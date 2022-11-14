@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+
+if [[ -z ${ONE_DIR:-} ]]; then
+  # Copy from https://github.com/ko1nksm/readlinkf
+  readlinkf() {
+    [ "${1:-}" ] || return 1
+    max_symlinks=40
+    CDPATH='' # to avoid changing to an unexpected directory
+
+    target=$1
+    [ -e "${target%/}" ] || target=${1%"${1##*[!/]}"} # trim trailing slashes
+    [ -d "${target:-/}" ] && target="$target/"
+
+    cd -P . 2>/dev/null || return 1
+    while [ "$max_symlinks" -ge 0 ] && max_symlinks=$((max_symlinks - 1)); do
+      if [ ! "$target" = "${target%/*}" ]; then
+        case $target in
+          /*) cd -P "${target%/*}/" 2>/dev/null || break ;;
+          *) cd -P "./${target%/*}" 2>/dev/null || break ;;
+        esac
+        target=${target##*/}
+      fi
+
+      if [ ! -L "$target" ]; then
+        target="${PWD%/}${target:+/}${target}"
+        printf '%s\n' "${target:-/}"
+        return 0
+      fi
+
+      target=$(readlink -- "$target" 2>/dev/null) || break
+    done
+    return 1
+  }
+
+  ONE_DIR=$(dirname "$(readlinkf "$0")")
+  export ONE_DIR
+fi
+
+# one.bash:usage
+if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+  name=$(basename "$0")
+  cat <<EOF
+Usage: $name [<CMD>]                 Run one command
+       $name sub [<SUB_CMD>]         Run ONE_SUB command
+       $name help [<CMD>]            Show the usage of one command
+       $name help-sub [<SUB_CMD>]    Show the usage of ONE_SUB command
+       $name [--bashrc]              Print one.bash entry codes for bashrc
+       $name [-h|--help]             Show the usage of one
+
+Desc: An elegant framework to manage commands, completions, dotfiles for terminal players.
+      https://github.com/one-bash/one.bash
+
+Arguments:
+  <CMD> the command of one
+  <SUB_CMD> the command of ONE_SUB
+EOF
+  exit 0
+fi
+
+one_sub_cmd() {
+  if (( $# > 0 )); then
+    local sub_cmd=$1
+    local cmd_path
+
+    # shellcheck source=./bash/load-config.bash
+    . "$ONE_DIR/bash/load-config.bash"
+
+    if [[ $sub_cmd == help ]]; then
+      cmd_path="$ONE_DIR/one-cmds/help-sub"
+    else
+      # shellcheck disable=2153
+      for ONE_REPO in "${ONE_REPOS[@]}"; do
+        if [[ ! -d $ONE_REPO/sub ]]; then continue; fi
+
+        if [[ -x "$ONE_REPO/sub/$sub_cmd" ]]; then
+          cmd_path="$ONE_REPO/sub/$sub_cmd"
+          break
+        fi
+      done
+
+      if [[ -z "${cmd_path:-}" ]]; then
+        echo "Not found sub command '$sub_cmd'" >&2
+        return "$ONE_EX_USAGE"
+      fi
+    fi
+
+    shift
+    exec "$cmd_path" "$@"
+  else
+    exec "$ONE_DIR/one-cmds/sub" list
+  fi
+}
+
+one_cmd() {
+  local cmd_path="$ONE_DIR/one-cmds/$cmd"
+
+  if [[ ! -x $cmd_path ]]; then
+    echo "Not found executable file '$cmd_path'" >&2
+    return "$ONE_EX_USAGE"
+  fi
+
+  shift
+  exec "$cmd_path" "$@"
+}
+
+bashrc() {
+  cat <<-EOF
+ONE_DIR=$ONE_DIR
+. "\$ONE_DIR/bash/entry.bash"
+EOF
+}
+
+main() {
+  local cmd="${1:-}"
+
+  # shellcheck source=bash/exit-codes.bash
+  . "$ONE_DIR/bash/exit-codes.bash"
+
+  case "$cmd" in
+    "--bashrc") bashrc ;;
+
+    subs ) shift; one_sub_cmd "$@" ;;
+
+    * ) one_cmd "$@" ;;
+  esac
+}
+
+main "$@"

@@ -1,0 +1,3 @@
+/deps/*
+!/deps/colors.bash
+!/deps/build_lobash

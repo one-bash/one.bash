@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+# one.bash:usage
+if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+  cat <<EOF
+Usage: one $(basename "$0") [<ACTION>]
+
+Desc: Manage one.bash deps
+
+ACTION:
+  i, install          Install all deps.
+  u, update [<DEP>]   If <DEP> not passed, update all deps.
+EOF
+  exit 0
+fi
+
+if [[ -z ${ONE_DIR:-} ]]; then
+  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+  readonly SCRIPT_DIR
+  export ONE_DIR=$SCRIPT_DIR/..
+fi
+
+# one.bash:completion
+if [[ "${1:-}" == --complete ]]; then
+  if (( COMP_CWORD < 3 )); then
+    words=(i install u update --help -h)
+    printf '%s\n' "${words[@]}"
+  else
+    compgen -A directory "$ONE_DIR/deps/" | sed "s|$ONE_DIR/deps/||"
+  fi
+  exit 0
+fi
+
+git_clone() {
+  local repo=$1
+  local dir=$2
+  if [[ -d "$dir" ]]; then return 0; fi
+  shift 2
+
+  if [[ -z ${SUBMOD:-} ]]; then
+    git clone --depth 1 --single-branch "$@" "$repo" "$dir"
+  else
+    git clone --depth 1 --single-branch --recurse-submodules --shallow-submodules "$@" "$repo" "$dir"
+  fi
+}
+
+git_update() {
+  local dir=$1
+  shift
+
+  if [[ ! -d "$dir" ]]; then
+    echo "No such folder $dir" >&2
+    return 0;
+  fi
+
+  echo "To update $dir"
+
+  git -C "$dir" pull --recurse-submodules="${SUBMOD:-no}" "$@"
+}
+
+install() {
+  SUBMOD=true git_clone "https://github.com/anishathalye/dotbot.git" "$ONE_DIR/deps/dotbot"
+  git_clone "https://github.com/adoyle-h/composure.git" "$ONE_DIR/deps/composure"
+
+  if [[ ${ONE_SHARE_ENABLE:-} == true ]]; then
+    SUBMOD=true git_clone "$ONE_SHARE_GIT" "$ONE_SHARE_DIR" --branch "$ONE_SHARE_BRANCH"
+  fi
+
+  if [[ ${ONE_BASH_IT_ENABLE:-} == true ]]; then
+    git_clone "$ONE_BASH_IT_GIT" "$ONE_BASH_IT_DIR" --branch "$ONE_BASH_IT_BRANCH"
+  fi
+}
+
+update() {
+  if (( $# == 0 )); then
+    SUBMOD=true git_update "$ONE_DIR/deps/dotbot"
+    git_update "$ONE_DIR/deps/composure"
+    [[ ${ONE_SHARE_ENABLE:-} == true ]] && SUBMOD=true git_update "$ONE_SHARE_DIR"
+    [[ ${ONE_BASH_IT_ENABLE:-} == true ]] && git_update "$ONE_BASH_IT_DIR"
+  else
+    if [[ "$1" == dotbot ]] || [[ "$1" == one.share ]]; then
+      SUBMOD=yes git_update "$ONE_DIR/deps/$1"
+    else
+      git_update "$ONE_DIR/deps/$1"
+    fi
+  fi
+}
+
+action=$1
+shift
+
+# shellcheck source=../../bash/load-config.bash
+. "$ONE_DIR/bash/load-config.bash"
+
+case "$action" in
+  i|install) install ;;
+
+  u|update) update "$@" ;;
+
+  *)
+    echo "Invalid action '$action'" >&2
+    exit 1
+    ;;
+esac

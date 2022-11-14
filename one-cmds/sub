@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+# one.bash:usage
+if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+  cmd=$(basename "$0")
+  cat <<EOF
+Usage: one $cmd [<ACTION>]
+       one $cmd list [-f]
+
+Desc: List all ONE_SUB commands
+
+ACTION:
+  l, list          List executable files in each REPO/sub
+
+Options:
+  -f							 Show filepath of each executable file
+EOF
+  exit 0
+fi
+
+# one.bash:completion
+if [[ "${1:-}" == --complete ]]; then
+  if (( COMP_CWORD < 3 )); then
+    words=(list --help)
+    printf '%s\n' "${words[@]}"
+  elif [[ $2 =~ l|list ]] && (( COMP_CWORD < 4 )); then
+		echo '-f'
+  fi
+  exit 0
+fi
+
+scan_dir() {
+  local dir=$1
+
+  for path in "$dir"/*; do
+    if [[ -x $path ]]; then
+      if [[ $full == -f ]]; then
+        echo "$path"
+      else
+        echo "${path##"$dir/"}"
+      fi
+    fi
+  done
+}
+
+list_subs() {
+  local full=${1:-}
+
+  shopt -s nullglob
+
+  # shellcheck disable=2153
+  for ONE_REPO in "${ONE_REPOS[@]}"; do
+    if [[ ! -d $ONE_REPO/sub ]]; then continue; fi
+    scan_dir "$ONE_REPO/sub"
+  done | uniq
+}
+
+action=$1
+shift
+
+# shellcheck source=../../bash/load-config.bash
+. "$ONE_DIR/bash/load-config.bash"
+
+case "$action" in
+  l|list) list_subs "$@" ;;
+
+  *)
+    echo "Invalid action '$action'" >&2
+    exit 1
+    ;;
+esac

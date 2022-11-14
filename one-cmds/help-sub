@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+# one.bash:usage:--help
+if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+  cat <<EOF
+Usage: one help-sub [<CMD>]
+       one help-sub -a
+       $ONE_SUB help [<CMD>]
+       $ONE_SUB help -a
+
+Desc: Print the usage of ONE_SUB command
+
+Arguments:
+  <CMD>  The sub command of ONE_SUB
+
+Options:
+  -a  If set, print usage of all commands.
+EOF
+  exit 0
+fi
+
+if [[ -z ${ONE_DIR:-} ]]; then
+  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+  readonly SCRIPT_DIR
+  export ONE_DIR=$SCRIPT_DIR/..
+fi
+
+# one.bash:completion
+if [[ $1 == --complete ]]; then
+  if (( $# == 2 )); then
+    "$ONE_DIR"/one-cmds/sub list
+  fi
+  exit
+fi
+
+# shellcheck source=../../bash/load-config.bash
+. "$ONE_DIR/bash/load-config.bash"
+
+# shellcheck source=../deps/colors.bash
+. "$ONE_DIR/deps/colors.bash"
+
+colorful() {
+  local line
+  while IFS=$'\n' read -r line; do
+    if [[ $line =~ ^'Usage:' ]]; then
+      printf '%b%s%b\n' "$GREEN" "$line" "$RESET_ALL"
+    else
+      echo "$line"
+    fi
+  done
+}
+
+print_help() {
+  local cmd="${1:-}"
+  local ONE_REPO file label arg
+
+  # shellcheck disable=2153
+  for ONE_REPO in "${ONE_REPOS[@]}"; do
+    if [[ -f "$ONE_REPO/sub/$cmd" ]]; then
+      file="$ONE_REPO/sub/$cmd"
+      break
+    fi
+  done
+
+  if [[ ! -f ${file:-} ]]; then
+    printf '%s: Not found ONE_SUB command "%s".\n' 'one.bash' "$cmd" >&2
+    return 2
+  fi
+
+  if [[ ! -x "${file}" ]]; then
+    printf '%s: Not found ONE_SUB command "%s". No executable file: %s\n' 'one.bash' "$cmd" "$file" >&2
+    return 1
+  fi
+
+  label=$( grep -i '^# one.bash:usage' "$file" 2>/dev/null || true )
+
+  if [[ -z "$label" ]]; then
+    echo "The command '$cmd' has not usage document." >&2
+    return 0
+  fi
+
+  arg=$( sed -E 's/^# one.bash:usage(:?.*)/\1/i' <<<"$label" || true )
+
+  if [[ -z ${arg#:} ]]; then
+    arg='--help'
+  else
+    arg=${arg#:}
+  fi
+
+  "$file" "$arg" | colorful
+}
+
+print_all_helps() {
+  local cmd
+  for cmd in $("$ONE_DIR"/one-cmds/sub list); do
+    print_help "$cmd" || true
+    printf '%b--------------------------------------------------%b\n' "${GREY}" "${RESET_ALL}"
+  done
+}
+
+main() {
+  if [[ $1 == -a ]]; then
+    print_all_helps
+  else
+    print_help "$1"
+  fi
+}
+
+main "$@"

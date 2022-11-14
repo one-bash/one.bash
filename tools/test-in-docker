@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+readonly SCRIPT_DIR
+
+echo "[test-in-docker] BASHVER=${BASHVER:=4.4}"
+
+DOCKER_IMAGE="adoyle/one.bash:test-env-$BASHVER"
+
+if [[ -z $(docker images -q $DOCKER_IMAGE) ]]; then
+  if [[ -n ${PULL_IMAGE:-} ]]; then
+    docker pull $DOCKER_IMAGE
+  else
+    echo "To build image $DOCKER_IMAGE"
+    BASHVER=$BASHVER IN_CHINA=${IN_CHINA:-} "$SCRIPT_DIR/../tools/build-test-image"
+  fi
+fi
+
+args=(
+  --rm -t
+  -e DOCKER=true
+  -e CI="${CI:-}"
+  -e BASHVER="$BASHVER"
+  -e ONE_DIR=/work
+)
+
+vols=(
+  bash bin deps enabled one-cmds test tools
+  one.config.default.bash
+)
+
+for vol in "${vols[@]}"; do
+  v=$(printf '%s:%s' "$SCRIPT_DIR/../$vol" "/work/$vol")
+  # shellcheck disable=2016
+  args+=( -v "$v")
+done
+
+echo "docker run ${args[*]} $DOCKER_IMAGE"
+
+docker run "${args[@]}" "$DOCKER_IMAGE" \
+  '/work/tools/ci-init && PATH="$ONE_DIR/bin:$PATH" one dep install && /work/tools/test'

@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+# one.bash:usage
+if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+  cmd=$(basename "$0")
+  cat <<EOF
+Usage: one $cmd [<ACTION>]
+       one $cmd list [-f]
+
+Desc: bin commands
+
+ACTION:
+  l, list          List executable files in each REPO/bin
+
+Options:
+  -f							 Show filepath of each executable file
+EOF
+  exit 0
+fi
+
+# one.bash:completion
+if [[ "${1:-}" == --complete ]]; then
+  if (( COMP_CWORD < 3 )); then
+    words=(list --help)
+    printf '%s\n' "${words[@]}"
+  elif [[ $2 =~ l|list ]] && (( COMP_CWORD < 4 )); then
+		echo '-f'
+  fi
+  exit 0
+fi
+
+if [[ -z ${ONE_DIR:-} ]]; then
+  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+  readonly SCRIPT_DIR
+  export ONE_DIR=$SCRIPT_DIR/..
+fi
+
+list_bins() {
+	{
+		shopt -s nullglob
+
+		# shellcheck disable=2153
+		for ONE_REPO in "${ONE_REPOS[@]}"; do
+			if [[ ! -d $ONE_REPO/bin ]]; then continue; fi
+
+			for path in "$ONE_REPO"/bin/*; do
+				if [[ -x $path ]]; then
+					if [[ ${1:-} == -f ]]; then
+						echo "$path"
+					else
+						echo "${path##"$ONE_REPO/bin/"}"
+					fi
+				fi
+			done
+		done
+	} | uniq
+}
+
+action=$1
+shift
+
+# shellcheck source=../../bash/load-config.bash
+. "$ONE_DIR/bash/load-config.bash"
+
+case "$action" in
+  l|list) list_bins "$@" ;;
+
+  *)
+    echo "Invalid action '$action'" >&2
+    exit 1
+    ;;
+esac

@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+if [[ -z ${ONE_DIR:-} ]]; then
+  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+  ONE_DIR=$SCRIPT_DIR/..
+fi
+
+# shellcheck source=../../bash/load-config.bash
+. "$ONE_DIR/bash/load-config.bash"
+
+# shellcheck source=../../bash/mod.bash
+. "$ONE_DIR/bash/mod.bash"
+
+t=$(basename "$0")
+ts=${t_map[$t]}
+readonly t ts
+
+
+usage() {
+  cat <<EOF
+Usage: one $t <ACTION>
+Desc: manage $ts in ONE_REPO/$ts/
+
+ACTION:
+  e, enable           Enable matched $ts
+  d, disable          Disable matched $ts
+  l, list             List enabled $ts
+
+------
+Usage:
+  one $t enable <name> [<name>...]
+
+Arguments:
+  <name>  $t name
+
+------
+Usage:
+  one $t disable <name> [<name>...]
+  one $t disable -a
+
+Options:
+  -a                  If set, disable all $ts
+
+------
+Usage:
+  one $t list [-a]
+
+Desc: List enabled $ts
+
+Options:
+  -a                  If set, list all available $ts
+EOF
+  exit 0
+}
+
+# one.bash:usage
+if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then usage; fi
+
+# one.bash:completion
+if [[ "${1:-}" == "--complete" ]]; then
+  if (( COMP_CWORD < 3 )); then
+    words=(enable disable list --help)
+    printf '%s\n' "${words[@]}"
+  elif [[ $2 == list ]]; then
+    echo '-a'
+  elif [[ $2 == enable ]]; then
+    compgen_enable_mod
+  elif [[ $2 == disable ]]; then
+    compgen_disable_mod
+  fi
+
+  exit 0
+fi
+
+action=$1
+shift
+
+case "$action" in
+  l|list) list_it "$@" ;;
+
+  e|enable) if (( $# == 0 )); then usage; else enable_it "$@"; fi ;;
+
+  d|disable) if (( $# == 0 )); then usage; else disable_it "$@"; fi ;;
+
+  *)
+    echo "Invalid action '$action'" >&2
+    exit 1
+    ;;
+esac

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+readonly SCRIPT_DIR
+
+lobash-gen -y -m 4.4 -p l. "$SCRIPT_DIR/lobash.bash"
+
+lobash-gen -y -c "$SCRIPT_DIR/one_l.conf" "$SCRIPT_DIR/one_l.bash"

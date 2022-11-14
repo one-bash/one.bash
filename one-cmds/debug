@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+# one.bash:completion
+if [[ "${1:-}" == --complete ]]; then
+  if (( COMP_CWORD < 3 )); then
+    printf 'true\nfalse\n--help\n'
+  fi
+
+  exit 0
+fi
+
+# one.bash:usage
+if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+  cat <<EOF
+Usage: one $(basename "$0") <value>
+Desc: Toggle debug mode on one.bash
+Arguments:
+  <value>  Available value: true false
+EOF
+  exit 0
+fi
+
+case $1 in
+  true|false )
+    one config debug "$1"
+    echo "Please restart shell to take effect"
+    ;;
+
+  * )
+    echo "Invalid value: $1"
+    exit 2
+    ;;
+esac

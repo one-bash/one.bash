@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+# one.bash:completion
+if [ "${1:-}" = "--complete" ]; then
+  if [[ $COMP_CWORD -lt 3 ]]; then
+    words=(
+      -h --help -l --list
+      SUB RC DEBUG FIG NO_MODS BASHRC_FO REPOS PATHS SKIP_COMPS LINKS_CONF
+    )
+    for w in "${words[@]}"; do echo "$w"; done
+  fi
+  exit 0
+fi
+
+# one.bash:usage
+if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+  cmd=$(basename "$0")
+  cat <<EOF
+Usage:
+  one $cmd [-l|--list]
+  one $cmd [-h|--help]
+  one $cmd <key>           Get value
+  one $cmd <key>=<value>   Set value
+  one $cmd <key> <value>   Set value
+
+Desc: Manage user ONE_CONF (Current: $ONE_CONF)
+
+Arguments:
+  <key>      The name of property defined in ONE_CONF
+  <value>    The value of property
+
+Options:
+  -h|--help     Show help
+  -l|--list     List configs
+EOF
+  exit 0
+fi
+
+SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+readonly SCRIPT_DIR
+
+# shellcheck source=../../bash/load-config.bash
+. "$ONE_DIR/bash/load-config.bash"
+
+# shellcheck source=../deps/lobash.bash
+. "$SCRIPT_DIR/../deps/lobash.bash"
+
+get_val() {
+  declare -p "$1" | sed -E 's/^declare -[-a-zA-Z]+ //'
+}
+
+get_func() {
+  declare -f "$1"
+}
+
+list_options() {
+  local name
+  for name in $(compgen -A variable ONE_); do
+    get_val "$name"
+  done
+
+  for name in $(compgen -A function ONE_); do
+    get_func "$name"
+  done
+}
+
+if l.is_gnu_sed; then
+  sedi() { sed -i'' "$@"; }
+else
+  sedi() { sed -i '' "$@"; }
+fi
+
+parse_pairs() {
+  declare -a list
+
+  if [[ $# == 1 ]]; then
+    l.split "$1" list '='
+  else
+    list=( "$1" "$2" )
+  fi
+
+  local key=ONE_${list[0]^^}
+
+  if [[ ${#list[@]} == 1 ]]; then
+    if [[ $key == ONE_LINKS_CONF ]]; then
+      get_func "$key"
+    else
+      get_val "$key"
+    fi
+  else
+    if [[ -h $ONE_CONF ]]; then
+      ONE_CONF=$(readlink "$ONE_CONF")
+    fi
+
+    sedi -E "s/^${key}=.+/${key}=${list[1]}/" "$ONE_CONF"
+
+    # shellcheck source=../../bash/load-config.bash
+    . "$ONE_DIR/bash/load-config.bash"
+
+    get_val "$key"
+  fi
+}
+
+case "$1" in
+  -l|--list)
+    list_options
+    exit 0
+    ;;
+
+  *)
+    parse_pairs "$@"
+    ;;
+esac

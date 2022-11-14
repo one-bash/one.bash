@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+# one.bash:usage:-h
+if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+  cat <<EOF
+Usage: one help [<CMD>]
+       one help -a
+
+Desc: Print the usage of One Command.
+
+Arguments:
+  <CMD>  The sub command of one
+
+Options:
+  -a  If set, print usage of all commands.
+EOF
+  exit 0
+fi
+
+if [[ -z ${ONE_DIR:-} ]]; then
+  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+  readonly SCRIPT_DIR
+  ONE_DIR=$SCRIPT_DIR/..
+fi
+
+# one.bash:completion
+if [[ $1 == '--complete' ]]; then
+  if (( $# == 2 )); then
+    "$ONE_DIR"/one-cmds/commands
+  fi
+  exit
+fi
+
+colorful() {
+  local line
+  while IFS=$'\n' read -r line; do
+    if [[ $line =~ ^'Usage:' ]]; then
+      printf '%b%s%b\n' "$GREEN" "$line" "$RESET_ALL"
+    else
+      echo "$line"
+    fi
+  done
+}
+
+print_help() {
+  local cmd="$1"
+  local file="$ONE_DIR/one-cmds/$cmd"
+  local label arg
+
+  if [[ ! -x "$file" ]]; then
+    printf '%s: Not found sub-command "%s". No executable file: %s\n' 'one.bash' "$cmd" "$file" >&2
+    return "$ONE_EX_USAGE"
+  fi
+
+  label=$( grep -i '^# one.bash:usage' "$file" 2>/dev/null || true )
+
+  if [[ -z "$label" ]]; then
+    echo "The command '$cmd' has not usage document." >&2
+    return "$ONE_EX_UNAVAILABLE"
+  fi
+
+  arg=$( sed -E 's/^# one.bash:usage(:?.*)/\1/i' <<<"$label" || true )
+
+  if [[ -z ${arg#:} ]]; then
+    arg='--help'
+  else
+    arg=${arg#:}
+  fi
+
+  "$file" "$arg" | colorful
+}
+
+print_all_helps() {
+  local cmd
+  for cmd in $(one commands); do
+    print_help "$cmd" || true
+    printf '%b--------------------------------------------------%b\n' "${GREY}" "${RESET_ALL}"
+  done
+}
+
+main() {
+  # shellcheck source=../deps/colors.bash
+  . "$ONE_DIR/deps/colors.bash"
+
+  # shellcheck source=../bash/exit-codes.bash
+  . "$ONE_DIR/bash/exit-codes.bash"
+
+  if [[ $1 == -a ]]; then
+    print_all_helps
+  else
+    print_help "$1"
+  fi
+}
+
+main "$@"

@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+# one.bash:completion
+if [[ "${1:-}" == --complete ]]; then
+  if (( COMP_CWORD < 3 )); then
+    result=$(compgen -f -- "$2")
+    if [[ -d $result ]]; then
+      compgen -f -- "$result/"
+    else
+      echo "${result[@]}"
+    fi
+  fi
+  exit 0
+fi
+
+# one.bash:usage
+if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
+  cat <<EOF
+Usage: one $(basename "$0") [<LINKS_CONF>]
+Desc: Create symlink files based on LINKS_CONF file
+Args:
+  <LINKS_CONF>  The links config. If omit, use the output of function ONE_LINKS_CONF which defined in ONE_CONF.
+EOF
+  exit 0
+fi
+
+if [[ -z ${ONE_DIR:-} ]]; then
+  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+  readonly SCRIPT_DIR
+  export ONE_DIR=$SCRIPT_DIR/..
+fi
+
+# shellcheck source=./bash/xdg.bash
+. "$ONE_DIR/bash/xdg.bash"
+
+# shellcheck source=./deps/lobash.bash
+. "$ONE_DIR/deps/lobash.bash"
+
+if (( $# > 0 )); then
+  DOTBOT_CONF=$1
+
+  if [[ ! -f $DOTBOT_CONF ]]; then
+    echo "Not found file '$DOTBOT_CONF'" >&2
+    exit 4
+  fi
+else
+  # shellcheck source=../../one_config.bash
+  . "$ONE_CONF"
+
+  if l.has_not function ONE_LINKS_CONF; then
+    echo "Not found function ONE_LINKS_CONF in file '$DOTBOT_CONF." >&2
+    exit 6
+  fi
+
+  DOTBOT_CONF=$(ONE_LINKS_CONF "$(l.detect_os)")
+
+  if [[ ! -f $DOTBOT_CONF ]]; then
+    echo "Not found file '$DOTBOT_CONF'. Check the ONE_LINKS_CONF function in your config." >&2
+    exit 5
+  fi
+fi
+
+echo "Use ONE_LINKS_CONF: ${DOTBOT_CONF}"
+
+"$ONE_DIR/deps/dotbot/bin/dotbot" -d "$(dirname "$DOTBOT_CONF")" -c "$DOTBOT_CONF"
