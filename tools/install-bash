@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# How to install bash: https://www.gnu.org/software/bash/manual/bash.html#Basic-Installation
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+readonly SCRIPT_DIR
+
+# GNU Mirror List: https://www.gnu.org/prep/ftp.html
+# MIRROR=https://ftp.gnu.org
+MIRROR=https://gnu.freemirror.org
+TMP_DIR="$SCRIPT_DIR/../tmp"
+# BUILD_DIR=${DIST_DIR}/$BASHVER
+# BASH_TGZ="$SCRIPT_DIR/../tmp/bash-$BASHVER.tar.gz"
+
+mkdir -p "$TMP_DIR/bash-src"
+cd "$TMP_DIR/bash-src"
+
+if [[ ! -f "bash-$BASHVER.tar.gz" ]]; then
+  echo "To download bash from $MIRROR/gnu/bash/bash-$BASHVER.tar.gz"
+  curl -sSkLO "$MIRROR/gnu/bash/bash-$BASHVER.tar.gz"
+fi
+
+if [[ ! -d "bash-$BASHVER" ]]; then
+  tar -xzf "bash-$BASHVER.tar.gz"
+fi
+cd "bash-$BASHVER"
+
+DIST_DIR=${DIST_DIR:-"$TMP_DIR/bash-$BASHVER"}
+mkdir -p "$DIST_DIR"
+
+export CFLAGS='-Wno-implicit-function-declaration'
+./configure --silent --prefix="$DIST_DIR"
+make
+make install
