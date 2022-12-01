@@ -1,3 +1,7 @@
 /deps/*
 !/deps/colors.bash
 !/deps/build_lobash
+/test/fixture/bats
+/test/fixture/assert
+/test/fixture/bats-file
+/test/fixture/support

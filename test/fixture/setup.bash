@@ -7,9 +7,11 @@ set -o pipefail
 if [[ -n ${DOCKER:-} ]]; then
   load /test/support/load.bash
   load /test/assert/load.bash
+  load /test/bats-file/load.bash
 else
   load "$TEST_DIR"/fixture/support/load.bash
   load "$TEST_DIR"/fixture/assert/load.bash
+  load "$TEST_DIR"/fixture/bats-file/load.bash
 fi
 
 load_fixtrue() {

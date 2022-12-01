@@ -25,6 +25,6 @@ else
   test_dirs=( "$1" )
 fi
 
-export PATH="$ONE_DIR/bin:$TEST_DIR/fixture/bats/bin:${PATH}"
+export PATH="$TEST_DIR/fixture/bats/bin:${PATH}"
 
 exec bats ${CI:+--tap} "${test_dirs[@]}"

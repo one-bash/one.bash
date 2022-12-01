@@ -63,6 +63,18 @@ jobs:
           echo "PWD: $PWD"
           echo "ACT: ${{ env.ACT }}"
 
+      - name: Cache test/fixture
+        if: ${{ !env.ACT }}
+        id: cache-test-fixture
+        uses: actions/cache@v3
+        with:
+          path: |
+            test/fixture/assert
+            test/fixture/bats
+            test/fixture/bats-file
+            test/fixture/support
+          key: ${{ runner.os }}-test-fixture
+
       - name: Cache bash
         if: ${{ !env.ACT }}
         id: cache-bash
@@ -83,6 +95,11 @@ jobs:
             ./deps/bash-it
           key: ${{ runner.os }}-one-deps
 
+      - name: Update git submodules
+        if: steps.cache-test-fixture.outputs.cache-hit != 'true'
+        run:
+          git submodule update --init --recursive
+
       - name: Install bash
         if: steps.cache-bash.outputs.cache-hit != 'true'
         run: |
@@ -102,7 +119,7 @@ jobs:
           export ONE_DIR=${{ github.workspace }}
           export PATH="$ONE_DIR/bin:$PATH"
           # Install Dependencies
-          one deps install
+          one dep install
 
       - name: Start to test
         run: |

@@ -2,6 +2,8 @@
 
 setup_fixture
 
+PATH="$BATS_TEST_DIRNAME/../../bin:$PATH"
+
 @test "one" {
   run one
 
@@ -36,12 +38,12 @@ setup_fixture
   run one sub list
 
   assert_success
-  assert [[ "${#lines[@]}" -gt 10 ]]
+  assert [ "${#lines[@]}" -gt 10 ]
 }
 
 @test "one help -a" {
   run one help -a
 
   assert_success
-  assert [[ "${#lines[@]}" -gt 30 ]]
+  assert [ "${#lines[@]}" -gt 30 ]
 }

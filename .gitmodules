@@ -1,0 +1,16 @@
+[submodule "test/fixture/bats"]
+	path = test/fixture/bats
+	url = https://github.com/bats-core/bats-core.git
+  shallow = true
+[submodule "test/fixture/assert"]
+	path = test/fixture/assert
+	url = https://github.com/bats-core/bats-assert.git
+  shallow = true
+[submodule "test/fixture/bats-file"]
+	path = test/fixture/bats-file
+	url = https://github.com/bats-core/bats-file.git
+  shallow = true
+[submodule "test/fixture/support"]
+	path = test/fixture/support
+	url = https://github.com/bats-core/bats-support.git
+  shallow = true

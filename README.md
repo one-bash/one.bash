@@ -322,6 +322,10 @@ There are many tricks you may be interested.
 
 You can create your own repo by `one repo init`.
 
+`one repo init -h` for usage.
+
+Read [ONE Repo](./docs/repo.md) for details.
+
 ### [ONE Functions](./docs/one-functions.md)
 
 ### ONE_RC
