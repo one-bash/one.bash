@@ -53,15 +53,15 @@ print_help() {
   local file="$ONE_DIR/one-cmds/$cmd"
   local label arg
 
-  if [[ ! -x "$file" ]]; then
-    printf '%s: Not found sub-command "%s". No executable file: %s\n' 'one.bash' "$cmd" "$file" >&2
+  if [[ ! -x "${file}" ]]; then
+    printf '%bNot found command "%s".%b\n' "$YELLOW" "$cmd" "$RESET_ALL" >&2
     return "$ONE_EX_USAGE"
   fi
 
   label=$( grep -i '^# one.bash:usage' "$file" 2>/dev/null || true )
 
   if [[ -z "$label" ]]; then
-    echo "The command '$cmd' has not usage document." >&2
+    printf '%bThe command "%s" has not usage document.%b\n' "$YELLOW" "$cmd" "$RESET_ALL" >&2
     return "$ONE_EX_UNAVAILABLE"
   fi
 
