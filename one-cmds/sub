@@ -11,27 +11,22 @@ if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
   cmd=$(basename "$0")
   cat <<EOF
 Usage: one $cmd [<ACTION>]
-       one $cmd list [-f]
-
-Desc: List all ONE_SUB commands
+Desc:  Manage ONE_SUB commands
 
 ACTION:
   l, list          List executable files in each REPO/sub
+  which <cmd>      Show filepath of cmd
 
+---
+Usage: one $cmd list [-f]
+Desc:  List executable files in each REPO/sub
 Options:
   -f							 Show filepath of each executable file
-EOF
-  exit 0
-fi
 
-# one.bash:completion
-if [[ "${1:-}" == --complete ]]; then
-  if (( COMP_CWORD < 3 )); then
-    words=(list --help)
-    printf '%s\n' "${words[@]}"
-  elif [[ $2 =~ l|list ]] && (( COMP_CWORD < 4 )); then
-		echo '-f'
-  fi
+---
+Usage: one $cmd which <cmd>
+Desc:  Show filepath of <cmd>
+EOF
   exit 0
 fi
 
@@ -61,6 +56,33 @@ list_subs() {
   done | uniq
 }
 
+# one.bash:completion
+if [[ "${1:-}" == --complete ]]; then
+  if (( COMP_CWORD < 3 )); then
+    words=(list which --help)
+    printf '%s\n' "${words[@]}"
+  elif [[ $2 =~ l|list ]] && (( COMP_CWORD < 4 )); then
+		echo '-f'
+  elif [[ $2 =~ which ]] && (( COMP_CWORD < 4 )); then
+    # shellcheck source=../../bash/load-config.bash
+    . "$ONE_DIR/bash/load-config.bash"
+    list_subs
+  fi
+  exit 0
+fi
+
+which_sub() {
+  local name=$1
+  local path
+
+  for ONE_REPO in "${ONE_REPOS[@]}"; do
+    if [[ -x $ONE_REPO/sub/$name ]]; then
+      echo "$ONE_REPO/sub/$name"
+      return 0
+    fi
+  done
+}
+
 action=$1
 shift
 
@@ -69,6 +91,8 @@ shift
 
 case "$action" in
   l|list) list_subs "$@" ;;
+
+  which) which_sub "$@" ;;
 
   *)
     echo "Invalid action '$action'" >&2
