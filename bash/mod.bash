@@ -76,19 +76,6 @@ list_mod_path() {
   done
 }
 
-list() {
-  readonly opt=${1:-}
-
-  if [[ "$opt" == '-a' ]]; then
-    list_mod | sort | uniq
-  else
-    # shellcheck disable=2154
-    list_enabled "$t"
-  fi
-
-  echo ""
-}
-
 list_it() {
   readonly opt=${1:-}
 
