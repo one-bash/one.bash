@@ -8,10 +8,12 @@ An elegant framework to manage commands, completions, dotfiles for terminal play
 ## Features
 
 - Manage collections of dotfiles in one place. Using YAML file to manage soft-links via [dotbot][].
-- Manage shell scripts, completions, aliases by [modules](#modules).
-- Easy to share and override executable files, sub commands, configs and modules by repo. Read [ONE_REPOS](#onerepos) and [one.share][].
-- Manage commands under scope. Like `a <cmd>` to invoke command that no worry about duplicated in `PATH`. Read the [ONE_SUB Commands](#onesub-commands).
-- Support [bash-it][]
+- Manage shell scripts, completions, aliases by [modules](#modules). Support custom modules.
+- Easy to share and reuse executable files, sub commands, configs and modules by [repo](#onerepos). Read [one.share][]. And suspport custom repo.
+- Manage commands under scope. Like `a <cmd>` to invoke command that no worry about duplicated in `PATH`. Read the [ONE_SUB Commands](./docs/advanced-usage/one-sub-cmd.md).
+- Support custom one.bash. Read [ONE_CONF](#oneconf).
+- Support [bash-it][]. You can use one.bash commands to manage bash-it's aliases/completions/plugins. Read [./docs/advanced-usage/bash-it.md](./docs/advanced-usage/bash-it.md).
+- Support [Fig][]. Read [./docs/advanced-usage/fig.md](./docs/advanced-usage/fig.md).
 
 ## Environments
 
@@ -97,7 +99,7 @@ EOF
 . "$ONE_CONF"
 ```
 
-For more `ONE_CONF` options and documents, Please read [./one.config.default.bash](./one.config.default.bash).
+For more `ONE_CONF` options and documents, Please read [./one.config.default.bash][one.config.default].
 
 ### ONE_LINKS_CONF
 
@@ -184,38 +186,29 @@ The modules have three types: `alias`, `completion`, `plugin`.
 - `one <mod_type> disable` to disable modules.
 - `one <mod_type> list` to list modules.
 
-It's suggested to move your shell codes to modules.
-Read the [Module document](./docs/module.md) and [Custom](#custom) for details.
-
 [one.share][] has provided many modules, configs, sub commands, and bin commands.
+
+It's suggested to move your shell codes to modules.
+
+Read the [Module document](./docs/advanced-usage/module.md) for details.
 
 ### Enabled Modules
 
-All enabled modules are under [./enabled/](./enabled), and they are git ignored.
+All enabled modules are under [$ONE_DIR/enabled/](./enabled).
 
-### Module Load Priority
+`one enabled list` to view enabled modules.
 
-The modules are loaded by one.bash in order (from lower to higher).
-
-Put `# ONE_LOAD_PRIORITY: <PRIORITY>` at the head of script to set loading priority.
-
-`# ONE_LOAD_PRIORITY: 400` means the load priority of module is 400. It is optional, each module has default priority.
-
-The priority range of each module type:
-
-- `plugin`: 300~499, default 400.
-- `completion`: 500~699, default 600.
-- `alias`: 700~899, default 800.
+`one enabled backup` to backup enabled modules to a file.
 
 ## ONE_REPOS
 
 one.bash is just a management framework. It does not contain any dotfiles, configs.
-I have created [one.share][] (an official repo) to enhance shell.
+The official repo [one.share][] provides them to enhance shell.
 
-one.bash enable [one.share][] (an official repo) and [bash-it][] (not one.bash official repo) by default.
+one.bash enable [one.share][] and [bash-it][] by default.
 You can disable them by `ONE_SHARE_ENABLE=false` and `ONE_BASH_IT_ENABLE=false` in `ONE_CONF`.
 
-You can create your own ONE repo. Read the [Create Repo](./docs/repo.md#create-repo).
+You can create your own ONE repo. Read the [Create Repo](./docs/advanced-usage/repo.md#create-repo) for details.
 
 Just add repo's filepath to `ONE_REPOS` to enable the repo, or remove from `ONE_REPOS` to disable it.
 
@@ -223,120 +216,23 @@ Invoke `one repo l` to list ONE repos based on `ONE_CONF`.
 
 ## ONE_SUB Commands
 
-All executable files in `sub/` of each [repo](./docs/repo.md) could be invoked
-by `one subs <cmd>` or `a <cmd>` (`$ONE_SUB <cmd>`, `ONE_SUB` defaults to `a`, read the usage in [`ONE_CONF`](./one.config.default.bash)).
+All executable files in `sub/` of each [repo](./docs/advanced-usage/repo.md) could be invoked
+by `one subs <cmd>` or `a <cmd>` (`$ONE_SUB <cmd>`, `ONE_SUB` defaults to `a`, read the usage in [`ONE_CONF`][one.config.default]).
 
 The `sub/` path is not included in `$PATH`. So you cannot invoke ONE_SUB commands directly.
 
-Read the [document](./docs/one-sub-cmd.md) for more details.
+Read [this document](./docs/advanced-usage/one-sub-cmd.md) for more details.
 
-## ONE Dependencies
+## [Docs](./docs)
 
-`one dep install` will download below four dependencies into [./deps/](./deps).
-
-- [dotbot][]: To create symbol links and manage them with config. See [example](./one.links.example.yaml).
-- [composure][]: Provides functions for modules
-- [one.share][]: It can be disabled by `ONE_SHARE_ENABLE=false` in `ONE_CONF`.
-- [bash-it](https://github.com/Bash-it/bash-it): It can be disabled by `ONE_BASH_IT_ENABLE=false` in `ONE_CONF`.
-
-You can use `one dep` to manage these dependencies.
-
-- `one dep install` to install all dependencies.
-- `one dep update` to update all dependencies.
-- `one dep update <dep>` to update a dependency.
-
-## File Structure
-
-```
-.
-├── bash/
-│   ├── envs/                       # Different environments
-│   │   ├── linux.bash              # Settings for Linux user
-│   │   └── mac.bash                # Settings for MacOS user
-│   ├── bash_profile                # Link to ~/.bash_profile
-│   ├── bashrc                      # Link to ~/.bashrc
-│   ├── bashrc.failover.bash        # failover for ~/.bashrc
-│   ├── check-environment.bash
-│   ├── debug.bash
-│   ├── enable-mods.bash
-│   ├── entry.bash                  # The entrypoint of one.bash
-│   ├── failover.bash
-│   ├── helper.bash
-│   ├── inputrc                     # Set shortcut Key Character Sequence (keyseq). Link to ~/.inputrc
-│   ├── one.bash
-│   ├── one-load.bash
-│   ├── mod.bash
-│   ├── profile                     # Link to ~/.profile
-│   ├── sub.bash                    # The entrypoint of SUB command
-│   └── xdg.bash                    # Set XDG_ variables
-├── one-cmds/                        #
-│   ├── backup-enabled*             # Create a restore file for enabled modules
-│   ├── bins*                       # List executable files in each REPO/bin
-│   ├── commands*                   # List one commands
-│   ├── debug*                      # Toggle debug mode on one.bash
-│   ├── disable*                    # Disable modules
-│   ├── enable*                     # Enable modules
-│   ├── help*                       # Print the usage of one.bash sub command
-│   ├── install*                    # Install one.bash
-│   ├── link*                       # Create soft-links based on dotbot config yaml
-│   ├── list*                       # List modules
-│   └── unlink*                     # Remove soft-links based on dotbot config yaml
-├── sub/                            # ONE_SUB Commands
-├── deps/                           # Dependencies
-│   ├── composure/
-│   ├── dotbot/                     # https://github.com/anishathalye/dotbot
-│   ├── colors.bash
-│   ├── one_l.bash                  # Similar to lobash.bash. Just less functions for one.bash.
-│   └── lobash.bash                 # https://github.com/adoyle-h/lobash
-├── docs/                           # The documents of this project
-├── enabled/                        # Enabled modules. soft-link files
-├── README.md
-├── .ignore                         # Ignore files for rg and ag
-└── one.config.default.bash         # ONE.bash default config
-```
-
-## Bash Initialization Process
-
-It will execute scripts in order:
-
-- ~/.profile or ~/.bash_profile
-- ~/.bashrc
-- [./bash/entry.bash](./bash/entry.bash)
-  - Load [exit codes](./bash/exit-codes.bash)
-  - Load `$ONE_CONF` (Defaults to $HOME/.config/one.bash/one.config.bash)
-  - Load [one.config.default.bash](./one.config.default.bash)
-  - Reset PATH: [./bash/path.bash](./bash/path.bash)
-  - Set XDG environment variables: [./bash/xdg.bash](./bash/xdg.bash)
-  - If `$ONE_RC` is not empty, enter the `$ONE_RC`, and not execute below steps.
-  - If check_shell failed, enter the `$ONE_BASHRC_FO`, and not execute below steps.
-  - Load settings for OS.
-  - Enable [Fig][] if `$ONE_FIG` is true
-  - Enable `one` and `$ONE_SUB` auto-completions
-  - Enabled modules: [./enabled/*.bash](./enabled/)
-
-## Advanced Usage
-
-There are many tricks you may be interested.
-
-### Custom
-
-You can create your own repo by `one repo init`.
-
-`one help repo` for usage.
-
-Read [ONE Repo](./docs/repo.md) for details.
-
-### [ONE Functions](./docs/one-functions.md)
-
-### ONE_RC
-
-If one.bash has any critical issue and failed to start up, you can set `ONE_RC=<path-to-your-rcfile>` for rescue.
-
-### ONE_DEBUG
-
-Invoke `one debug true` and restart shell. You will see the debug logs on screen.
-
-Invoke `one debug false` will turn off debug logs.
+- [Bashrc Initialization Proces](./docs/entry.md)
+- [Project File Structure](./docs/file-structure.md)
+- [Advanced Usages](./docs/advanced-usage)
+  - [ONE Dependencies](./docs/advanced-usage/dep.md)
+  - [ONE Functions](./docs/advanced-usage/one-functions.md)
+  - [ONE_SUB Command](./docs/advanced-usage/one-sub-cmd.md)
+  - [Fig](./docs/advanced-usage/fig.md)
+  - [Bash-it](./docs/advanced-usage/bash-it.md)
 
 ## Suggestion, Bug Reporting, Contributing
 
@@ -391,10 +287,11 @@ Read the [NOTICE][] file distributed with this work for additional information r
 <!-- links -->
 
 [one.share]: https://github.com/one-bash/one.share
-[one.links.example.yaml]: https://github.com/one-bash/one.share/blob/develop/one.links.example.yaml
+[one.config.default]: ./one.config.default.bash
+[one.links.example.yaml]: https://github.com/one-bash/one.share/blob/master/one.links.example.yaml
+[composure]: https://github.com/adoyle-h/composure.git
 [dotbot]: https://github.com/anishathalye/dotbot/
-[sub]: https://github.com/basecamp/sub
 [bash-it]: https://github.com/Bash-it/bash-it
 [bash-completion]: https://github.com/scop/bash-completion
 [Fig]: https://github.com/withfig/fig
-[composure]: https://github.com/adoyle-h/composure.git
+[sub]: https://github.com/basecamp/sub

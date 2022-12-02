@@ -15,10 +15,9 @@ The modules have three types: `alias`, `completion`, `plugin`.
 - `one <mod_type> disable` to disable modules.
 - `one <mod_type> list` to list modules.
 
-It's suggested to move your shell codes to modules.
-Read the [Module document](./module.md) and [Custom](../README.md#custom) for details.
-
 [one.share][] has provided many modules, configs, sub commands, and bin commands.
+
+It's suggested to move your shell codes to modules.
 
 ## Write a module
 
@@ -34,6 +33,20 @@ about-plugin 'Module Description'
 ```
 
 Invoke `one <mod_type> enable <name>` and restart shell to enable the module.
+
+### ONE_LOAD_PRIORITY
+
+The modules are loaded by one.bash in order (`ONE_LOAD_PRIORITY` from lower to higher).
+
+Put `# ONE_LOAD_PRIORITY: <PRIORITY>` at the head of script to set loading priority.
+
+`# ONE_LOAD_PRIORITY: 400` means the load priority of module is 400. It is optional, each module has default priority.
+
+The priority range of each module type:
+
+- `plugin`: 300~499, default 400.
+- `completion`: 500~699, default 600.
+- `alias`: 700~799, default 700.
 
 
 <!-- links -->

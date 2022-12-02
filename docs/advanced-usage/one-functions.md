@@ -1,6 +1,6 @@
 # ONE Functions
 
-Read the code: [../bash/helper.bash](../bash/helper.bash).
+Read the code: [bash/helper.bash](../../bash/helper.bash).
 
 ## one_check_cmd
 

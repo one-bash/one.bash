@@ -2,12 +2,8 @@
 
 ## Use ONE_SUB Commands
 
-All executable files in [`sub/`]('./sub/') of each [repo](./repo.md) could be invoked
+All executable files in `sub/` of each [repo](./repo.md) could be invoked
 by `one subs <cmd>` or `a <cmd>` (`$ONE_SUB <cmd>`, `ONE_SUB` defaults to `a`, read the usage in [`ONE_CONF`](../one.config.default.bash)).
-
-Add `# one.bash:completion` in file to enable auto-completed feature. Just type `<Tab>`. Read [ONE_SUB Command Completion](#onesub-command-completion).
-
-Add `# one.bash:usage` in file to show usage via `one help-sub <cmd>` or `$ONE_SUB help <cmd>`. Read [ONE_SUB Command Document](#onesub-command-document).
 
 The `sub/` path is not included in `$PATH`. So you cannot invoke ONE_SUB commands directly.
 
@@ -48,7 +44,9 @@ fi
 
 ### ONE_SUB Command Document
 
-Add `# one.bash:usage:--help` or `# one.bash:usage` in file, so that `one help-sub` can pass `--help` to command.
+Add `# one.bash:usage:--help` or `# one.bash:usage` in file,
+so that user can use `one help-sub <cmd>` or `$ONE_SUB help <cmd>` to show command usage.
+one.bash will pass `--help` to ONE_SUB command.
 
 `# one.bash:usage:--help` means that `one help-sub` will pass `--help`.
 If your command received another option for printing usage, for example `-H` option, just set `# one.bash:usage:-H`.
@@ -59,7 +57,10 @@ Invoke `$ONE_SUB help <cmd>` for the usage of this ONE_SUB command.
 
 ### ONE_SUB Command Completion
 
-Add `# one.bash:completion` in file, so that one.bash can pass `--complete` to file.
+Add `# one.bash:completion` in file, so that user can type `<Tab>` for completion `one subs` commands.
+one.bash will pass `--complete` to file.
+
+If not set `# one.bash:completion`, the `one subs` completion will not work.
 
 ```sh
 # one.bash:completion
@@ -69,7 +70,7 @@ if [[ "${1:-}" = "--complete" ]]; then
 fi
 ```
 
-One completion option each printed line. Do not `echo "option-1 option-2"` with spaces.
+You should print each completion option for one line. Do not `echo "option-1 option-2"` with spaces.
 
 ```sh
 # one.bash:completion
@@ -82,7 +83,7 @@ if [[ "${1:-}" = "--complete" ]]; then
 fi
 ```
 
-Or filepath completion for current directory.
+Below codes are filepath completion for current word under cursor.
 
 ```sh
 # one.bash:completion
@@ -98,5 +99,3 @@ if [[ "${1:-}" == --complete ]]; then
   exit 0
 fi
 ```
-
-The code comments `# one.bash:completion` is required. Otherwise the completion not work.

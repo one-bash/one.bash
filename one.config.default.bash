@@ -2,6 +2,7 @@
 # shellcheck disable=2034
 
 # The trigger name for sub commands. [Default: a]
+# If set empty string, ONE_SUB will not be set, so only `one subs <cmd>` is available.
 ONE_SUB=${ONE_SUB:-a}
 # Filepath to script. If set, use this file as bashrc.
 ONE_RC=${ONE_RC:-}
@@ -20,7 +21,7 @@ ONE_BASHRC_FO=${ONE_BASHRC_FO:-$ONE_DIR/bash/bashrc.failover.bash}
 # If set false, do not enable https://github.com/one-bash/one.share
 ONE_SHARE_ENABLE=${ONE_SHARE_ENABLE:-true}
 ONE_SHARE_GIT=${ONE_SHARE_GIT:-https://github.com/one-bash/one.share.git}
-ONE_SHARE_BRANCH=${ONE_SHARE_BRANCH:-develop}
+ONE_SHARE_BRANCH=${ONE_SHARE_BRANCH:-master}
 # The target path for git clone
 ONE_SHARE_DIR=${ONE_SHARE_DIR:-$ONE_DIR/deps/one.share}
 
