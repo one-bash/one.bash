@@ -74,6 +74,12 @@ install() {
 
   if [[ ${ONE_BASH_IT_ENABLE:-} == true ]]; then
     git_clone "$ONE_BASH_IT_GIT" "$ONE_BASH_IT_DIR" --branch "$ONE_BASH_IT_BRANCH"
+
+    local BASH_IT_ONE_REPO="$ONE_DIR"/deps/one-bash-it
+    mkdir -p "$BASH_IT_ONE_REPO"
+    ln -nfs "$ONE_BASH_IT_DIR"/aliases/available "$BASH_IT_ONE_REPO"/aliases
+    ln -nfs "$ONE_BASH_IT_DIR"/completion/available "$BASH_IT_ONE_REPO"/completions
+    ln -nfs "$ONE_BASH_IT_DIR"/plugins/available "$BASH_IT_ONE_REPO"/plugins
   fi
 }
 

@@ -34,7 +34,7 @@ ONE_BASH_IT_DIR=${ONE_BASH_IT_DIR:-$ONE_DIR/deps/bash-it}
 # Add external one.bash repos
 one_l.is_array ONE_REPOS || ONE_REPOS=()
 [[ $ONE_SHARE_ENABLE == true ]] && ONE_REPOS+=("$ONE_SHARE_DIR")
-[[ $ONE_BASH_IT_ENABLE == true ]] && ONE_REPOS+=("$ONE_BASH_IT_DIR")
+[[ $ONE_BASH_IT_ENABLE == true ]] && ONE_REPOS+=("$ONE_DIR"/deps/one-bash-it)
 
 # Reset environment variable PATH.
 # Most users don't need to modify ONE_PATHS. Use ONE_REPOS.
