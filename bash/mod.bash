@@ -49,9 +49,7 @@ list_enabled() {
   find "$ENABLED_DIR" -maxdepth 1 -type l \
     -name "*---*.$1.bash" \
     -exec basename {} ".$1.bash" \; \
-    | sed -E 's/^[[:digit:]]{3}---(.+)$/\1/' \
-    | sort \
-    | tr '\n' ' '
+    | sed -E 's/^[[:digit:]]{3}---(.+)$/\1/'
 }
 
 list_mod() {
@@ -74,19 +72,6 @@ list_mod_path() {
 
     find -L "$ONE_REPO/$ts" -maxdepth 1 -type f | sort | tr '\n' ' '
   done
-}
-
-list_it() {
-  readonly opt=${1:-}
-
-  if [[ "$opt" == '-a' ]]; then
-    list_mod | sort | uniq
-  else
-    # shellcheck disable=2154
-    list_enabled "$t"
-  fi
-
-  echo ""
 }
 
 # -----------------------------------------------------------------------------
@@ -176,7 +161,7 @@ search_mod() {
     fi
   done
 
-  echo ''
+  printf '\n'
 }
 
 enable_mod() {

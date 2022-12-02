@@ -15,7 +15,7 @@ Desc:  Manage ONE_SUB commands
 
 ACTION:
   l, list          List executable files in each REPO/sub
-  which <cmd>      Show filepath of cmd
+  w, which <cmd>   Show filepath of cmd
 
 ---
 Usage: one $cmd list [-f]
@@ -92,7 +92,7 @@ shift
 case "$action" in
   l|list) list_subs "$@" ;;
 
-  which) which_sub "$@" ;;
+  w|which) which_sub "$@" ;;
 
   *)
     echo "Invalid action '$action'" >&2
