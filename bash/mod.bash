@@ -30,7 +30,7 @@ compgen_enable_mod() {
   done
 
   for dir in "${plugin_dirs[@]}" ; do
-    find "$dir" -maxdepth 1 -type f -name "*.bash" -exec basename {} ".bash" \;
+    find -L "$dir" -maxdepth 1 -type f -name "*.bash" -exec basename {} ".bash" \;
   done
 }
 
@@ -61,7 +61,7 @@ list_mod() {
     # shellcheck disable=2154
     if [[ ! -d "$ONE_REPO/$ts" ]]; then continue; fi
 
-    find "$ONE_REPO/$ts" -maxdepth 1 -type f -exec basename {} ".bash" \; | sort | tr '\n' ' '
+    find -L "$ONE_REPO/$ts" -maxdepth 1 -type f -exec basename {} ".bash" \;
   done
 }
 
@@ -72,7 +72,7 @@ list_mod_path() {
     # shellcheck disable=2154
     if [[ ! -d "$ONE_REPO/$ts" ]]; then continue; fi
 
-    find "$ONE_REPO/$ts" -maxdepth 1 -type f | sort | tr '\n' ' '
+    find -L "$ONE_REPO/$ts" -maxdepth 1 -type f | sort | tr '\n' ' '
   done
 }
 

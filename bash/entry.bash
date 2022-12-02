@@ -74,6 +74,9 @@ _one_load "bash/env.bash"
 # shellcheck source=./one-complete.bash
 _one_load "bash/one-complete.bash"
 
+# shellcheck source=../deps/bash-it/lib/utilities.bash
+[[ $ONE_BASH_IT_ENABLE == true ]] && . "$ONE_BASH_IT_DIR/lib/utilities.bash"
+
 # shellcheck source=./enable-mods.bash
 [[ $ONE_NO_MODS == false ]] && _one_load "bash/enable-mods.bash"
 
