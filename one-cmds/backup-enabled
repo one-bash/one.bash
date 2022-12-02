@@ -55,6 +55,10 @@ set -o pipefail
 set -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
+one plugin disable -a
+one alias disable -a
+one completion disable -a
+
 EOF
 
 printf '%b%s\nContent:%b\n' "${GREEN}" "Created file: $dist" "${RESET_ALL}"
@@ -65,9 +69,8 @@ printf '%b%s\nContent:%b\n' "${GREEN}" "Created file: $dist" "${RESET_ALL}"
   echo "one alias enable $(list_enabled alias)"
   echo ''
   echo "one completion enable $(list_enabled completion)"
-  echo ''
 } | tee -a "$dist"
 
-echo 'echo "[All Done]"' >> "$dist"
+printf '\necho "[All Done]"\n' >> "$dist"
 
 chmod +x "$dist"

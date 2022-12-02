@@ -21,7 +21,7 @@ if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
 Usage: one $(basename "$0") <value>
 Desc: Toggle debug mode on one.bash
 Arguments:
-  <value>  Available value: true false
+  <value>    Available value: true, false
 EOF
   exit 0
 fi

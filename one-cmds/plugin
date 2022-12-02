@@ -25,7 +25,8 @@ readonly t ts
 usage() {
   cat <<EOF
 Usage: one $t <ACTION>
-Desc: manage $ts in ONE_REPO/$ts/
+
+Desc:  Manage $ts in ONE_REPO/$ts/
 
 ACTION:
   e, enable           Enable matched $ts

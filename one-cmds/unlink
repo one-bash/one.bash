@@ -23,7 +23,9 @@ fi
 if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
   cat <<EOF
 Usage: one $(basename "$0") [<LINKS_CONF>]
+
 Desc: remove all symbol links based on LINKS_CONF file
+
 Arguments:
   <LINKS_CONF>  The links config. If omit, use the output of function ONE_LINKS_CONF which defined in ONE_CONF.
 EOF

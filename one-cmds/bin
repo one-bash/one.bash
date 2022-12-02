@@ -11,13 +11,13 @@ if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
   cmd=$(basename "$0")
   cat <<EOF
 Usage: one $cmd [<ACTION>]
-       one $cmd list [-f]
-
-Desc: bin commands
-
+Desc: Manage commands in ONE_REPO/bin/
 ACTION:
-  l, list          List executable files in each REPO/bin
+  l, list          List executable filenames in each REPO/bin
 
+-----
+Usage: one $cmd list [-f]
+Desc:  List executable filenames in each REPO/bin
 Options:
   -f							 Show filepath of each executable file
 EOF

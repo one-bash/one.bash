@@ -17,7 +17,7 @@ Desc: Manage one.bash repos
 
 ACTION:
   l, list          List all repos
-  init             Scaffolding a repo
+  init [<PATH>]    Scaffolding a repo
 
 ---
 Usage: one $cmd init [<PATH>]

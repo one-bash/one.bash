@@ -10,7 +10,7 @@ The modules have three types: `alias`, `completion`, `plugin`.
 - All completions are put in `completions/` of each repo.
 - All aliases are put in `aliases/` of each repo.
 - All enabled modules are symbol linked in `$ONE_DIR/enabled/` directory.
-- Read `one <mod_type> -h` for usages.
+- Read `one help <mod_type>` for usages.
 - `one <mod_type> enable` to enable modules.
 - `one <mod_type> disable` to disable modules.
 - `one <mod_type> list` to list modules.

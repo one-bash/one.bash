@@ -44,7 +44,7 @@ A ONE Repo's file structure should be that.
 
 `one repo init` to scaffolding a repo.
 
-`one repo init -h` for usage.
+`one help repo` for usage.
 
 <!-- links -->
 
