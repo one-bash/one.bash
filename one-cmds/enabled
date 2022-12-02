@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+# one.bash:completion
+if [[ "${1:-}" == --complete ]]; then
+  if (( COMP_CWORD < 3 )); then
+    words=(backup list --help)
+    printf '%s\n' "${words[@]}"
+  elif [[ $2 == backup ]]; then
+    result=$(compgen -f -- "$2")
+    if [[ -d $result ]]; then
+      compgen -f -- "$result/"
+    else
+      echo "${result[@]}"
+    fi
+  fi
+  exit 0
+fi
+
+# one.bash:usage
+if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+  cmd=$(basename "$0")
+  cat <<EOF
+Usage: one $cmd <ACTION>
+Desc:  Manage enabled modules
+Action:
+  backup      Create a backup file for current enabled modules
+
+-----
+Usage: one $cmd backup [OPTIONS]
+Desc: Create a backup file for current enabled modules
+Options:
+  -o, --output <PATH>  The filepath of output [Default: restore-modules]
+EOF
+  exit 0
+fi
+
+if [[ -z ${ONE_DIR:-} ]]; then
+  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+  ONE_DIR=$SCRIPT_DIR/..
+fi
+
+# shellcheck source=../../bash/load-config.bash
+. "$ONE_DIR/bash/load-config.bash"
+
+# shellcheck source=../../deps/colors.bash
+. "$ONE_DIR/deps/colors.bash"
+
+list_enabled() {
+  find "$ONE_DIR/enabled" -maxdepth 1 -type l \
+    -name "*---*.$1.bash" \
+    -exec basename {} ".$1.bash" \; \
+    | sed -E 's/^[[:digit:]]{3}---(.+)$/\1/' | sort | tr '\n' ' '
+
+  printf '\n'
+}
+
+backup() {
+  dist="${opts[o]:-${opts[output]:-restore-modules}}"
+
+  cat <<EOF >"$dist"
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+one plugin disable -a
+one alias disable -a
+one completion disable -a
+
+EOF
+
+  printf '%b%s\nContent:%b\n' "${GREEN}" "Created file: $dist" "${RESET_ALL}"
+
+  {
+    echo "one plugin enable $(list_enabled plugin)"
+    echo ''
+    echo "one alias enable $(list_enabled alias)"
+    echo ''
+    echo "one completion enable $(list_enabled completion)"
+  } | tee -a "$dist"
+
+  printf '\necho "[All Done]"\n' >> "$dist"
+
+  chmod +x "$dist"
+}
+
+list() {
+  (compgen -G "$ONE_DIR/enabled/*.bash" || true) | xargs -n1 basename | sort |\
+    sed -E "s/^([[:digit:]]{3})---(.+)$/\1 \2/"
+}
+
+action=$1
+shift
+
+# shellcheck source=../../deps/lobash.bash
+. "$ONE_DIR/deps/lobash.bash"
+
+declare -A opts=()
+declare -a args=()
+l.parse_params opts args "$@"
+
+case "$action" in
+  backup) backup ;;
+
+  l|list) list ;;
+
+  *)
+    echo "Invalid action '$action'" >&2
+    exit 1
+    ;;
+esac
