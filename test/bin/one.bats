@@ -18,13 +18,13 @@ PATH="$BATS_TEST_DIRNAME/../../bin:$PATH"
 
   assert_success
   assert_line -n 0 alias
-  assert_line -n 1 backup-enabled
-  assert_line -n 2 bin
-  assert_line -n 3 commands
-  assert_line -n 4 completion
-  assert_line -n 5 config
-  assert_line -n 6 debug
-  assert_line -n 7 dep
+  assert_line -n 1 bin
+  assert_line -n 2 commands
+  assert_line -n 3 completion
+  assert_line -n 4 config
+  assert_line -n 5 debug
+  assert_line -n 6 dep
+  assert_line -n 7 enabled
   assert_line -n 8 help
   assert_line -n 9 help-sub
   assert_line -n 10 link
