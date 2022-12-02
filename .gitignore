@@ -1,4 +1,4 @@
-!**/*/.gitkeep
+/tmp/*
 /configs/ranger/bookmarks
 /configs/ranger/history
 /configs/ranger/tagged
@@ -6,6 +6,7 @@
 /enabled/*
 /one.config.bash
 /one.links.yaml
+!**/.gitkeep
 
 # Created by https://www.gitignore.io/api/vim,osx
 

@@ -4,7 +4,7 @@ test:
 	./tools/test
 
 act-linux:
-	act local -j linux -W ./.github/workflows/local.yaml
+	./tools/act linux
 
 act-mac:
-	act local -j linux -W ./.github/workflows/local.yaml
+	./tools/act mac

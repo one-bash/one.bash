@@ -1,0 +1,101 @@
+name: reuse test
+
+on:
+  workflow_call:
+    inputs:
+      BASHVER:
+        description: 'An array of bash verions'
+        default: '[]'
+        required: true
+        type: string
+
+      OS:
+        description: 'An array of OS'
+        default: '[]'
+        required: true
+        type: string
+
+jobs:
+
+  reuse-test:
+
+    strategy:
+      fail-fast: true
+      max-parallel: 10
+      matrix:
+        os: ${{ fromJSON(inputs.OS) }}
+        BASHVER: ${{ fromJSON(inputs.BASHVER) }}
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Init
+        run: |
+          echo "PWD: $PWD"
+          echo "ACT: ${{ env.ACT }}"
+
+      - name: Cache test/fixture
+        if: ${{ !env.ACT }}
+        id: cache-test-fixture
+        uses: actions/cache@v3
+        with:
+          path: |
+            test/fixture/assert
+            test/fixture/bats
+            test/fixture/bats-file
+            test/fixture/support
+          key: ${{ runner.os }}-test-fixture
+
+      - name: Cache bash
+        if: ${{ !env.ACT }}
+        id: cache-bash
+        uses: actions/cache@v3
+        with:
+          path: tmp/bash-${{ matrix.BASHVER }}
+          key: ${{ runner.os }}-bash-${{ matrix.BASHVER }}
+
+      - name: Cache deps
+        if: ${{ !env.ACT }}
+        id: cache-deps
+        uses: actions/cache@v3
+        with:
+          path: |
+            deps/compose
+            deps/dotbot
+            deps/one.share
+            deps/bash-it
+          key: ${{ runner.os }}-one-deps
+
+      - name: Update git submodules
+        if: steps.cache-test-fixture.outputs.cache-hit != 'true'
+        run:
+          git submodule update --init --recursive
+
+      - name: Install bash
+        if: steps.cache-bash.outputs.cache-hit != 'true'
+        run: |
+          BASHVER=${{ matrix.BASHVER }} ./tools/install-bash
+
+      - name: Prepare
+        run: |
+          export PATH="${{ github.workspace }}/tmp/bash-${{ matrix.BASHVER }}/bin:$PATH"
+          bash --version
+
+          export ONE_DIR=${{ github.workspace }}
+          ./tools/ci-init
+
+      - name: Install one.bash deps
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: |
+          export ONE_DIR=${{ github.workspace }}
+          export PATH="$ONE_DIR/bin:$PATH"
+          # Install Dependencies
+          one dep install
+
+      - name: Start to test
+        run: |
+          export PATH="${{ github.workspace }}/tmp/bash-${{ matrix.BASHVER }}/bin:$PATH"
+          export ONE_DIR=${{ github.workspace }}
+          ./tools/test
