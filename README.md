@@ -9,11 +9,12 @@ An elegant framework to manage commands, completions, dotfiles for terminal play
 
 - Manage collections of dotfiles in one place. Using YAML file to manage soft-links via [dotbot][].
 - Manage shell scripts, completions, aliases by [modules](#modules). Support custom modules.
-- Easy to share and reuse executable files, sub commands, configs and modules by [repo](#onerepos). Read [one.share][]. And suspport custom repo.
+- Easy to share and reuse executable files, sub commands, configs and modules by [repo](#onerepos). Read [one.share][].
+- Support custom repo and multiple repos. Managed by [`ONE_REPOS`](#onerepos).
 - Manage commands under scope. Like `a <cmd>` to invoke command that no worry about duplicated in `PATH`. Read the [ONE_SUB Commands](./docs/advanced-usage/one-sub-cmd.md).
 - Support custom one.bash. Read [ONE_CONF](#oneconf).
-- Support [bash-it][]. You can use one.bash commands to manage bash-it's aliases/completions/plugins. Read [./docs/advanced-usage/bash-it.md](./docs/advanced-usage/bash-it.md).
-- Support [Fig][]. Read [./docs/advanced-usage/fig.md](./docs/advanced-usage/fig.md).
+- Support [bash-it][]. You can use one.bash commands to manage bash-it's aliases/completions/plugins. Read [bash-it.md](./docs/advanced-usage/bash-it.md).
+- Support [Fig][]. Read [fig.md](./docs/advanced-usage/fig.md).
 
 ## Environments
 
@@ -101,11 +102,18 @@ EOF
 
 For more `ONE_CONF` options and documents, Please read [./one.config.default.bash][one.config.default].
 
+You can use `one config <key>=<val>` set config option. (ONE_LINKS_CONF not supported)
+
+And `one config <key>` to query config option.
+
 ### ONE_LINKS_CONF
 
 `ONE_LINKS_CONF` is a bash function that returns a filepath of [dotbot][] config.
 
-[dotbot][] is used to manage symbol links of dotfiles (or any files). You can use the [dotfiles from one.share][one.share] or your own dotfiles.
+It receives a parameter that is current OS. So you can manage different ONE_LINKS_CONF for different OS (such as MacOS, Linux).
+
+[dotbot][] is used to manage symbol links of dotfiles (or any files).
+You can use the [dotfiles from one.share][one.share] or from your own dotfiles.
 
 The default `ONE_LINKS_CONF` return empty. User should defined yours in ONE_CONF file.
 
@@ -138,6 +146,10 @@ See https://github.com/anishathalye/dotbot/wiki/Plugins
 
 ## Usage
 
+If `ONE_SHARE_ENABLE` is true, invoke `$ONE_SHARE_ENABLE/recommended-modules` to enable recommended modules in one.share.
+
+If `ONE_BASH_IT_ENABLE` is true, invoke `one completion enable aliases.completion`.
+
 ## ONE Commands
 
 The `one` command is used to manage one.bash modules, one.config, and dependencies.
@@ -166,8 +178,6 @@ It provides many commands defined in [./one-cmds/](./one-cmds).
 - `one help -a` to list all usages of commands.
 - `one bin list` to show all executable files in `bin/` of each repo.
 - `one sub list` to show all commands in `sub/` of each repo.
-- `one config <key>=<val>` and `one config <key>` to set and query config option.
-- `one debug true|false` to enable/disable debug mode
 
 ## Modules
 
@@ -227,7 +237,7 @@ Read [this document](./docs/advanced-usage/one-sub-cmd.md) for more details.
 
 - [Bashrc Initialization Proces](./docs/entry.md)
 - [Project File Structure](./docs/file-structure.md)
-- [Advanced Usages](./docs/advanced-usage)
+- [Advanced Usages](./docs/advanced-usage/README.md)
   - [ONE Dependencies](./docs/advanced-usage/dep.md)
   - [ONE Functions](./docs/advanced-usage/one-functions.md)
   - [ONE_SUB Command](./docs/advanced-usage/one-sub-cmd.md)

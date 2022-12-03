@@ -14,7 +14,9 @@ It will execute scripts in order:
   - Set XDG environment variables: [bash/xdg.bash](../bash/xdg.bash)
   - If `$ONE_RC` is not empty, enter the `$ONE_RC`, and not execute below steps.
   - If check_shell failed, enter the `$ONE_BASHRC_FO`, and not execute below steps.
+  - Load [composure](https://github.com/adoyle-h/composure.git)
   - Load settings for OS.
   - Enable Fig if `$ONE_FIG` is true
-  - Enable `one` and `$ONE_SUB` auto-completions
-  - Enabled modules: [enabled/*.bash](../enabled/)
+  - Enable `one` and `$ONE_SUB` auto-completions. [bash/one-complete.bash](../bash/one-complete.bash)
+  - Load bash-it.sh if `ONE_BASH_IT_ENABLE` is true.
+  - Load [enabled modules](../enabled/) if `ONE_NO_MODS` is false.
