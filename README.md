@@ -3,7 +3,9 @@
   <b>Make Bash Great Again!</b>
 </p>
 
-An elegant framework to manage commands, completions, dotfiles for terminal players.
+An elegant framework to manage commands, completions, dotfiles for bash players.
+
+中文文档 [README.zh.md](./README.zh.md)
 
 ## Features
 
@@ -11,14 +13,15 @@ An elegant framework to manage commands, completions, dotfiles for terminal play
 - Manage shell scripts, completions, aliases by [modules](#modules). Support custom modules.
 - Easy to share and reuse executable files, sub commands, configs and modules by [repo](#onerepos). Read [one.share][].
 - Support custom repo and multiple repos. Managed by [`ONE_REPOS`](#onerepos).
-- Manage commands under scope. Like `a <cmd>` to invoke command that no worry about duplicated in `PATH`. Read the [ONE_SUB Commands](./docs/advanced-usage/one-sub-cmd.md).
+- Manage commands under your own scope. Like `a <cmd>` to invoke command that no worry about duplicated in `PATH`. Read the [ONE_SUB Commands](./docs/advanced-usage/one-sub-cmd.md).
 - Support custom one.bash. Read [ONE_CONF](#oneconf).
-- Support [bash-it][]. You can use one.bash commands to manage bash-it's aliases/completions/plugins. Read [bash-it.md](./docs/advanced-usage/bash-it.md).
+- Support [bash-it][]. You can use `one` commands to manage bash-it's aliases/completions/plugins. Read [bash-it.md](./docs/advanced-usage/bash-it.md).
 - Support [Fig][]. Read [fig.md](./docs/advanced-usage/fig.md).
 
 ## Environments
 
-- ✅ iTerm2 (Terminal.app compatible)
+- ✅ iTerm2
+- ✅ Terminal.app
 - ✅ MacOS Intel Arch
 - ✅ MacOS ARM Arch
 - ✅ Linux/Unix system
@@ -28,6 +31,11 @@ An elegant framework to manage commands, completions, dotfiles for terminal play
 ## CI Status
 
 - [develop branch](https://github.com/one-bash/one.bash/tree/develop): [![CI Status](https://github.com/one-bash/one.bash/actions/workflows/ci.yaml/badge.svg?branch=develop)](https://github.com/one-bash/one.bash/actions/workflows/ci.yaml?query=branch%3Adevelop)
+
+## Versions
+
+See [tags][].
+The versions follows the rules of [SemVer 2.0.0](http://semver.org/).
 
 ## Dependencies
 
@@ -54,9 +62,10 @@ See https://github.com/topics/one-bash
 ## Installation
 
 ```sh
-# Set your Dotfiles directory path
+# Set the directory for download one.bash
 ONE_DIR=~/.one.bash
 git clone --depth 1 https://github.com/one-bash/one.bash.git $ONE_DIR
+# Note: you should ensure /usr/local/bin/ is in environment variable PATH
 sudo ln -s "$ONE_DIR/bin/one" /usr/local/bin/one
 
 # Install Dependencies
@@ -65,15 +74,14 @@ one dep install
 # Add one.bash to your bashrc. Or you can add the result of "one --bashrc" to bashrc by manual.
 echo '' >> ~/.bashrc
 one --bashrc >> ~/.bashrc
-
-# Restart shell
 ```
 
 ## Configuration
 
 ### ONE_CONF
 
-`ONE_CONF` is the filepath of one.bash configuration. The file is not required. one.bash has default config.
+`ONE_CONF` is the filepath of one.bash configuration.
+The file is not required. one.bash has [default config](./one.config.default.bash).
 
 ```sh
 ONE_CONF=${XDG_CONFIG_HOME:-$HOME/.config}/one.bash/one.config.bash
@@ -102,7 +110,7 @@ EOF
 
 For more `ONE_CONF` options and documents, Please read [./one.config.default.bash][one.config.default].
 
-You can use `one config <key>=<val>` set config option. (ONE_LINKS_CONF not supported)
+You can use `one config <key>=<val>` set config option. (function and array are not supported)
 
 And `one config <key>` to query config option.
 
@@ -110,7 +118,7 @@ And `one config <key>` to query config option.
 
 `ONE_LINKS_CONF` is a bash function that returns a filepath of [dotbot][] config.
 
-It receives a parameter that is current OS. So you can manage different ONE_LINKS_CONF for different OS (such as MacOS, Linux).
+This function receives a parameter that is current OS. So you can manage different ONE_LINKS_CONF for different OS (such as MacOS, Linux).
 
 [dotbot][] is used to manage symbol links of dotfiles (or any files).
 You can use the [dotfiles from one.share][one.share] or from your own dotfiles.
@@ -191,24 +199,18 @@ The modules have three types: `alias`, `completion`, `plugin`.
 - All completions are put in `completions/` of each repo.
 - All aliases are put in `aliases/` of each repo.
 - All enabled modules are symbol linked in `$ONE_DIR/enabled/` directory.
+  - `one enabled list` to view enabled modules.
+  - `one enabled backup` to backup enabled modules to a file.
 - Read `one help <mod_type>` for usages.
 - `one <mod_type> enable` to enable modules.
 - `one <mod_type> disable` to disable modules.
 - `one <mod_type> list` to list modules.
 
-[one.share][] has provided many modules, configs, sub commands, and bin commands.
+[one.share][] has provided many modules, configs, ONE_SUB commands, and bin commands.
 
-It's suggested to move your shell codes to modules.
+It's suggested to move your shell codes to modules for management.
 
 Read the [Module document](./docs/advanced-usage/module.md) for details.
-
-### Enabled Modules
-
-All enabled modules are under [$ONE_DIR/enabled/](./enabled).
-
-`one enabled list` to view enabled modules.
-
-`one enabled backup` to backup enabled modules to a file.
 
 ## ONE_REPOS
 
@@ -265,11 +267,6 @@ Do not post duplicated and useless contents like `+1`, `LOL`. React to comments 
 
 Please read [./docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md) before make a Pull Request.
 
-## Versions
-
-See [tags][].
-The versions follows the rules of [SemVer 2.0.0](http://semver.org/).
-
 ## Copyright and License
 
 Copyright 2022 ADoyle (adoyle.h@gmail.com) Some Rights Reserved.
@@ -282,7 +279,7 @@ Read the [NOTICE][] file distributed with this work for additional information r
 ## Other Projects
 
 - [lobash](https://github.com/adoyle-h/lobash): A modern, safe, powerful utility/library for Bash script development.
-- [Other shell projects](https://github.com/adoyle-h?tab=repositories&q=&type=source&language=shell&sort=stargazers) created by me.
+- [Other shell projects created by me](https://github.com/adoyle-h?tab=repositories&q=&type=source&language=shell&sort=stargazers)
 
 
 <!-- links -->

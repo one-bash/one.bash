@@ -10,12 +10,14 @@ The modules have three types: `alias`, `completion`, `plugin`.
 - All completions are put in `completions/` of each repo.
 - All aliases are put in `aliases/` of each repo.
 - All enabled modules are symbol linked in `$ONE_DIR/enabled/` directory.
+  - `one enabled list` to view enabled modules.
+  - `one enabled backup` to backup enabled modules to a file.
 - Read `one help <mod_type>` for usages.
 - `one <mod_type> enable` to enable modules.
 - `one <mod_type> disable` to disable modules.
 - `one <mod_type> list` to list modules.
 
-[one.share][] has provided many modules, configs, sub commands, and bin commands.
+[one.share][] has provided many modules, configs, ONE_SUB commands, and bin commands.
 
 It's suggested to move your shell codes to modules.
 
