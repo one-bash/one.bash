@@ -4,9 +4,9 @@
 # /usr/local for macOS Intel, /opt/homebrew for Apple Silicon and /home/linuxbrew/.linuxbrew for Linux
 # See https://docs.brew.sh/Installation
 if [[ -x /usr/local/bin/brew ]]; then
-  eval "$(/usr/local/bin/brew shellenv)"
+  _one_eval /usr/local/bin/brew shellenv
 elif [[ -x /opt/homebrew/bin/brew ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+  _one_eval /opt/homebrew/bin/brew shellenv
 fi
 
 # Fix MANPATH --------------------------------------------------------

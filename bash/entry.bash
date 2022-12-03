@@ -69,18 +69,18 @@ _one_load "bash/helper.bash"
 _one_load "bash/env.bash"
 
 # Fig: https://github.com/withfig/fig
-[[ $ONE_FIG == true ]] && eval "$(fig init bash pre)"
+[[ $ONE_FIG == true ]] && _one_eval fig init bash pre
 
 # shellcheck source=./one-complete.bash
 _one_load "bash/one-complete.bash"
 
 # shellcheck source=../deps/bash-it/lib/utilities.bash
-[[ $ONE_BASH_IT_ENABLE == true ]] && . "$ONE_BASH_IT_DIR/lib/utilities.bash"
+[[ $ONE_BASH_IT_ENABLE == true ]] && _one_load "$ONE_BASH_IT_DIR/bash_it.sh"
 
 # shellcheck source=./enable-mods.bash
 [[ $ONE_NO_MODS == false ]] && _one_load "bash/enable-mods.bash"
 
-[[ $ONE_FIG == true ]] && eval "$(fig init bash post)"
+[[ $ONE_FIG == true ]] && _one_eval fig init bash post
 
 ONE_LOAD_END_TIME=$(_one_now)
 one_debug "${GREEN}%s${RESET_ALL}" "loaded success (Total $(( ONE_LOAD_END_TIME - ONE_LOAD_START_TIME ))ms)"
