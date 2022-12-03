@@ -9,7 +9,7 @@ readonly -A t_map=(
 readonly -A default_weight_map=(
   [plugin]=400
   [completion]=600
-  [alias]=800
+  [alias]=750
 )
 
 readonly ENABLED_DIR=$ONE_DIR/enabled

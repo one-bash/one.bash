@@ -26,7 +26,6 @@ All modules must be put in one of aliases/completions/plugins folders. And its f
 ### Module Template
 
 ```sh
-# ONE_LOAD_PRIORITY: 400
 about-plugin 'Module Description'
 
 # put your shellscript codes here
@@ -46,7 +45,7 @@ The priority range of each module type:
 
 - `plugin`: 300~499, default 400.
 - `completion`: 500~699, default 600.
-- `alias`: 700~799, default 700.
+- `alias`: 700~799, default 750.
 
 
 <!-- links -->

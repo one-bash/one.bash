@@ -30,12 +30,17 @@ Usage: one $cmd <ACTION>
 Desc:  Manage enabled modules
 Action:
   backup      Create a backup file for current enabled modules
+  l, list     List enabled modules
 
 -----
 Usage: one $cmd backup [OPTIONS]
 Desc: Create a backup file for current enabled modules
 Options:
   -o, --output <PATH>  The filepath of output [Default: restore-modules]
+
+-----
+Usage: one $cmd list
+Desc: List enabled modules
 EOF
   exit 0
 fi
