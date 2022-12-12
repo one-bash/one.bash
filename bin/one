@@ -40,6 +40,7 @@ if [[ -z ${ONE_DIR:-} ]]; then
   }
 
   ONE_DIR=$(dirname "$(readlinkf "$0")")
+  ONE_DIR=$(dirname "$ONE_DIR")
   export ONE_DIR
 fi
 
