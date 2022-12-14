@@ -16,8 +16,29 @@ on:
     inputs: {}
 
 jobs:
-  ci:
 
+  alpine:
+    runs-on: ubuntu-22.04
+
+    if: "!(
+      startsWith(github.event.head_commit.message, 'docs:') ||
+      startsWith(github.event.head_commit.message, 'ci:') ||
+      startsWith(github.event.head_commit.message, 'chore:') ||
+      startsWith(github.event.head_commit.message, 'style:')
+      )"
+
+    strategy:
+      fail-fast: true
+      max-parallel: 10
+      matrix:
+        # 5.2 and 5.2.9 are same in bash docker image
+        BASHVER: ['4.0', '4.1', '4.2', '4.3', '4.4', '5.0', '5.1', '5.2']
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: BASHVER=${{ matrix.BASHVER }} BUILD_DIST=true PULL_IMAGE=true ./tools/test-in-docker
+
+  host:
     if: "!(
       startsWith(github.event.head_commit.message, 'docs:') ||
       startsWith(github.event.head_commit.message, 'ci:') ||
