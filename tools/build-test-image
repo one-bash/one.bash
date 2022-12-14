@@ -9,11 +9,21 @@ set -o errtrace
 SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 readonly SCRIPT_DIR
 
+BUILDER=one-bash-test-builder
+PREV_BUILDER=$(docker buildx inspect | awk 'NR==1 {print $2}')
+
 main() {
   local version="${BASHVER:-4.4}"
 
+  if ! docker buildx inspect $BUILDER &>/dev/null; then
+    docker buildx create --name $BUILDER --driver docker-container --bootstrap
+  fi
+  docker buildx use $BUILDER
+
   local docker_args=(
     -t "adoyle/one.bash:test-env-$version"
+    --platform 'linux/amd64,linux/arm64'
+    --push
     --build-arg "VERSION=$version"
   )
 
@@ -24,7 +34,11 @@ main() {
     )
   fi
 
-  docker build "$@" "${docker_args[@]}" - < "$SCRIPT_DIR"/test.dockerfile
+  echo "[TODO] docker buildx build $* ${docker_args[*]} - < $SCRIPT_DIR/test.dockerfile"
+
+  docker buildx build "$@" "${docker_args[@]}" - < "$SCRIPT_DIR"/test.dockerfile
+
+  docker buildx use "$PREV_BUILDER"
 }
 
 main "$@"
