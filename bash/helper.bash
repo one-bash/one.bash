@@ -1,11 +1,11 @@
 # Provide functions for one.bash modules
 
 one_stdout() {
-  echo "$@"
+  printf '[one.bash] %s\n' "$*"
 }
 
 one_stderr() {
-  echo "$@" >&2
+  printf '%b[one.bash] %s%b\n' "$RED" "$*" "$RESET_ALL" >&2
 }
 
 # Check command existed
