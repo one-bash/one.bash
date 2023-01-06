@@ -95,8 +95,10 @@ list_mods() {
 
 
   if [[ -n "${opts[a]:-}" ]]; then
+    # list all available mods
     if [[ -n "${opts[n]:-}" ]]; then
-      list_mod | sort | tr '\n' ' '
+      # list only mod names
+      list_mod | tr '\n' ' '
       printf '\n'
     else
       local ONE_REPO
@@ -106,16 +108,18 @@ list_mods() {
         if [[ ! -d "$ONE_REPO/$ts" ]]; then continue; fi
 
         printf '%b%s%b\n' "$BLUE" "[REPO: $ONE_REPO]" "$RESET_ALL"
-        find -L "$ONE_REPO/$ts" -maxdepth 1 -type f -exec basename {} .bash \; | sort | tr '\n' ' '
+        find -L "$ONE_REPO/$ts" -maxdepth 1 -type f -exec basename {} .bash \; | tr '\n' ' '
         printf '\n'
       done
     fi
   else
+    # list all enabled mods
     if [[ -n "${opts[n]:-}" ]]; then
-      list_enabled "$t" | sort | tr '\n' ' '
+      # list only mod names
+      list_enabled "$t" | tr '\n' ' '
       printf '\n'
     else
-      find "$ENABLED_DIR" -maxdepth 1 -type l -name "*---*.$t.bash" | print_list_item | sort
+      find "$ENABLED_DIR" -maxdepth 1 -type l -name "*---*.$t.bash" | print_list_item
     fi
   fi
 }
