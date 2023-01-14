@@ -32,7 +32,17 @@ if [[ "${1:-}" == --complete ]]; then
     words=(i install u update --help -h)
     printf '%s\n' "${words[@]}"
   else
-    compgen -A directory "$ONE_DIR/deps/" | sed "s|$ONE_DIR/deps/||"
+    case $2 in
+      i|install|u|update)
+        readarray -t list < <(compgen -A directory "$ONE_DIR/deps/")
+        for dir in "${list[@]}"; do
+          if [[ -d "$dir/.git" ]]; then
+            # shellcheck disable=2001
+            sed "s|^$ONE_DIR/deps/||" <<<"$dir"
+          fi
+        done
+        ;;
+    esac
   fi
   exit 0
 fi
