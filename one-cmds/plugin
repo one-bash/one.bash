@@ -80,50 +80,6 @@ if [[ "${1:-}" == "--complete" ]]; then
   exit 0
 fi
 
-print_list_item() {
-  local line name
-
-  while read -r line; do
-    name=$(basename "$line" | sed -E "s/^[[:digit:]]{3}---(.+).$t.bash\$/\1/")
-    printf '%b%s%b -> %b%s\n' "$CYAN" "$name" "$GREY" "$RESET_ALL" "$(readlink "$line")"
-  done
-}
-
-list_mods() {
-  # shellcheck source=../../deps/colors.bash
-  . "$ONE_DIR/deps/colors.bash"
-
-
-  if [[ -n "${opts[a]:-}" ]]; then
-    # list all available mods
-    if [[ -n "${opts[n]:-}" ]]; then
-      # list only mod names
-      list_mod | tr '\n' ' '
-      printf '\n'
-    else
-      local ONE_REPO
-      # shellcheck disable=2153
-      for ONE_REPO in "${ONE_REPOS[@]}"; do
-        # shellcheck disable=2154
-        if [[ ! -d "$ONE_REPO/$ts" ]]; then continue; fi
-
-        printf '%b%s%b\n' "$BLUE" "[REPO: $ONE_REPO]" "$RESET_ALL"
-        find -L "$ONE_REPO/$ts" -maxdepth 1 -type f -exec basename {} .bash \; | tr '\n' ' '
-        printf '\n'
-      done
-    fi
-  else
-    # list all enabled mods
-    if [[ -n "${opts[n]:-}" ]]; then
-      # list only mod names
-      list_enabled "$t" | tr '\n' ' '
-      printf '\n'
-    else
-      find "$ENABLED_DIR" -maxdepth 1 -type l -name "*---*.$t.bash" | print_list_item
-    fi
-  fi
-}
-
 action=$1
 shift
 

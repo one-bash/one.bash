@@ -56,12 +56,11 @@ fi
 # shellcheck source=../../deps/colors.bash
 . "$ONE_DIR/deps/colors.bash"
 
-list_enabled() {
-  find "$ONE_DIR/enabled" -maxdepth 1 -type l \
-    -name "*---*.$1.bash" \
-    -exec basename {} ".$1.bash" \; \
-    | sed -E 's/^[[:digit:]]{3}---(.+)$/\1/' | sort | tr '\n' ' '
+# shellcheck source=../../bash/mod.bash
+. "$ONE_DIR/bash/mod.bash"
 
+list_enabled_for_backup() {
+  list_enabled "$1" | sort | tr '\n' ' '
   printf '\n'
 }
 
@@ -86,11 +85,11 @@ EOF
   printf '%b%s\nContent:%b\n' "${GREEN}" "Created file: $dist" "${RESET_ALL}"
 
   {
-    echo "one plugin enable $(list_enabled plugin)"
+    echo "one plugin enable $(list_enabled_for_backup plugin)"
     echo ''
-    echo "one alias enable $(list_enabled alias)"
+    echo "one alias enable $(list_enabled_for_backup alias)"
     echo ''
-    echo "one completion enable $(list_enabled completion)"
+    echo "one completion enable $(list_enabled_for_backup completion)"
   } | tee -a "$dist"
 
   printf '\necho "[All Done]"\n' >> "$dist"
@@ -99,8 +98,7 @@ EOF
 }
 
 list() {
-  (compgen -G "$ONE_DIR/enabled/*.bash" || true) | xargs -n1 basename | sort |\
-    sed -E "s/^([[:digit:]]{3})---(.+)$/\1 \2/"
+  find "$ONE_DIR/enabled" -maxdepth 1 -name "*---*.bash" | print_list_item
 }
 
 action=$1

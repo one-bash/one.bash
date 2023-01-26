@@ -49,7 +49,9 @@ if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
   name=$(basename "$0")
   cat <<EOF
 Usage: $name [<CMD>]                 Run one command
+       $name commands                List one commands
        $name sub [<SUB_CMD>]         Run ONE_SUB command
+       $name subs                    List ONE_SUB commands
        $name help [<CMD>]            Show the usage of one command
        $name help-sub [<SUB_CMD>]    Show the usage of ONE_SUB command
        $name [--bashrc]              Print one.bash entry codes for bashrc
