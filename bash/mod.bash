@@ -43,7 +43,7 @@ compgen_disable_mod() {
     | xargs -0 -I{} basename '{}' ".$t.bash" \
     | sed -E 's/^[[:digit:]]{3}---(.+)$/\1/' || true
 
-  echo "-a"
+  echo "--all"
 }
 
 # -----------------------------------------------------------------------------
@@ -106,7 +106,7 @@ disable_mod() {
 }
 
 disable_it() {
-  if [[ ${1:-} == -a ]]; then
+  if [[ ${1:-} == --all ]]; then
     for name in $(list_enabled "$t"); do
       disable_mod "$name" || echo "Failed to enable '$name'."
     done

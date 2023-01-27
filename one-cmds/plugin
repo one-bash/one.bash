@@ -31,7 +31,7 @@ if [[ "${1:-}" == "--complete" ]]; then
   elif [[ $2 == -h ]] || [[ $2 == --help ]]; then
     printf '%s\n' "${actions[@]}"
   elif [[ $2 =~ ^(l|list)$ ]] && (( COMP_CWORD < 4 )); then
-    printf -- '-a\n-n\n'
+    printf -- '--all\n-n\n'
   elif [[ $2 =~ ^(w|which|i|info)$ ]] && (( COMP_CWORD < 4 )); then
     list_mod
   elif [[ $2 =~ ^(e|enable)$ ]]; then
@@ -74,10 +74,10 @@ usage_e() { usage_enable; }
 usage_disable() {
   cat <<EOF
 Usage:  one $t disable <NAME> [<NAME>...]
-        one $t disable -a
+        one $t disable --all
 Desc:   Disable matched $ts
 Options:
-  -a                  If set, disable all $ts
+  --all               If set, disable all $ts
 EOF
   exit 0
 }
