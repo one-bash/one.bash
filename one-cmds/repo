@@ -6,44 +6,15 @@ set -o pipefail
 set -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
-usage() {
-  local cmd
-  cmd=$(basename "$0")
-
-  cat <<EOF
-Usage: one $cmd [<ACTION>]
-
-Desc: Manage one.bash repos
-
-ACTION:
-  l, list          List all repos
-  init [<PATH>]    Scaffolding a repo
-
----
-Usage: one $cmd init [<PATH>]
-
-Desc: Scaffolding a repo
-
-Arguments:
-  <PATH>  If <PATH> not passed, use current directory
-EOF
-  exit 0
-}
-
-# one.bash:usage
-if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then usage; fi
-
-if [[ -z ${ONE_DIR:-} ]]; then
-  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-  readonly SCRIPT_DIR
-  export ONE_DIR=$SCRIPT_DIR/..
-fi
-
 # one.bash:completion
 if [[ "${1:-}" == --complete ]]; then
+  actions=(init list)
+
   if (( COMP_CWORD < 3 )); then
-    words=(init l list -h --help)
+    words=("${actions[@]}" -h --help)
     printf '%s\n' "${words[@]}"
+  elif [[ $2 == -h ]] || [[ $2 == --help ]]; then
+    printf '%s\n' "${actions[@]}"
   elif [[ $2 == init ]]; then
     result=$(compgen -f -- "$3")
     if [[ -d $result ]]; then
@@ -53,6 +24,60 @@ if [[ "${1:-}" == --complete ]]; then
     fi
   fi
   exit 0
+fi
+
+usage() {
+  local cmd; cmd=$(basename "$0");
+  cat <<EOF
+Usage:  one $cmd [-h|--help] <ACTION>
+        one $cmd [-h|--help]
+
+Desc:   Manage one.bash repos
+
+ACTION:
+  l, list          List available repos
+  init [<PATH>]    Scaffolding a repo in <PATH> (Defaults to \$PWD)
+EOF
+  exit 0
+}
+
+usage_init() {
+  local cmd; cmd=$(basename "$0");
+  cat <<EOF
+Usage: one $cmd init [<PATH>]
+
+Desc: Scaffolding a repo in <PATH> (Defaults to \$PWD)
+
+Arguments:
+  <PATH>  If <PATH> not passed, use current directory
+EOF
+  exit 0
+}
+
+usage_list() {
+  local cmd; cmd=$(basename "$0");
+  cat <<EOF
+Usage: one $cmd list
+Desc:  List available repos
+EOF
+  exit 0
+}
+usage_l() { usage_list; }
+
+
+# one.bash:usage
+if (( $# == 0 )) then
+  usage;
+elif [[ $1 == -h ]] || [[ $1 == --help ]]; then
+  if (( $# > 1 )); then usage_"$2"; else usage; fi
+elif [[ ${*: -1} == --help ]] ; then
+  if (( $# > 1 )); then usage_"$1"; else usage; fi
+fi
+
+if [[ -z ${ONE_DIR:-} ]]; then
+  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+  readonly SCRIPT_DIR
+  export ONE_DIR=$SCRIPT_DIR/..
 fi
 
 is_empty_dir() {

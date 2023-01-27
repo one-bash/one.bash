@@ -6,30 +6,6 @@ set -o pipefail
 set -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
-# one.bash:usage
-if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
-  cmd=$(basename "$0")
-  cat <<EOF
-Usage: one $cmd [<ACTION>]
-Desc:  Manage ONE_SUB commands
-
-ACTION:
-  l, list          List executable files in each REPO/sub
-  w, which <cmd>   Show filepath of cmd
-
----
-Usage: one $cmd list [-f]
-Desc:  List executable files in each REPO/sub
-Options:
-  -f							 Show filepath of each executable file
-
----
-Usage: one $cmd which <cmd>
-Desc:  Show filepath of <cmd>
-EOF
-  exit 0
-fi
-
 scan_dir() {
   local dir=$1
 
@@ -58,17 +34,68 @@ list_subs() {
 
 # one.bash:completion
 if [[ "${1:-}" == --complete ]]; then
+  actions=(list which)
+
   if (( COMP_CWORD < 3 )); then
-    words=(list which --help)
+    words=("${actions[@]}" -h --help)
     printf '%s\n' "${words[@]}"
-  elif [[ $2 =~ l|list ]] && (( COMP_CWORD < 4 )); then
-		echo '-f'
-  elif [[ $2 =~ which ]] && (( COMP_CWORD < 4 )); then
+  elif [[ $2 == -h ]] || [[ $2 == --help ]]; then
+    printf '%s\n' "${actions[@]}"
+  elif [[ $2 =~ ^(l|list)$ ]] && (( COMP_CWORD < 4 )); then
+    echo '-f'
+  elif [[ $2 =~ ^(w|which)$ ]] && (( COMP_CWORD < 4 )); then
     # shellcheck source=../../bash/load-config.bash
     . "$ONE_DIR/bash/load-config.bash"
     list_subs
   fi
   exit 0
+fi
+
+usage() {
+  local cmd; cmd=$(basename "$0");
+  cat <<EOF
+Usage:  one $cmd <ACTION>
+        one $cmd [-h|--help]
+        one $cmd <-h|--help> <ACTION>
+
+Desc:  Manage ONE_SUB commands
+
+ACTION:
+  l, list          List executable files in each REPO/sub
+  w, which <cmd>   Show filepath of cmd
+EOF
+  exit 0
+}
+
+usage_list() {
+  local cmd; cmd=$(basename "$0");
+  cat <<EOF
+Usage: one $cmd list [-f]
+Desc:  List executable files in each REPO/sub
+Options:
+  -f							 Show filepath of each executable file
+EOF
+  exit 0
+}
+usage_l() { usage_list; }
+
+usage_which() {
+  local cmd; cmd=$(basename "$0");
+  cat <<EOF
+Usage: one $cmd which <cmd>
+Desc:  Show filepath of <cmd>
+EOF
+  exit 0
+}
+usage_w() { usage_which; }
+
+# one.bash:usage
+if (( $# == 0 )) then
+  usage;
+elif [[ $1 == -h ]] || [[ $1 == --help ]]; then
+  if (( $# > 1 )); then usage_"$2"; else usage; fi
+elif [[ ${*: -1} == --help ]] ; then
+  if (( $# > 1 )); then usage_"$1"; else usage; fi
 fi
 
 which_sub() {

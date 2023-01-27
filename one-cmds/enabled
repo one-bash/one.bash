@@ -8,9 +8,13 @@ set -o errtrace
 
 # one.bash:completion
 if [[ "${1:-}" == --complete ]]; then
+  actions=(backup list)
+
   if (( COMP_CWORD < 3 )); then
-    words=(backup list --help)
+    words=("${actions[@]}" -h --help)
     printf '%s\n' "${words[@]}"
+  elif [[ $2 == -h ]] || [[ $2 == --help ]]; then
+    printf '%s\n' "${actions[@]}"
   elif [[ $2 == backup ]]; then
     result=$(compgen -f -- "$2")
     if [[ -d $result ]]; then
@@ -22,27 +26,48 @@ if [[ "${1:-}" == --complete ]]; then
   exit 0
 fi
 
-# one.bash:usage
-if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
-  cmd=$(basename "$0")
+usage() {
+  local cmd; cmd=$(basename "$0");
   cat <<EOF
-Usage: one $cmd <ACTION>
-Desc:  Manage enabled modules
+Usage:  one $cmd [-h|--help] <ACTION>
+        one $cmd [-h|--help]
+Desc:   Manage enabled modules
 Action:
   backup      Create a backup file for current enabled modules
   l, list     List enabled modules
-
------
-Usage: one $cmd backup [OPTIONS]
-Desc: Create a backup file for current enabled modules
-Options:
-  -o, --output <PATH>  The filepath of output [Default: restore-modules]
-
------
-Usage: one $cmd list
-Desc: List enabled modules
 EOF
   exit 0
+}
+
+usage_backup() {
+  local cmd; cmd=$(basename "$0");
+  cat <<EOF
+Usage: one $cmd backup [OPTIONS]
+Desc:  Create a backup file for current enabled modules
+Options:
+  -o, --output <PATH>  The filepath of output [Default: restore-modules]
+EOF
+  exit 0
+}
+
+
+usage_list() {
+  local cmd; cmd=$(basename "$0");
+  cat <<EOF
+Usage: one $cmd list
+Desc:  List enabled modules
+EOF
+  exit 0
+}
+usage_l() { usage_list; }
+
+# one.bash:usage
+if (( $# == 0 )) then
+  usage;
+elif [[ $1 == -h ]] || [[ $1 == --help ]]; then
+  if (( $# > 1 )); then usage_"$2"; else usage; fi
+elif [[ ${*: -1} == --help ]] ; then
+  if (( $# > 1 )); then usage_"$1"; else usage; fi
 fi
 
 if [[ -z ${ONE_DIR:-} ]]; then

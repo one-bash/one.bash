@@ -21,63 +21,109 @@ t=$(basename "$0")
 ts=${t_map[$t]}
 readonly t ts
 
+# one.bash:completion
+if [[ "${1:-}" == "--complete" ]]; then
+  actions=(enable disable which list info)
+
+  if (( COMP_CWORD < 3 )); then
+    words=("${actions[@]}" -h --help)
+    printf '%s\n' "${words[@]}"
+  elif [[ $2 == -h ]] || [[ $2 == --help ]]; then
+    printf '%s\n' "${actions[@]}"
+  elif [[ $2 =~ ^(l|list)$ ]] && (( COMP_CWORD < 4 )); then
+    printf -- '-a\n-n\n'
+  elif [[ $2 =~ ^(w|which|i|info)$ ]] && (( COMP_CWORD < 4 )); then
+    list_mod
+  elif [[ $2 =~ ^(e|enable)$ ]]; then
+    compgen_enable_mod
+  elif [[ $2 =~ ^(d|disable)$ ]]; then
+    compgen_disable_mod
+  fi
+  exit 0
+fi
 
 usage() {
   cat <<EOF
-Usage: one $t <ACTION>
-Desc:  Manage $ts in ONE_REPO/$ts/
+Usage:  one $t <ACTION>
+        one $t [-h|--help]
+        one $t <-h|--help> <ACTION>
+
+Desc:   Manage $ts in ONE_REPO/$ts/
+
 Action:
   e, enable           Enable matched $ts
   d, disable          Disable matched $ts
   l, list             List enabled $ts
-  w, which <NAME>     Show realpath of $ts
+  i, info             Show info of matched $ts
+  w, which <NAME>     Show realpath of $t
+EOF
+  exit 0
+}
 
-------
-Usage: one $t enable <name> [<name>...]
+usage_enable() {
+  cat <<EOF
+Usage: one $t enable <NAME> [<NAME>...]
+Desc:  Enable matched $ts
 Arguments:
   <name>  $t name
+EOF
+  exit 0
+}
+usage_e() { usage_enable; }
 
-------
-Usage: one $t disable <name> [<name>...]
-       one $t disable -a
+usage_disable() {
+  cat <<EOF
+Usage:  one $t disable <NAME> [<NAME>...]
+        one $t disable -a
+Desc:   Disable matched $ts
 Options:
   -a                  If set, disable all $ts
+EOF
+  exit 0
+}
+usage_d() { usage_diable; }
 
-------
+usage_list() {
+  cat <<EOF
 Usage: one $t list [<OPTIONS>]
 Desc: List enabled $ts
 Options:
   -a                  If set, list all available $ts in each repo
   -n                  If set, list module names instead of filepaths
+EOF
+  exit 0
+}
+usage_l() { usage_list; }
 
-------
-Usage: one $t which <NAME>
-Desc:  Show realpath of $ts
+usage_info() {
+  cat <<EOF
+Usage: one $t info <NAME>
+Desc:  Show info of matched $ts
 Arguments:
   <NAME>    the module name
 EOF
   exit 0
 }
+usage_i() { usage_info; }
+
+usage_which() {
+  cat <<EOF
+Usage: one $t which <NAME>
+Desc:  Show realpath of $t
+Arguments:
+  <NAME>    the module name
+EOF
+  exit 0
+}
+usage_w() { usage_which; }
 
 # one.bash:usage
-if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then usage; fi
-
-# one.bash:completion
-if [[ "${1:-}" == "--complete" ]]; then
-  if (( COMP_CWORD < 3 )); then
-    words=(enable disable which list --help)
-    printf '%s\n' "${words[@]}"
-  elif [[ $2 == list ]] && (( COMP_CWORD < 5 )); then
-    printf -- '-a\n-n\n'
-  elif [[ $2 == which ]] && (( COMP_CWORD < 5 )); then
-    list_mod
-  elif [[ $2 == enable ]]; then
-    compgen_enable_mod
-  elif [[ $2 == disable ]]; then
-    compgen_disable_mod
-  fi
-
-  exit 0
+if (( $# == 0 )) then
+  usage;
+elif [[ $1 == -h ]] || [[ $1 == --help ]]; then
+  if (( $# > 1 )); then usage_"$2"; else usage; fi
+elif [[ ${*: -1} == --help ]] ; then
+  if (( $# > 1 )); then usage_"$1"; else usage; fi
 fi
 
 action=$1
