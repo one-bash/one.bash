@@ -244,6 +244,17 @@ get_weight() {
   fi
 }
 
+get_enabled_link_to() {
+  local name=$1
+  local path
+  shopt -s nullglob
+  path=$(echo "$ENABLED_DIR/"*---"$name.$t.bash")
+  shopt -u nullglob
+  if [[ -n $path ]]; then
+    readlink "$path"
+  fi
+}
+
 enable_file() {
   local name=$1
   local filepath=$2
@@ -366,3 +377,56 @@ list_mods() {
 }
 
 # -----------------------------------------------------------------------------
+
+metafor () {
+  local keyword=$1;
+  # Copy from composure.sh
+  sed -n "/$keyword / s/['\";]*\$//;s/^[      ]*\(: _\)*$keyword ['\"]*\([^([].*\)*\$/\2/p"
+}
+
+info_mod() {
+  local name=$1
+  local filepath
+
+  filepath=$(search_mod "$name")
+
+  local ABOUT URL SCRIPT ONE_LOAD_PRIORITY
+
+  local enabled link_to
+  link_to=$(get_enabled_link_to "$name")
+
+  if [[ -n $filepath ]]; then
+    if [[ -n $link_to ]]; then
+      echo "Enabled: true"
+      echo "Link to: $link_to"
+    else
+      echo "Enabled: false"
+    fi
+    ABOUT=$(metafor about-plugin <"$filepath")
+    ONE_LOAD_PRIORITY=$(get_weight "$filepath")
+    [[ -n ${ABOUT:-} ]] && echo "About: $ABOUT";
+    [[ -n ${ONE_LOAD_PRIORITY:-} ]] && echo "Priority: $ONE_LOAD_PRIORITY";
+  else
+    local opt_path
+    opt_path=$(search_mod "$name.opt")
+
+    if [[ -n $opt_path ]]; then
+      # shellcheck disable=1090
+      (source "$opt_path" && {
+        if [[ -n $link_to ]]; then
+          echo "Enabled: true"
+          echo "Link to: $link_to"
+        else
+          echo "Enabled: false"
+        fi
+        [[ -n ${ABOUT:-} ]] && echo "About: $ABOUT";
+        [[ -n ${ONE_LOAD_PRIORITY:-} ]] && echo "Priority: $ONE_LOAD_PRIORITY";
+        echo "Opt File: $opt_path"
+        [[ -n ${URL:-} ]] && echo "URL: $URL";
+        [[ -n ${SCRIPT:-} ]] && echo "Script: $SCRIPT";
+      })
+    else
+      echo "No found $t '$name'." >&2
+    fi
+  fi
+}

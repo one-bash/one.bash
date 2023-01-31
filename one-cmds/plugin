@@ -143,6 +143,8 @@ case "$action" in
 
   d|disable) if (( $# == 0 )); then usage; else disable_it "$@"; fi ;;
 
+  i|info) if (( $# == 0 )); then usage; else info_mod "$1"; fi ;;
+
   w|which) if (( $# == 0 )); then usage; else search_mod "$1"; fi ;;
 
   *)
