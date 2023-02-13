@@ -31,6 +31,8 @@ usage() {
   cat <<EOF
 Usage:  one $cmd [-h|--help] <ACTION>
         one $cmd [-h|--help]
+        one $cmd <ACTION> [--help]
+
 Desc:   Manage enabled modules
 Action:
   backup      Create a backup file for current enabled modules
