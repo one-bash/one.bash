@@ -116,27 +116,30 @@ And `one config <key>` to query config option.
 
 ### ONE_LINKS_CONF
 
-`ONE_LINKS_CONF` is a bash function that returns a filepath of [dotbot][] config.
+`ONE_LINKS_CONF` is a bash function that returns a filepath of [dotbot][] config. Defaults to empty.
 
-This function receives a parameter that is current OS. So you can manage different ONE_LINKS_CONF for different OS (such as MacOS, Linux).
-
-[dotbot][] is used to manage symbol links of dotfiles (or any files).
-You can use the [dotfiles from one.share][one.share] or from your own dotfiles.
-
-The default `ONE_LINKS_CONF` return empty. User should defined yours in ONE_CONF file.
+This function receives two parameters: OS (`uname -s`), Arch (`uname -m`).
+It is used for managing different [dotbot][] configs for different environments (such as MacOS and Linux).
 
 ```sh
 # User should print the path of ONE_LINKS_CONF file
-# @param os type
+# @param os   $(uname -s)
+# @param arch $(uname -m)
 ONE_LINKS_CONF() {
-  case "$1" in
-    MacOS) echo "$DOTFILES_DIR"/links/macos.yaml ;;
-    Linux) echo "$DOTFILES_DIR"/links/debian.yaml ;;
+  local os=$1
+  local arch=$2
+  case "$os_$arch" in
+    Darwin_arm64) echo "$DOTFILES_DIR"/links/macos_arm.yaml ;;
+    Darwin_amd64) echo "$DOTFILES_DIR"/links/macos_intel.yaml ;;
+    Linux*) echo "$DOTFILES_DIR"/links/linux.yaml ;;
   esac
 }
 ```
 
-You can copy the [one.links.example.yaml][] from [one.share][] to your directory.
+The [dotbot][] is a tool to manage symbol links of dotfiles and any other files. It is a part of one.bash.
+You can use it to create symbol links to any files.
+
+There is a dotbot config template in [one.share][]. You can copy [one.links.example.yaml][] to your directory.
 
 ```sh
 cp "$ONE_SHARE_DIR"/one.links.example.yaml "$DOTFILES_DIR"/one.links.yaml
@@ -147,7 +150,7 @@ $EDITOR "$DOTFILES_DIR"/one.links.yaml
 Invoke `one link` to create symbol links based on ONE_LINKS_CONF file.
 **Notice: Do not invoke `one link` with sudo.**
 
-Invoke `one unlink` to remove all links defined in ONE_LINKS_CONF file.
+Invoke `one unlink` to remove all symbol links based on ONE_LINKS_CONF file.
 
 You can use [dotbot plugins](https://github.com/anishathalye/dotbot#plugins) for more directives.
 See https://github.com/anishathalye/dotbot/wiki/Plugins

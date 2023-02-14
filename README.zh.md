@@ -116,26 +116,30 @@ EOF
 
 ### ONE_LINKS_CONF
 
-`ONE_LINKS_CONF` 是一个 Bash 函数，它返回 [dotbot][] 配置的文件路径。
-该函数接收一个参数，值为当前系统的标识。这样你可以管理不同系统下的不同 ONE_LINKS_CONF（比如 MacOS, Linux）
+`ONE_LINKS_CONF` 是一个 Bash 函数，它返回 [dotbot][] 配置的文件路径。默认为空。
 
-[dotbot][] 通过软链接管理配置文件（或者任何文件）。
-你可以使用 [one.share 里的配置文件][one.share] 或者使用你自己的。
-
-默认的 `ONE_LINKS_CONF` 为空。用户需要在 ONE_CONF 文件里定义你自己的文件路径。
+该函数接收两个参数：OS (`uname -s`) 和 Arch (`uname -m`)。
+它可以用来管理不同系统下的不同 [dotbot][] 配置（比如 MacOS 和 Linux）。
 
 ```sh
 # User should print the path of ONE_LINKS_CONF file
-# @param os type
+# @param os   $(uname -s)
+# @param arch $(uname -m)
 ONE_LINKS_CONF() {
-  case "$1" in
-    MacOS) echo "$DOTFILES_DIR"/links/macos.yaml ;;
-    Linux) echo "$DOTFILES_DIR"/links/debian.yaml ;;
+  local os=$1
+  local arch=$2
+  case "$os_$arch" in
+    Darwin_arm64) echo "$DOTFILES_DIR"/links/macos_arm.yaml ;;
+    Darwin_amd64) echo "$DOTFILES_DIR"/links/macos_intel.yaml ;;
+    Linux*) echo "$DOTFILES_DIR"/links/linux.yaml ;;
   esac
 }
 ```
 
-你可以从 [one.share][] 拷贝 [one.links.example.yaml][] 到你的目录。
+[dotbot][] 是一个通过软链接管理配置文件（或者任何文件）的工具。
+你可以用它来创建软链接，指向任何文件。
+
+[one.share][] 提供了一个 dotbot 配置模板。你可以拷贝 [one.links.example.yaml][] 到你的目录。
 
 ```sh
 cp "$ONE_SHARE_DIR"/one.links.example.yaml "$DOTFILES_DIR"/one.links.yaml
@@ -144,9 +148,9 @@ $EDITOR "$DOTFILES_DIR"/one.links.yaml
 ```
 
 调用 `one link` 会根据 ONE_LINKS_CONF 创建软链接。
-**Notice: 不要用 sudo 调用 `one link`。**
+**注意: 不要用 sudo 调用 `one link`。**
 
-调用 `one unlink` 会根据 ONE_LINKS_CONF 移除目标软链接文件。
+调用 `one unlink` 会根据 ONE_LINKS_CONF 移除软链接文件。
 
 你可以使用 [dotbot 插件](https://github.com/anishathalye/dotbot#plugins) 来获得更多指令。
 详见 https://github.com/anishathalye/dotbot/wiki/Plugins

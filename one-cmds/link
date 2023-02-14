@@ -58,7 +58,7 @@ else
     exit 6
   fi
 
-  DOTBOT_CONF=$(ONE_LINKS_CONF "$(l.detect_os)")
+  DOTBOT_CONF=$(ONE_LINKS_CONF "$(uname -s)" "$(uname -m)")
 
   if [[ ! -f $DOTBOT_CONF ]]; then
     echo "Not found file '$DOTBOT_CONF'. Check the ONE_LINKS_CONF function in your config." >&2
