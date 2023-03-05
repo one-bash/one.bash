@@ -143,33 +143,37 @@ search_mod() {
   printf '\n'
 }
 
-download_source() {
+_ask_update_mod_data() {
+  local target=$1
+  local answer
+
+  if [[ -e $target ]]; then
+    read -r -p "Find existed data which may be outdated. Do you want to update it to latest? (y/[n])" answer
+    if [[ ${answer:-n} == y ]]; then
+      rm -rf "$target"
+    else
+      return 1;
+    fi
+  fi
+  echo "To download data..."
+}
+
+download_mod_data() {
   local name=$1 url answer
   url=$(get_opt "$opt_path" URL)
 
   if l.end_with "$url" '.git'; then
     local target="$ONE_DIR/data/completions/$name"
-    if [[ -e $target ]]; then
-      read -r -p "Find old data. Do you want to update it? (y/[n])" answer
-      if [[ ${answer:-n} == y ]]; then
-        # The git repo may changed. So remove it.
-        rm -rf "$target"
-      else
-        return 0;
-      fi
+    if _ask_update_mod_data "$target"; then
       printf 'To git clone "%s" "%s"\n' "$url" "$target" >&2
       git clone --depth 1 --single-branch --recurse-submodules --shallow-submodules "$url" "$target"
     fi
   elif [[ -n $url ]]; then
     local target="$ONE_DIR/data/completions/$name.bash"
-    read -r -p "Find old data. Do you want to update it? (y/[n])" answer
-    if [[ ${answer:-n} == y ]]; then
-      rm -f "$target"
-    else
-      return 0;
+    if _ask_update_mod_data "$target"; then
+      printf 'To curl -Lo "%s" "%s"\n' "$target" "$url" >&2
+      curl -Lo "$target" "$url"
     fi
-    printf 'To curl -Lo "%s" "%s"\n' "$target" "$url" >&2
-    curl -Lo "$target" "$url"
   fi
 }
 
@@ -282,7 +286,7 @@ enable_mod() {
     if [[ -n $opt_path ]]; then
       # Disable first, prevent duplicated module enabled with different weight
       disable_mod "$name" true
-      download_source "$name" "$opt_path"
+      download_mod_data "$name" "$opt_path"
       filepath=$(create_mod "$name")
       enable_file "$name" "$filepath" || echo "Failed to enable '$name'."
     else
