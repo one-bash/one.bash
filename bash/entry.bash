@@ -69,7 +69,13 @@ _one_load "bash/helper.bash"
 _one_load "bash/env.bash"
 
 # Fig: https://github.com/withfig/fig
-[[ $ONE_FIG == true ]] && _one_eval fig init bash pre
+if [[ $ONE_FIG == true ]]; then
+  if one_l.has command fig; then
+    _one_eval fig init bash pre
+  else
+    one_stderr "Not found command: fig. You can set 'ONE_FIG=false' in ONE_CONF to turn off Fig feature."
+  fi
+fi
 
 # shellcheck source=./one-complete.bash
 _one_load "bash/one-complete.bash"
@@ -80,7 +86,11 @@ _one_load "bash/one-complete.bash"
 # shellcheck source=./enable-mods.bash
 [[ $ONE_NO_MODS == false ]] && _one_load "bash/enable-mods.bash"
 
-[[ $ONE_FIG == true ]] && _one_eval fig init bash post
+if [[ $ONE_FIG == true ]]; then
+  if one_l.has command fig; then
+    _one_eval fig init bash post
+  fi
+fi
 
 ONE_LOAD_END_TIME=$(_one_now)
 one_debug "${GREEN}%s${RESET_ALL}" "loaded success (Total $(( ONE_LOAD_END_TIME - ONE_LOAD_START_TIME ))ms)"
