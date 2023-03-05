@@ -1,3 +1,5 @@
+/makefile-utils/*
+!/makefile-utils/*.mk
 /tmp/*
 /configs/ranger/bookmarks
 /configs/ranger/history
