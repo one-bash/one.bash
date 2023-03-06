@@ -5,7 +5,7 @@
 
 一个优雅管理命令、shell 脚本，自动补全、配置的框架，适合 bash 玩家。
 
-English Document [README.md](./README.md)
+[English](./README.md) | [中文](./README.zh.md)
 
 ## 功能
 
@@ -261,12 +261,12 @@ one.bash 默认启用 [one.share][] 和 [bash-it][] 。
 - 提问和建议。请开一个 [discussion][]。
 - 其他上面未提到的内容，请开一个 [discussion][] 来讨论。
 
-不要发重复或无用的内容，比如 `+1`，`哈哈`。请贴 emoji 标签反馈到评论上。
+不要发重复或无用的内容，比如 `+1`，`哈哈`。请[贴 emoji 标签][emoji-reaction]反馈到评论上。
 
 你可以使用中文反馈意见。但希望你尽可能使用英文，不要中英文混杂，而是写下完整的英文语句。
 因为我们处于国际社区，英文更通用，方便外国人阅读理解你的意见。
 
-请阅读[如何为本项目贡献](./docs/CONTRIBUTING.md)。
+请阅读[贡献指南](./docs/CONTRIBUTING.md)。
 
 ## 版权声明
 
@@ -291,6 +291,7 @@ Read the [NOTICE][] file distributed with this work for additional information r
 [issue]: https://github.com/one-bash/one.bash/issues
 [discussion]: https://github.com/one-bash/one.bash/discussions
 [PR]: https://github.com/one-bash/one.bash/pulls
+[emoji-reaction]: https://github.blog/2016-03-10-add-reactions-to-pull-requests-issues-and-comments/
 
 <!-- links -->
 

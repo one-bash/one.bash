@@ -5,7 +5,7 @@
 
 An elegant framework to manage commands, completions, dotfiles for bash players.
 
-中文文档 [README.zh.md](./README.zh.md)
+[English](./README.md) | [中文](./README.zh.md)
 
 ## Features
 
@@ -262,11 +262,9 @@ Any comments and suggestions are always welcome.
 - For question and suggestion, open a [discussion][].
 - For anything not mentioned above, open a [discussion][].
 
-Do not post duplicated and useless contents like `+1`, `LOL`. React to comments with emoji instead of.
+Do not post duplicated and useless contents like `+1`, `LOL`. [React to comments with emoji][emoji-reaction] instead of.
 
-你可以使用中文反馈意见。但希望你尽可能使用英文，不要中英文混杂，而是完全的英文语句。
-因为我们处于国际社区，英文更通用，方便外国人阅读理解你的意见。
-(Please communicate in English as much as possible)
+Please communicate in English as much as possible.
 
 Please read [./docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md) before make a Pull Request.
 
@@ -293,6 +291,7 @@ Read the [NOTICE][] file distributed with this work for additional information r
 [issue]: https://github.com/one-bash/one.bash/issues
 [discussion]: https://github.com/one-bash/one.bash/discussions
 [PR]: https://github.com/one-bash/one.bash/pulls
+[emoji-reaction]: https://github.blog/2016-03-10-add-reactions-to-pull-requests-issues-and-comments/
 
 <!-- links -->
 

@@ -8,6 +8,9 @@ end_of_line = lf
 trim_trailing_whitespace = true
 insert_final_newline = true
 
+[*.{bats,bash,sh}]
+indent_size = 2
+
 [configs/gitconfig]
 indent_size = 4
 
