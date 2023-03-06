@@ -10,7 +10,7 @@ set -o errtrace
 if [ "${1:-}" = "--complete" ]; then
   if [[ $COMP_CWORD -lt 3 ]]; then
     words=(
-      -h --help -l --list
+      -h --help -l --list --edit
       SUB RC DEBUG FIG NO_MODS BASHRC_FO REPOS PATHS SKIP_COMPS LINKS_CONF
     )
     for w in "${words[@]}"; do echo "$w"; done
@@ -23,8 +23,7 @@ if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
   cmd=$(basename "$0")
   cat <<EOF
 Usage:
-  one $cmd [-l|--list]
-  one $cmd [-h|--help]
+  one $cmd [OPTIONS]
   one $cmd <key>           Get value
   one $cmd <key>=<value>   Set value
   one $cmd <key> <value>   Set value
@@ -38,6 +37,11 @@ Arguments:
 Options:
   -h|--help     Show help
   -l|--list     List configs
+  --edit        Edit config file
+
+Example:
+  one $cmd fig true        To set ONE_FIG=true
+  one $cmd fig             To query the value of ONE_FIG
 EOF
   exit 0
 fi
@@ -111,6 +115,10 @@ case "$1" in
   -l|--list)
     list_options
     exit 0
+    ;;
+
+  --edit)
+    $EDITOR "$ONE_CONF"
     ;;
 
   *)
