@@ -270,7 +270,7 @@ one.bash 默认启用 [one.share][] 和 [bash-it][] 。
 
 ## 版权声明
 
-Copyright 2022 ADoyle (adoyle.h@gmail.com) Some Rights Reserved.
+Copyright 2022-2023 ADoyle (adoyle.h@gmail.com). Some Rights Reserved.
 The project is licensed under the **Apache License Version 2.0**.
 
 Read the [LICENSE][] file for the specific language governing permissions and limitations under the License.
