@@ -29,6 +29,18 @@ _one_precmd_functions_has_func() {
   return 1
 }
 
+one_PATH_append() {
+  local path=$1
+  if [[ ! -d $path ]] || [[ $PATH =~ $path ]]; then return 0; fi
+  PATH="$PATH:$path"
+}
+
+one_PATH_insert() {
+  local path=$1
+  if [[ ! -d $path ]] || [[ $PATH =~ $path ]]; then return 0; fi
+  PATH="$path:$PATH"
+}
+
 # Add function to PROMPT_COMMAND
 # @param function_name
 one_prompt_append() {
