@@ -16,6 +16,8 @@ ONE_FIG=${ONE_FIG:-false}
 ONE_NO_MODS=${ONE_NO_MODS:-false}
 # If fault error occurred, use the ONE_BASHRC_FO instead of
 ONE_BASHRC_FO=${ONE_BASHRC_FO:-$ONE_DIR/bash/bashrc.failover.bash}
+# The log file of one.bash
+ONE_LOG_FILE=${ONE_LOG_FILE:-$ONE_DIR/tmp/one.log}
 
 # one.share
 # If set false, do not enable https://github.com/one-bash/one.share
