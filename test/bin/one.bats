@@ -28,10 +28,11 @@ PATH="$BATS_TEST_DIRNAME/../../bin:$PATH"
   assert_line -n 8 help
   assert_line -n 9 help-sub
   assert_line -n 10 link
-  assert_line -n 11 plugin
-  assert_line -n 12 repo
-  assert_line -n 13 sub
-  assert_line -n 14 unlink
+  assert_line -n 11 log
+  assert_line -n 12 plugin
+  assert_line -n 13 repo
+  assert_line -n 14 sub
+  assert_line -n 15 unlink
 }
 
 @test "one sub list" {
