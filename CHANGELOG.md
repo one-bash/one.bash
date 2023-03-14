@@ -8,7 +8,64 @@ The versions follow the rules of [Semantic Versioning 2.0.0](https://semver.org/
 
 ## [Unreleased]
 
-[Full Changes](https://github.com/one-bash/one.bash/compare/v0.0.1...HEAD)
+[Full Changes](https://github.com/one-bash/one.bash/compare/v0.1.0...HEAD)
+
+
+<a name="v0.1.0"></a>
+## v0.1.0 (2023-03-14 15:17:01 +08:00)
+
+[Full Changes](https://github.com/one-bash/one.bash/compare/v0.0.1...v0.1.0)
+
+### Breaking Changes
+
+Have 1 breaking changes. Check below logs with ⚠️ .
+
+### New Features
+
+- ⚠️  for mod.opt.bash, add new options "DEP_CMDS" "RUN" ([1f5068b](https://github.com/one-bash/one.bash/commit/1f5068b68c3d60219a444afc0bb0c6b3dd0bf951))
+  > - DEP_CMDS: to check commands in your host when `one <mod> enable`.
+  >   - The DEP_CMDS is a string which includes one or more command names separated with spaces.
+  > - RUN: to run command when `one <mod> enable`
+  > - The stdout and stderr of RUN/INSERT/APPEND will output to `$ONE_DIR/data/$mod_type/$mod/enable.log` when `one <mod> enable`
+  > 
+  > Breaking Change:
+  > 
+  > - If URL suffixed with ".git", it will be downloaded to `$ONE_DIR/data/$mod_type/$mod/git`
+  >   - Otherwise, it will be downloaded to `$ONE_DIR/data/$mod_type/$mod/script.bash`
+  > - If you use below mods, you should re-enable them via `one <mod> enable` to fix symbol links.
+  >   - completions/cheat.opt.bash
+  >   - completions/crictl.opt.bash
+  >   - completions/ctr.opt.bash
+  >   - completions/docker-compose.v1.opt.bash
+  >   - completions/docker.opt.bash
+  >   - completions/exa.opt.bash
+  >   - completions/fzf-tab.opt.bash
+  >   - completions/gulp.opt.bash
+  >   - completions/helm.opt.bash
+  >   - completions/hubble.opt.bash
+  >   - completions/minikube.opt.bash
+  >   - completions/mvn.opt.bash
+  >   - completions/npm.opt.bash
+  >   - completions/nvim.opt.bash
+  >   - completions/pm2.opt.bash
+  >   - completions/procs.opt.bash
+  >   - completions/rclone.opt.bash
+  >   - completions/yq.opt.bash
+  >   - completions/zig.opt.bash
+  >   - plugins/ble.opt.bash
+  >   - plugins/zoxide.opt.bash
+  > - If you has customized mod.opt.bash, please modify the value of `SCRIPT` option
+  >   - Before: `SCRIPT=path/script.bash`. Now: `SCRIPT=git/path/script.bash`. The `git/` means the downloaded git repo from `URL`.
+- add "one log" and new config option "ONE_LOG_FILE" ([9c2723d](https://github.com/one-bash/one.bash/commit/9c2723ddfebf778edf56b4b7b66ddb8f7147c694))
+  > Some one-cmds would print logs to $ONE_LOG_FILE. User can use `one log` to read logs.
+  > 
+  > User can change the path of ONE_LOG_FILE in one.config.bash. It defaults to `$ONE_DIR/tmp/one.log`.
+- support "one config --edit" to edit config file ([5ab9673](https://github.com/one-bash/one.bash/commit/5ab9673fd42b4fa1ebdc8262fd10fc931e6d1aac))
+
+### Document Changes
+
+- update CONTRIBUTING ([a7b96f0](https://github.com/one-bash/one.bash/commit/a7b96f024a5c80ec5166dcab5c54c32a5323a6ae))
+- renew License date ([d8eddbd](https://github.com/one-bash/one.bash/commit/d8eddbdd107b7a84e31b8a2674f9dcd08110e91b))
 
 
 <a name="v0.0.1"></a>
