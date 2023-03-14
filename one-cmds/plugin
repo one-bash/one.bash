@@ -14,6 +14,9 @@ fi
 # shellcheck source=../../bash/load-config.bash
 . "$ONE_DIR/bash/load-config.bash"
 
+# shellcheck source=../../bash/log.bash
+. "$ONE_DIR/bash/log.bash"
+
 # shellcheck source=../../bash/mod.bash
 . "$ONE_DIR/bash/mod.bash"
 

@@ -83,6 +83,9 @@ fi
 # shellcheck source=../../deps/colors.bash
 . "$ONE_DIR/deps/colors.bash"
 
+# shellcheck source=../../bash/log.bash
+. "$ONE_DIR/bash/log.bash"
+
 # shellcheck source=../../bash/mod.bash
 . "$ONE_DIR/bash/mod.bash"
 

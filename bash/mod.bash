@@ -162,14 +162,18 @@ download_mod_data() {
   local name=$1 url answer
   url=$(get_opt "$opt_path" URL)
 
+  local MOD_DATA_ROOT="$ONE_DIR/data/$ts"
+  local MOD_DATA_DIR="$MOD_DATA_ROOT/${name}"
+  mkdir -p "$MOD_DATA_DIR"
+
   if l.end_with "$url" '.git'; then
-    local target="$ONE_DIR/data/completions/$name"
+    local target="$MOD_DATA_DIR/git"
     if _ask_update_mod_data "$target"; then
       printf 'To git clone "%s" "%s"\n' "$url" "$target" >&2
       git clone --depth 1 --single-branch --recurse-submodules --shallow-submodules "$url" "$target"
     fi
   elif [[ -n $url ]]; then
-    local target="$ONE_DIR/data/completions/$name.bash"
+    local target="$MOD_DATA_DIR/script.bash"
     if _ask_update_mod_data "$target"; then
       printf 'To curl -Lo "%s" "%s"\n' "$target" "$url" >&2
       curl -Lo "$target" "$url"
@@ -187,27 +191,35 @@ get_opt() {
 # Create completion mod file
 create_mod() {
   local name=$1
-  local data_dir="$ONE_DIR/data/$ts"
-  local mod_path="$data_dir/${name}.mod.bash"
+  local MOD_DATA_ROOT="$ONE_DIR/data/$ts"
+  local MOD_DATA_DIR="$MOD_DATA_ROOT/${name}"
+  local MOD_FILE="$MOD_DATA_DIR/mod.bash"
+  local log_tag="enable:$t:$name"
 
-  echo "$mod_annotation" > "$mod_path"
+  local ONE_LOAD_PRIORITY SCRIPT APPEND INSERT ABOUT URL RUN
 
-  local ONE_LOAD_PRIORITY SCRIPT APPEND INSERT ABOUT URL
-  ONE_LOAD_PRIORITY=$(get_opt "$opt_path" ONE_LOAD_PRIORITY)
-  ABOUT=$(get_opt "$opt_path" ABOUT)
   APPEND=$(get_opt "$opt_path" APPEND)
   INSERT=$(get_opt "$opt_path" INSERT)
+  RUN=$(get_opt "$opt_path" RUN)
+
+  if [[ -n "${RUN:-}" ]]; then
+    log_verb "$log_tag:RUN" "$RUN"
+    # shellcheck disable=2094
+    (eval "$RUN" 2>&1 1>>"$ONE_LOG_FILE" | tee -a "$ONE_LOG_FILE" >&2) ||
+      { log_err "$log_tag:RUN" "[Failed] $RUN"; return 7; }
+  fi
+
+  ONE_LOAD_PRIORITY=$(get_opt "$opt_path" ONE_LOAD_PRIORITY)
+  ABOUT=$(get_opt "$opt_path" ABOUT)
   SCRIPT=$(get_opt "$opt_path" SCRIPT)
   URL=$(get_opt "$opt_path" URL)
 
   local target_script
   if [[ -n ${URL:-} ]]; then
-    if [[ -n ${SCRIPT:-} ]]; then
-      target_script="$data_dir/$name/$SCRIPT"
-    else
-      target_script="$data_dir/$name.bash"
-    fi
+    target_script="$MOD_DATA_DIR/${SCRIPT:-script.bash}"
   fi
+
+  echo "$mod_annotation" > "$MOD_FILE"
 
   {
     if [[ -n "${ABOUT:-}" ]]; then
@@ -219,8 +231,10 @@ create_mod() {
     fi
 
     if [[ -n "${INSERT:-}" ]]; then
+      log_verb "$log_tag:INSERT" "$INSERT"
       printf '\n'
-      (eval "$INSERT") || return 8
+      (eval "$INSERT" 2> >(tee -a "$ONE_LOG_FILE" >&2)) ||
+        { log_err "$log_tag:INSERT" "[Failed] $INSERT"; return 8; }
     fi
 
     if [[ -n "${target_script:-}" ]]; then
@@ -228,12 +242,14 @@ create_mod() {
     fi
 
     if [[ -n "${APPEND:-}" ]]; then
+      log_verb "$log_tag:APPEND" "$APPEND"
       printf '\n'
-      (eval "$APPEND") || return 9
+      (eval "$APPEND" 2> >(tee -a "$ONE_LOG_FILE" >&2)) ||
+        { log_err "$log_tag:APPEND" "[Failed] $APPEND"; return 9; }
     fi
-  } >> "$mod_path"
+  } >> "$MOD_FILE"
 
-  echo "$mod_path"
+  echo "$MOD_FILE"
 }
 
 get_weight() {
@@ -270,6 +286,20 @@ enable_file() {
   echo "Enabled $weight---$name.$t.bash. Please restart shell to take effect."
 }
 
+check_opt_mod_dep_cmds() {
+  local -a DEP_CMDS
+  # shellcheck disable=2207
+  IFS=' ' DEP_CMDS=( $(get_opt "$opt_path" DEP_CMDS) )
+
+  local cmd
+  for cmd in "${DEP_CMDS[@]}"; do
+    if one_l.has_not command "$cmd"; then
+      printf "The command '%s' is required but not found in host.\nSee %s to install it.\n"  "$cmd" "https://command-not-found.com/$cmd" >&2
+      return 10
+    fi
+  done
+}
+
 enable_mod() {
   local name=$1 filepath
 
@@ -284,6 +314,7 @@ enable_mod() {
     opt_path=$(search_mod "$name.opt")
 
     if [[ -n $opt_path ]]; then
+      check_opt_mod_dep_cmds
       # Disable first, prevent duplicated module enabled with different weight
       disable_mod "$name" true
       download_mod_data "$name" "$opt_path"
@@ -428,6 +459,7 @@ info_mod() {
         echo "Opt File: $opt_path"
         [[ -n ${URL:-} ]] && echo "URL: $URL";
         [[ -n ${SCRIPT:-} ]] && echo "Script: $SCRIPT";
+        [[ -n ${DEP_CMDS:-} ]] && echo "DEP_CMDS: $DEP_CMDS";
       })
     else
       echo "No found $t '$name'." >&2
