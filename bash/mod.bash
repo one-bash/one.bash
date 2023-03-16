@@ -214,11 +214,6 @@ create_mod() {
   SCRIPT=$(get_opt "$opt_path" SCRIPT)
   URL=$(get_opt "$opt_path" URL)
 
-  local target_script
-  if [[ -n ${URL:-} ]]; then
-    target_script="$MOD_DATA_DIR/${SCRIPT:-script.bash}"
-  fi
-
   echo "$mod_annotation" > "$MOD_FILE"
 
   {
@@ -237,8 +232,14 @@ create_mod() {
         { log_err "$log_tag:INSERT" "[Failed] $INSERT"; return 8; }
     fi
 
-    if [[ -n "${target_script:-}" ]]; then
-      printf '\nsource %s\n' "$target_script"
+    if [[ -n ${URL:-} ]]; then
+      if l.end_with "$URL" '.git'; then
+        if [[ -n ${SCRIPT:-} ]]; then
+          echo "source $MOD_DATA_DIR/${SCRIPT}"
+        fi
+      else
+        echo "source $MOD_DATA_DIR/script.bash"
+      fi
     fi
 
     if [[ -n "${APPEND:-}" ]]; then

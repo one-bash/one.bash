@@ -1,3 +1,5 @@
+# shellcheck disable=2317
+
 load_failed() {
   local exit_code=$1
   printf '%b[one.bash] Failed to load module "%s" (exit_code=%s). You can disable it by "%s".\n%b' \
