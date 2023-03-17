@@ -10,7 +10,7 @@ load_failed() {
 
 _load_enabled() {
   local filepath=$1
-  shift 1 # If not shift arguments, the sourced script will receive the arguments of function _load_enabled
+  set -- # prevent the sourced script receiving the arguments of function _load_enabled
 
   local filename
   filename=$(basename "$filepath")
