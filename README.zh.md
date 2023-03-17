@@ -16,7 +16,7 @@
 - 可以在一个作用域下管理自己的命令。如 `a <cmd>` 来调用命令，避免在 `PATH` 中重复命令。请阅读 [ONE_SUB Commands](./docs/advanced-usage/one-sub-cmd.md)。
 - 支持 one.bash 配置。阅读 [ONE_CONF](#oneconf)。
 - 支持 [bash-it][]。你可以使用 one 命令来管理 bash-it 的 aliases/completions/plugins。请阅读 [bash-it.md](./docs/advanced-usage/bash-it.md)。
-- 支持 [Fig][]。请阅读 [fig.md](./docs/advanced-usage/fig.md)。
+- 支持 [Fig][]。请阅读 [docs/advanced-usage/fig.md](./docs/advanced-usage/fig.md)。
 
 ## 环境
 
@@ -252,21 +252,7 @@ one.bash 默认启用 [one.share][] 和 [bash-it][] 。
 
 欢迎提供任何建议或者意见。
 
-**在开 issue/discussion/PR 之前，你必须先搜索相关 [issue][]/[discussion][]/[PR][]**，避免创建重复的链接。
-
-- 请求新功能。请开一个 [discussion][]，简短且清晰地描述你的需求。
-- 提交新功能。请开一个 [PR][]，简短且清晰地描述你的需求和设计。
-- 报告 BUG。请开一个 [issue][]，简短且清晰地描述你发现的问题。
-- 修复 BUG。请开一个 [PR][]，简短且清晰地描述你修了什么。
-- 提问和建议。请开一个 [discussion][]。
-- 其他上面未提到的内容，请开一个 [discussion][] 来讨论。
-
-不要发重复或无用的内容，比如 `+1`，`哈哈`。请[贴 emoji 标签][emoji-reaction]反馈到评论上。
-
-你可以使用中文反馈意见。但希望你尽可能使用英文，不要中英文混杂，而是写下完整的英文语句。
-因为我们处于国际社区，英文更通用，方便外国人阅读理解你的意见。
-
-请阅读[贡献指南](./docs/CONTRIBUTING.md)。
+**在创建新的 Issue/Discussion/PR，以及发表评论之前**，请先阅读[贡献指南](./docs/CONTRIBUTING.zh.md)。
 
 ## 版权声明
 
@@ -288,10 +274,6 @@ Read the [NOTICE][] file distributed with this work for additional information r
 [LICENSE]: ./LICENSE
 [NOTICE]: ./NOTICE
 [tags]: https://github.com/one-bash/one.bash/tags
-[issue]: https://github.com/one-bash/one.bash/issues
-[discussion]: https://github.com/one-bash/one.bash/discussions
-[PR]: https://github.com/one-bash/one.bash/pulls
-[emoji-reaction]: https://github.blog/2016-03-10-add-reactions-to-pull-requests-issues-and-comments/
 
 <!-- links -->
 

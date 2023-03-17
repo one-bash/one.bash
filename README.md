@@ -16,7 +16,7 @@ An elegant framework to manage commands, completions, dotfiles for bash players.
 - Manage commands under your own scope. Like `a <cmd>` to invoke command that no worry about duplicated in `PATH`. Read the [ONE_SUB Commands](./docs/advanced-usage/one-sub-cmd.md).
 - Support custom one.bash. Read [ONE_CONF](#oneconf).
 - Support [bash-it][]. You can use `one` commands to manage bash-it's aliases/completions/plugins. Read [bash-it.md](./docs/advanced-usage/bash-it.md).
-- Support [Fig][]. Read [fig.md](./docs/advanced-usage/fig.md).
+- Support [Fig][]. Read [docs/advanced-usage/fig.md](./docs/advanced-usage/fig.md).
 
 ## Environments
 
@@ -253,20 +253,7 @@ Read [this document](./docs/advanced-usage/one-sub-cmd.md) for more details.
 
 Any comments and suggestions are always welcome.
 
-**Before open an issue/discussion/PR, You should search related issues/discussions/PRs first** for avoiding to create duplicated links.
-
-- For new feature request, open a [discussion][], describe your demand concisely and clearly.
-- For new feature submit, open a [PR][], describe your demand and design concisely and clearly.
-- For bug report, open an [issue][], describe the bug concisely and clearly.
-- For bug fix, open a [PR][], concisely and clearly describe what you fixed.
-- For question and suggestion, open a [discussion][].
-- For anything not mentioned above, open a [discussion][].
-
-Do not post duplicated and useless contents like `+1`, `LOL`. [React to comments with emoji][emoji-reaction] instead of.
-
-Please communicate in English as much as possible.
-
-Please read [./docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md) before make a Pull Request.
+**Before opening new Issue/Discussion/PR and posting any comments**, please read [CONTRIBUTING.md](./docs/CONTRIBUTING.md).
 
 ## Copyright and License
 
@@ -288,10 +275,6 @@ Read the [NOTICE][] file distributed with this work for additional information r
 [LICENSE]: ./LICENSE
 [NOTICE]: ./NOTICE
 [tags]: https://github.com/one-bash/one.bash/tags
-[issue]: https://github.com/one-bash/one.bash/issues
-[discussion]: https://github.com/one-bash/one.bash/discussions
-[PR]: https://github.com/one-bash/one.bash/pulls
-[emoji-reaction]: https://github.blog/2016-03-10-add-reactions-to-pull-requests-issues-and-comments/
 
 <!-- links -->
 
