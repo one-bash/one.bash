@@ -258,7 +258,8 @@ create_mod() {
 get_weight() {
   local weight
 
-  weight=$(head "$1" | grep -Eo '^# (ONE|BASH_IT)_LOAD_PRIORITY: \d{3}$' | grep -Eo '\d{3}' || true)
+  # NOTE: grep -Eo not match "\d" in Linux. "\d" is part of a Perl-compatible regular expression (PCRE).
+  weight=$(head "$1" | grep -Eo '^# (ONE|BASH_IT)_LOAD_PRIORITY: [0-9]{3}$' | grep -Eo '[0-9]{3}' || true)
 
   if [[ -z "$weight" ]]; then
     echo "${default_weight_map[$t]}"
