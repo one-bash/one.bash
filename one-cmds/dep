@@ -16,6 +16,7 @@ Desc: Manage one.bash deps
 ACTION:
   i, install          Install all deps.
   u, update [<DEP>]   If <DEP> not passed, update all deps.
+  s, status [<DEP>]   Show status of deps
 EOF
   exit 0
 fi
@@ -29,18 +30,13 @@ fi
 # one.bash:completion
 if [[ "${1:-}" == --complete ]]; then
   if (( COMP_CWORD < 3 )); then
-    words=(i install u update --help -h)
+    words=(install update status --help -h)
     printf '%s\n' "${words[@]}"
   else
     case $2 in
-      i|install|u|update)
-        readarray -t list < <(compgen -A directory "$ONE_DIR/deps/")
-        for dir in "${list[@]}"; do
-          if [[ -d "$dir/.git" ]]; then
-            # shellcheck disable=2001
-            sed "s|^$ONE_DIR/deps/||" <<<"$dir"
-          fi
-        done
+      i|install|u|update|s|status)
+        words=(one.share one-bash-it bash-it composure dotbot)
+        printf '%s\n' "${words[@]}"
         ;;
     esac
   fi
@@ -72,6 +68,14 @@ git_update() {
   echo "To update $dir"
 
   git -C "$dir" pull --recurse-submodules="${SUBMOD:-no}" "$@"
+}
+
+git_status() {
+  local dir=$1
+  shift
+  echo "[$(basename "$dir")]"
+  git -C "$dir" show --oneline -s
+  echo ""
 }
 
 install() {
@@ -108,6 +112,17 @@ update() {
   fi
 }
 
+list_status() {
+  if (( $# == 0 )); then
+    git_status "$ONE_DIR/deps/dotbot"
+    git_status "$ONE_DIR/deps/composure"
+    [[ ${ONE_SHARE_ENABLE:-} == true ]] && git_status "$ONE_SHARE_DIR"
+    [[ ${ONE_BASH_IT_ENABLE:-} == true ]] && git_status "$ONE_BASH_IT_DIR"
+  else
+    git_status "$ONE_DIR/deps/$1"
+  fi
+}
+
 action=$1
 shift
 
@@ -118,6 +133,8 @@ case "$action" in
   i|install) install ;;
 
   u|update) update "$@" ;;
+
+  s|status) list_status "$@" ;;
 
   *)
     echo "Invalid action '$action'" >&2
