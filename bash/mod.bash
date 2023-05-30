@@ -4,6 +4,7 @@ readonly -A t_map=(
   [plugin]=plugins
   [completion]=completions
   [alias]=aliases
+  [bin]=bin
 )
 
 readonly -A default_weight_map=(

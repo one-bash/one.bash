@@ -175,6 +175,7 @@ Usage:
 
     one repo                    Manage one.bash repos
     one alias                   Manage aliases in ONE_REPO/aliases/
+    one bin                     Manage commands in ONE_REPO/bin/
     one completion              Manage completions in ONE_REPO/completions/
     one plugin                  Manage plugins in ONE_REPO/plugins/
     one enabled                 Manage enabled modules (alias/completion/plugin)

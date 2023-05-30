@@ -55,6 +55,7 @@ Usage:
 
     $name repo                    Manage one.bash repos
     $name alias                   Manage aliases in ONE_REPO/aliases/
+    $name bin                     Manage commands in ONE_REPO/bin/
     $name completion              Manage completions in ONE_REPO/completions/
     $name plugin                  Manage plugins in ONE_REPO/plugins/
     $name enabled                 Manage enabled modules (alias/completion/plugin)
