@@ -50,7 +50,10 @@ if (( $# > 0 )); then
     exit 4
   fi
 else
-  # shellcheck source=../../one_config.bash
+  # shellcheck source=../bash/load-config.bash
+  . "$ONE_DIR/bash/load-config.bash"
+
+  # shellcheck disable=1090
   . "$ONE_CONF"
 
   if l.has_not function ONE_LINKS_CONF; then
@@ -66,6 +69,6 @@ else
   fi
 fi
 
-echo "Use ONE_LINKS_CONF: ${DOTBOT_CONF}"
+echo "Create symbol links based on ONE_LINKS_CONF: ${DOTBOT_CONF}"
 
 "$ONE_DIR/deps/dotbot/bin/dotbot" -d "$(dirname "$DOTBOT_CONF")" -c "$DOTBOT_CONF"
