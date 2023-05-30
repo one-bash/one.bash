@@ -119,7 +119,7 @@ one_cmd() {
   local cmd_path="$ONE_DIR/one-cmds/$cmd"
 
   if [[ ! -x $cmd_path ]]; then
-    echo "Not found executable file '$cmd_path'" >&2
+    echo "No such command '$cmd'" >&2
     return "$ONE_EX_USAGE"
   fi
 

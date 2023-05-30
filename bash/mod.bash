@@ -106,13 +106,15 @@ disable_mod() {
 }
 
 disable_it() {
+  local name
+
   if [[ ${1:-} == --all ]]; then
     for name in $(list_enabled "$t"); do
-      disable_mod "$name" || echo "Failed to enable '$name'."
+      disable_mod "$name" || echo "Failed to disable '$name'."
     done
   else
     for name in "$@"; do
-      disable_mod "$name" || echo "Failed to enable '$name'."
+      disable_mod "$name" || echo "Failed to disable '$name'."
     done
   fi
 }
