@@ -18,7 +18,7 @@ Arguments:
   <CMD>  The sub command of one
 
 Options:
-  -a  If set, print usage of all commands.
+  -a     If set, print usages of all commands.
 EOF
   exit 0
 fi

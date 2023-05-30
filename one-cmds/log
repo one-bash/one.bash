@@ -27,7 +27,7 @@ fi
 if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
   cat <<EOF
 Usage: one $(basename "$0") [OPTIONS]
-Desc: tail the logs of one.bash
+Desc: Tail the logs of one.bash
 
 Options:
   -n [NUMBER=20]    tail -n \$NUMBER

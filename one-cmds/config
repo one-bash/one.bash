@@ -28,7 +28,7 @@ Usage:
   one $cmd <key>=<value>   Set value
   one $cmd <key> <value>   Set value
 
-Desc: Manage user ONE_CONF (Current: $ONE_CONF)
+Desc: Manage user's ONE_CONF (Current: $ONE_CONF)
 
 Arguments:
   <key>      The name of property defined in ONE_CONF

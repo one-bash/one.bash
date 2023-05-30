@@ -168,27 +168,37 @@ $EDITOR "$DOTFILES_DIR"/one.links.yaml
 调用 `one` 会显示用法。
 
 ```
-Usage: one [<CMD>]                 Run one command
-       one subs [<SUB_CMD>]        Run ONE_SUB command
-       one help [<CMD>]            Show the usage of one command
-       one help-sub [<SUB_CMD>]    Show the usage of ONE_SUB command
-       one [--bashrc]              Print one.bash entry codes for bashrc
-       one [-h|--help]             Show the usage of one
+Usage:
+    one help [<CMD>]            Show the usage of one command
+    one [<CMD>] [-h|--help]     Show the usage of one command
+    one help-sub [<SUB_CMD>]    Show the usage of ONE_SUB command
 
-Desc: An elegant framework to manage commands, completions, dotfiles for terminal players.
-      https://github.com/one-bash/one.bash
+    one repo                    Manage one.bash repos
+    one alias                   Manage aliases in ONE_REPO/aliases/
+    one completion              Manage completions in ONE_REPO/completions/
+    one plugin                  Manage plugins in ONE_REPO/plugins/
+    one enabled                 Manage enabled modules (alias/completion/plugin)
+
+    one config                  Manage user's ONE_CONF
+    one commands                List one commands
+    one debug                   Toggle debug mode on one.bash
+    one dep                     Manage one.bash deps
+    one link                    Create symlink files based on LINKS_CONF file
+    one unlink                  remove all symbol links based on LINKS_CONF file
+    one log                     Tail the logs of one.bash
+    one sub [<SUB_CMD>]         Run ONE_SUB command
+    one subs                    List ONE_SUB commands
+    one [--bashrc]              Print one.bash entry codes for bashrc
+
+Desc:
+    An elegant framework to manage commands, completions, dotfiles for terminal players.
+    Source code: https://github.com/one-bash/one.bash
+    /Users/adoyle/.config/one.bash/one.config.bash
 
 Arguments:
-  <CMD> the command of one
-  <SUB_CMD> the command of ONE_SUB
+    <CMD>                       The one command
+    <SUB_CMD>                   The ONE_SUB command
 ```
-
-`one` 命令定义在 [./one-cmds/](./one-cmds)。
-
-- `one commands` 列出所有命令。
-- `one help -a` 列出所有命令的使用帮助。
-- `one bin list` 列出所有 repo 的 `bin/` 目录下的可执行命令。
-- `one sub list` 列出所有 repo 的 `sub/` 目录下的可执行命令。
 
 ## 模块
 

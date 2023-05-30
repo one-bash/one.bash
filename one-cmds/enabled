@@ -33,7 +33,7 @@ Usage:  one $cmd [-h|--help] <ACTION>
         one $cmd [-h|--help]
         one $cmd <ACTION> [--help]
 
-Desc:   Manage enabled modules
+Desc:   Manage enabled modules (alias/completion/plugin)
 Action:
   backup      Create a backup file for current enabled modules
   l, list     List enabled modules

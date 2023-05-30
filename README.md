@@ -168,27 +168,37 @@ The `one` command is used to manage one.bash modules, one.config, and dependenci
 Invoke `one` to show usage of it.
 
 ```
-Usage: one [<CMD>]                 Run one command
-       one subs [<SUB_CMD>]        Run ONE_SUB command
-       one help [<CMD>]            Show the usage of one command
-       one help-sub [<SUB_CMD>]    Show the usage of ONE_SUB command
-       one [--bashrc]              Print one.bash entry codes for bashrc
-       one [-h|--help]             Show the usage of one
+Usage:
+    one help [<CMD>]            Show the usage of one command
+    one [<CMD>] [-h|--help]     Show the usage of one command
+    one help-sub [<SUB_CMD>]    Show the usage of ONE_SUB command
 
-Desc: An elegant framework to manage commands, completions, dotfiles for terminal players.
-      https://github.com/one-bash/one.bash
+    one repo                    Manage one.bash repos
+    one alias                   Manage aliases in ONE_REPO/aliases/
+    one completion              Manage completions in ONE_REPO/completions/
+    one plugin                  Manage plugins in ONE_REPO/plugins/
+    one enabled                 Manage enabled modules (alias/completion/plugin)
+
+    one config                  Manage user's ONE_CONF
+    one commands                List one commands
+    one debug                   Toggle debug mode on one.bash
+    one dep                     Manage one.bash deps
+    one link                    Create symlink files based on LINKS_CONF file
+    one unlink                  remove all symbol links based on LINKS_CONF file
+    one log                     Tail the logs of one.bash
+    one sub [<SUB_CMD>]         Run ONE_SUB command
+    one subs                    List ONE_SUB commands
+    one [--bashrc]              Print one.bash entry codes for bashrc
+
+Desc:
+    An elegant framework to manage commands, completions, dotfiles for terminal players.
+    Source code: https://github.com/one-bash/one.bash
+    /Users/adoyle/.config/one.bash/one.config.bash
 
 Arguments:
-  <CMD> the command of one
-  <SUB_CMD> the command of ONE_SUB
+    <CMD>                       The one command
+    <SUB_CMD>                   The ONE_SUB command
 ```
-
-It provides many commands defined in [./one-cmds/](./one-cmds).
-
-- `one commands` to list all commands.
-- `one help -a` to list all usages of commands.
-- `one bin list` to show all executable files in `bin/` of each repo.
-- `one sub list` to show all commands in `sub/` of each repo.
 
 ## Modules
 

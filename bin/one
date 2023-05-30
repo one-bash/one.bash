@@ -48,21 +48,35 @@ fi
 if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
   name=$(basename "$0")
   cat <<EOF
-Usage: $name [<CMD>]                 Run one command
-       $name commands                List one commands
-       $name sub [<SUB_CMD>]         Run ONE_SUB command
-       $name subs                    List ONE_SUB commands
-       $name help [<CMD>]            Show the usage of one command
-       $name help-sub [<SUB_CMD>]    Show the usage of ONE_SUB command
-       $name [--bashrc]              Print one.bash entry codes for bashrc
-       $name [-h|--help]             Show the usage of one
+Usage:
+    $name help [<CMD>]            Show the usage of one command
+    $name [<CMD>] [-h|--help]     Show the usage of one command
+    $name help-sub [<SUB_CMD>]    Show the usage of ONE_SUB command
 
-Desc: An elegant framework to manage commands, completions, dotfiles for terminal players.
-      https://github.com/one-bash/one.bash
+    $name repo                    Manage one.bash repos
+    $name alias                   Manage aliases in ONE_REPO/aliases/
+    $name completion              Manage completions in ONE_REPO/completions/
+    $name plugin                  Manage plugins in ONE_REPO/plugins/
+    $name enabled                 Manage enabled modules (alias/completion/plugin)
+
+    $name config                  Manage user's ONE_CONF
+    $name commands                List one commands
+    $name debug                   Toggle debug mode on one.bash
+    $name dep                     Manage one.bash deps
+    $name link                    Create symlink files based on LINKS_CONF file
+    $name unlink                  remove all symbol links based on LINKS_CONF file
+    $name log                     Tail the logs of one.bash
+    $name sub [<SUB_CMD>]         Run ONE_SUB command
+    $name subs                    List ONE_SUB commands
+    $name [--bashrc]              Print one.bash entry codes for bashrc
+
+Desc:
+    An elegant framework to manage commands, completions, dotfiles for terminal players.
+    Source code: https://github.com/one-bash/one.bash
 
 Arguments:
-  <CMD> the command of one
-  <SUB_CMD> the command of ONE_SUB
+    <CMD>                       The one command
+    <SUB_CMD>                   The ONE_SUB command
 EOF
   exit 0
 fi
