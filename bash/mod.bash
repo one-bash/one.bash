@@ -38,12 +38,12 @@ compgen_enable_mod() {
 }
 
 compgen_disable_mod() {
+  echo '--all'
+
   # shellcheck disable=2154
   find "$ENABLED_DIR" -maxdepth 1 -name "*---*.$t.bash" -print0 \
     | xargs -0 -I{} basename '{}' ".$t.bash" \
     | sed -E 's/^[[:digit:]]{3}---(.+)$/\1/' || true
-
-  echo "--all"
 }
 
 # -----------------------------------------------------------------------------
@@ -333,7 +333,7 @@ enable_mod() {
 enable_it() {
   local name
   for name in "$@"; do
-    enable_mod "$name"
+    enable_mod "$name" || echo "Failed to enable '$name'."
   done
 }
 
@@ -435,9 +435,9 @@ info_mod() {
   link_to=$(get_enabled_link_to "$name")
 
   if [[ -n $filepath ]]; then
+      echo "Mod: $filepath"
     if [[ -n $link_to ]]; then
       echo "Enabled: true"
-      echo "Link to: $link_to"
     else
       echo "Enabled: false"
     fi
@@ -450,17 +450,16 @@ info_mod() {
     opt_path=$(search_mod "$name.opt")
 
     if [[ -n $opt_path ]]; then
+      echo "Mod: $opt_path"
       # shellcheck disable=1090
       (source "$opt_path" && {
         if [[ -n $link_to ]]; then
           echo "Enabled: true"
-          echo "Link to: $link_to"
         else
           echo "Enabled: false"
         fi
         [[ -n ${ABOUT:-} ]] && echo "About: $ABOUT";
         [[ -n ${ONE_LOAD_PRIORITY:-} ]] && echo "Priority: $ONE_LOAD_PRIORITY";
-        echo "Opt File: $opt_path"
         [[ -n ${URL:-} ]] && echo "URL: $URL";
         [[ -n ${SCRIPT:-} ]] && echo "Script: $SCRIPT";
         [[ -n ${DEP_CMDS:-} ]] && echo "DEP_CMDS: $DEP_CMDS";
