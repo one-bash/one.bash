@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+# one.bash:completion
+if [[ "${1:-}" == --complete ]]; then
+  if (( COMP_CWORD < 3 )); then
+    words=(-o -h --help)
+    printf '%s\n' "${words[@]}"
+  elif [[ $2 == -o ]]; then
+    result=$(compgen -f -- "$3")
+    if [[ -d $result ]]; then
+      compgen -f -- "$result/"
+    else
+      echo "${result[@]}"
+    fi
+  fi
+  exit 0
+fi
+
+usage() {
+  local cmd; cmd=$(basename "$0");
+  cat <<EOF
+Usage: one $cmd [OPTIONS]
+Desc:  Output backup scripts for current enabled modules
+Options:
+  -h, --help           Show usage
+  -o, --output <PATH>  Output the content to file.
+EOF
+}
+
+# one.bash:usage
+if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
+  usage
+  exit 0
+fi
+
+if [[ -z ${ONE_DIR:-} ]]; then
+  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+  ONE_DIR=$SCRIPT_DIR/..
+fi
+
+# shellcheck source=../../bash/load-config.bash
+. "$ONE_DIR/bash/load-config.bash"
+
+# shellcheck source=../../deps/colors.bash
+. "$ONE_DIR/deps/colors.bash"
+
+# shellcheck source=../../bash/log.bash
+. "$ONE_DIR/bash/log.bash"
+
+# shellcheck source=../../bash/mod.bash
+. "$ONE_DIR/bash/mod.bash"
+
+# shellcheck source=../../deps/lobash.bash
+. "$ONE_DIR/deps/lobash.bash"
+
+declare -A opts=()
+declare -a args=()
+l.parse_params opts args "$@"
+
+list_enabled_for_backup() {
+  list_enabled "$1" | sort | tr '\n' ' '
+  printf '\n'
+}
+
+backup_content() {
+    cat <<EOF
+#!/usr/bin/env bash
+
+set -euE -o pipefail
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+one plugin disable --all
+one alias disable --all
+one completion disable --all
+
+EOF
+
+    printf "%s %s\n\n" "one plugin enable" "$(list_enabled_for_backup plugin)"
+    printf "%s %s\n\n" "one alias enable" "$(list_enabled_for_backup alias)"
+    printf "%s %s\n\n" "one completion enable" "$(list_enabled_for_backup completion)"
+    printf '\necho "[All Done]"\n'
+}
+
+backup() {
+  dist="${opts[o]:-${opts[output]:-/dev/stdout}}"
+
+  if [[ $dist == /dev/stdout ]]; then
+    backup_content
+  else
+    backup_content | tee "$dist"
+    printf '%b%s%b\n' "${GREEN}" "Created backup file: $dist" "${RESET_ALL}"
+    chmod +x "$dist"
+  fi
+}
+backup

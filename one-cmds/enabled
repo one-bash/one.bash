@@ -8,68 +8,27 @@ set -o errtrace
 
 # one.bash:completion
 if [[ "${1:-}" == --complete ]]; then
-  actions=(backup list)
-
-  if (( COMP_CWORD < 3 )); then
-    words=("${actions[@]}" -h --help)
-    printf '%s\n' "${words[@]}"
-  elif [[ $2 == -h ]] || [[ $2 == --help ]]; then
-    printf '%s\n' "${actions[@]}"
-  elif [[ $2 == backup ]]; then
-    result=$(compgen -f -- "$2")
-    if [[ -d $result ]]; then
-      compgen -f -- "$result/"
-    else
-      echo "${result[@]}"
-    fi
-  fi
+  words=(-h --help --type --priority)
+  printf '%s\n' "${words[@]}"
   exit 0
 fi
 
 usage() {
   local cmd; cmd=$(basename "$0");
   cat <<EOF
-Usage:  one $cmd [-h|--help] <ACTION>
-        one $cmd [-h|--help]
-        one $cmd <ACTION> [--help]
-
-Desc:   Manage enabled modules (alias/completion/plugin)
-Action:
-  backup      Create a backup file for current enabled modules
-  l, list     List enabled modules
-EOF
-  exit 0
-}
-
-usage_backup() {
-  local cmd; cmd=$(basename "$0");
-  cat <<EOF
-Usage: one $cmd backup [OPTIONS]
-Desc:  Create a backup file for current enabled modules
-Options:
-  -o, --output <PATH>  The filepath of output [Default: restore-modules]
-EOF
-  exit 0
-}
-
-
-usage_list() {
-  local cmd; cmd=$(basename "$0");
-  cat <<EOF
-Usage: one $cmd list
+Usage: one $cmd [OPTIONS]
 Desc:  List enabled modules
+Options:
+  -h, --help                          Show usage
+  --type=true|false
+  --priority=true|false
 EOF
-  exit 0
 }
-usage_l() { usage_list; }
 
 # one.bash:usage
-if (( $# == 0 )) then
-  usage;
-elif [[ $1 == -h ]] || [[ $1 == --help ]]; then
-  if (( $# > 1 )); then usage_"$2"; else usage; fi
-elif [[ ${*: -1} == --help ]] ; then
-  if (( $# > 1 )); then usage_"$1"; else usage; fi
+if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
+  usage
+  exit 0
 fi
 
 if [[ -z ${ONE_DIR:-} ]]; then
@@ -89,51 +48,6 @@ fi
 # shellcheck source=../../bash/mod.bash
 . "$ONE_DIR/bash/mod.bash"
 
-list_enabled_for_backup() {
-  list_enabled "$1" | sort | tr '\n' ' '
-  printf '\n'
-}
-
-backup() {
-  dist="${opts[o]:-${opts[output]:-restore-modules}}"
-
-  cat <<EOF >"$dist"
-#!/usr/bin/env bash
-
-set -o errexit
-set -o nounset
-set -o pipefail
-set -o errtrace
-(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
-
-one plugin disable --all
-one alias disable --all
-one completion disable --all
-
-EOF
-
-  printf '%b%s\nContent:%b\n' "${GREEN}" "Created file: $dist" "${RESET_ALL}"
-
-  {
-    echo "one plugin enable $(list_enabled_for_backup plugin)"
-    echo ''
-    echo "one alias enable $(list_enabled_for_backup alias)"
-    echo ''
-    echo "one completion enable $(list_enabled_for_backup completion)"
-  } | tee -a "$dist"
-
-  printf '\necho "[All Done]"\n' >> "$dist"
-
-  chmod +x "$dist"
-}
-
-list() {
-  find "$ONE_DIR/enabled" -maxdepth 1 -name "*---*.bash" | print_list_item
-}
-
-action=$1
-shift
-
 # shellcheck source=../../deps/lobash.bash
 . "$ONE_DIR/deps/lobash.bash"
 
@@ -141,13 +55,7 @@ declare -A opts=()
 declare -a args=()
 l.parse_params opts args "$@"
 
-case "$action" in
-  backup) backup ;;
-
-  l|list) list ;;
-
-  *)
-    echo "Invalid action '$action'" >&2
-    exit 1
-    ;;
-esac
+list() {
+  find "$ONE_DIR/enabled" -maxdepth 1 -name "*---*.bash" | print_list_item | sort
+}
+list

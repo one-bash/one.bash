@@ -177,7 +177,7 @@ Usage:
     one alias                   Manage aliases in ONE_REPO/aliases/
     one completion              Manage completions in ONE_REPO/completions/
     one plugin                  Manage plugins in ONE_REPO/plugins/
-    one enabled                 Manage enabled modules (alias/completion/plugin)
+    one enabled                 List enabled modules (alias/completion/plugin)
 
     one config                  Manage user's ONE_CONF
     one commands                List one commands
@@ -212,8 +212,8 @@ one.bash 使用模块来管理脚本。
 - 所有 completions 放在每个 repo 的 `completions/` 目录。
 - 所有 aliases 放在每个 repo 的 `aliases/` 目录。
 - 所有启用的模块会在 `$ONE_DIR/enabled/` 目录下创建软链接。
-  - 使用 `one enabled list` 可以查询启用的模块。
-  - 使用 `one enabled backup` 备份启动的模块。
+  - 使用 `one enabled` 可以查询启用的模块。
+  - 使用 `one backup` 备份启动的模块。
 - 使用 `one help <mod_type>` 显示使用方法。
 - `one <mod_type> enable` 来启用模块。
 - `one <mod_type> disable` 来禁用模块。

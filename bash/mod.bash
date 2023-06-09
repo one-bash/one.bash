@@ -345,7 +345,7 @@ print_list_item() {
   declare -A MOD_TYPE_COLOR=(
     ['completion']=$GREEN
     ['plugin']=$BLUE
-    ['alias']=$RED
+    ['alias']=$PURPLE
   )
 
   while read -r line; do
@@ -355,16 +355,16 @@ print_list_item() {
     local -a prints=()
     local format=''
 
-    # mod type
-    if [[ ${opts['type']:-} != false ]]; then
-      format="$format%b%s "
-      prints+=("${MOD_TYPE_COLOR[${list[2]}]}" "${type^}")
-    fi
-
     # load-priority
     if [[ ${opts['priority']:-} != false ]]; then
       format="$format%b%s "
       prints+=("$YELLOW" "${list[0]}")
+    fi
+
+    # mod type
+    if [[ ${opts['type']:-} != false ]]; then
+      format="$format%b%s "
+      prints+=("${MOD_TYPE_COLOR[${list[2]}]}" "${type^}")
     fi
 
     # mod name -> real path
@@ -410,7 +410,7 @@ list_mods() {
       list_enabled "$t" | tr '\n' ' '
       printf '\n'
     else
-      find "$ENABLED_DIR" -maxdepth 1 -name "*---*.$t.bash" | print_list_item
+      find "$ENABLED_DIR" -maxdepth 1 -name "*---*.$t.bash" | print_list_item | sort
     fi
   fi
 }
