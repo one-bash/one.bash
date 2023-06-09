@@ -18,7 +18,7 @@ check_shell() {
   fi
 
   if [[ ${BASH_VERSINFO[0]} -lt 4 ]] \
-    || { [[ ${BASH_VERSINFO[0]} == 4 ]] && [[ ${BASH_VERSINFO[1]} -lt 4 ]] } \
+    || { [[ ${BASH_VERSINFO[0]} == 4 ]] && [[ ${BASH_VERSINFO[1]} -lt 4 ]]; } \
   ; then
     cat >&2 <<EOF
 ${YELLOW_ESC}
