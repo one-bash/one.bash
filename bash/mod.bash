@@ -208,7 +208,7 @@ create_mod() {
     log_verb "$log_tag:RUN" "$RUN"
     # shellcheck disable=2094
     (eval "$RUN" 2>&1 1>>"$ONE_LOG_FILE" | tee -a "$ONE_LOG_FILE" >&2) ||
-      { log_err "$log_tag:RUN" "[Failed] $RUN"; return 7; }
+      { log_err "$log_tag:RUN" "Failed to execute cmd: $RUN"; return 7; }
   fi
 
   ONE_LOAD_PRIORITY=$(get_opt "$opt_path" ONE_LOAD_PRIORITY)
@@ -323,6 +323,8 @@ enable_mod() {
       disable_mod "$name" true
       download_mod_data "$name" "$opt_path"
       filepath=$(create_mod "$name")
+      [[ -z $filepath ]] && return
+
       enable_file "$name" "$filepath" || echo "Failed to enable '$name'."
     else
       echo "No found $t '$name'." >&2
