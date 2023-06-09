@@ -49,7 +49,7 @@ exit 0
 usage_l() { usage_list; }
 
 # one.bash:usage
-if (( $# == 0 )) then
+if (( $# == 0 )); then
   usage;
 elif [[ $1 == -h ]] || [[ $1 == --help ]]; then
   if (( $# > 1 )); then usage_"$2"; else usage; fi
