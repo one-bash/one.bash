@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 
-set -o errexit
-set -o nounset
-set -o pipefail
-set -o errtrace
+set -o errexit -o nounset -o pipefail -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
 # one.bash:usage
@@ -73,7 +70,7 @@ git_update() {
 git_status() {
   local dir=$1
   shift
-  echo "[$(basename "$dir")]"
+  printf '%b%s%b\n' "$REV_GREEN" "[$(basename "$dir")]" "$RESET_ALL"
   git -C "$dir" show --oneline -s
   echo ""
 }
@@ -128,6 +125,9 @@ shift
 
 # shellcheck source=../../bash/load-config.bash
 . "$ONE_DIR/bash/load-config.bash"
+
+# shellcheck source=../deps/colors.bash
+. "$ONE_DIR/deps/colors.bash"
 
 case "$action" in
   i|install) install ;;
