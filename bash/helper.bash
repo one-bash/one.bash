@@ -41,6 +41,18 @@ one_PATH_insert() {
   PATH="$path:$PATH"
 }
 
+one_MANPATH_append() {
+  local path=$1
+  if [[ ! -d $path ]] || [[ $MANPATH =~ $path ]]; then return 0; fi
+  MANPATH="$MANPATH:$path"
+}
+
+one_MANPATH_insert() {
+  local path=$1
+  if [[ ! -d $path ]] || [[ $MANPATH =~ $path ]]; then return 0; fi
+  MANPATH="$path:$MANPATH"
+}
+
 # Add function to PROMPT_COMMAND
 # @param function_name
 one_prompt_append() {
