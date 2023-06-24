@@ -18,12 +18,12 @@ log_info() {
   local tag=$1
   shift 1
   local msg="$*"
-  printf "[%s][INFO][$tag] %s\n" "$(date +"%Y-%m-%d %H:%M:%S")" "$msg" | tee -a "$ONE_LOG_FILE"
+  printf "[%s][INFO][$tag] %s\n" "$(date +"%Y-%m-%d %H:%M:%S")" "$msg" | tee -a "$ONE_LOG_FILE" >&2
 }
 
 log_verb() {
   local tag=$1
   shift 1
   local msg="$*"
-  printf "[%s][VERB][$tag] %s\n" "$(date +"%Y-%m-%d %H:%M:%S")" "$msg" | tee -a "$ONE_LOG_FILE"
+  printf "[%s][VERB][$tag] %s\n" "$(date +"%Y-%m-%d %H:%M:%S")" "$msg" | tee -a "$ONE_LOG_FILE" >&2
 }
