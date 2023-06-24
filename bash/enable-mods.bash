@@ -12,17 +12,31 @@ _load_enabled() {
   local filepath=$1
   set -- # prevent the sourced script receiving the arguments of function _load_enabled
 
-  local filename
+  local filename mod_name mod_type
   filename=$(basename "$filepath")
-  # shellcheck disable=2207
-  local list=( $(<<<"$filename" sed -E 's/^[[:digit:]]{3}---(.+)\.(.+)\.bash$/\1 \2/') )
-  local mod_name="${list[0]}"
-  local mod_type="${list[1]}"
+  case $filename in
+    *.plugin.bash)
+      mod_name=${filename:6:-12}
+      mod_type=plugin
+      ;;
+    *.completion.bash)
+      mod_name=${filename:6:-16}
+      mod_type=completion
+      ;;
+    *.alias.bash)
+      mod_name=${filename:6:-11}
+      mod_type='alias'
+      ;;
+    *)
+      echo "[_load_enabled] Invalid filename=$filename" >&2
+      return 4
+      ;;
+  esac
 
   # shellcheck disable=SC1090
   source "$filepath" \
-    1> >(sed -E "s|^(.+)|[one.bash ${mod_type}/${mod_name}]: \1|") \
-    2> >(sed -E "s|^(.+)|${RED_ESC}[one.bash ${mod_type}/${mod_name}]: \1${RESET_ALL_ESC}|" >&2) \
+    1> >(awk "{print \"[one.bash ${mod_type}/${mod_name}]: \" \$0}") \
+    2> >(awk "{print \"${RED_ESC}[one.bash ${mod_type}/${mod_name}]: \" \$0 \"${RESET_ALL_ESC}\"}" >&2) \
     || load_failed "$?"
 }
 
