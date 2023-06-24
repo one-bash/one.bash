@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 # How to install bash: https://www.gnu.org/software/bash/manual/bash.html#Basic-Installation
 
-set -o errexit
-set -o nounset
-set -o pipefail
-set -o errtrace
+set -o errexit -o nounset -o pipefail -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
 SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
