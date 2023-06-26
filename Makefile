@@ -1,6 +1,14 @@
 include ./makefile-utils/*.mk
 .DEFAULT_GOAL := help
 
+deps: deps/one_l.bash deps/lobash.bash
+
+deps/one_l.bash:
+	lobash-gen -c ./deps/one_l.conf ./deps/one_l.bash
+
+deps/lobash.bash:
+	lobash-gen -y -m 4.4 -p l. ./deps/lobash.bash
+
 .PHONY: act-linux act-mac test
 
 test:
