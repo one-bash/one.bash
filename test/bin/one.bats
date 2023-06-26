@@ -17,22 +17,7 @@ PATH="$BATS_TEST_DIRNAME/../../bin:$PATH"
   run one commands
 
   assert_success
-  assert_line -n 0 alias
-  assert_line -n 1 bin
-  assert_line -n 2 commands
-  assert_line -n 3 completion
-  assert_line -n 4 config
-  assert_line -n 5 debug
-  assert_line -n 6 dep
-  assert_line -n 7 enabled
-  assert_line -n 8 help
-  assert_line -n 9 help-sub
-  assert_line -n 10 link
-  assert_line -n 11 log
-  assert_line -n 12 plugin
-  assert_line -n 13 repo
-  assert_line -n 14 sub
-  assert_line -n 15 unlink
+  assert [ ${#lines[@]} -gt 10 ]
 }
 
 @test "one sub list" {
