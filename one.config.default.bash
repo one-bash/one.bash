@@ -19,28 +19,8 @@ ONE_BASHRC_FO=${ONE_BASHRC_FO:-$ONE_DIR/bash/bashrc.failover.bash}
 # The log file of one.bash
 ONE_LOG_FILE=${ONE_LOG_FILE:-$ONE_DIR/tmp/one.log}
 
-# one.share
-# If set false, do not enable https://github.com/one-bash/one.share
-ONE_SHARE_ENABLE=${ONE_SHARE_ENABLE:-true}
-ONE_SHARE_GIT=${ONE_SHARE_GIT:-https://github.com/one-bash/one.share.git}
-ONE_SHARE_BRANCH=${ONE_SHARE_BRANCH:-master}
-# The target path for git clone
-ONE_SHARE_DIR=${ONE_SHARE_DIR:-$ONE_DIR/deps/one.share}
-
-# Bash-it
-ONE_BASH_IT_ENABLE=${ONE_BASH_IT_ENABLE:-true}
-ONE_BASH_IT_GIT=${ONE_BASH_IT_GIT:-https://github.com/Bash-it/bash-it}
-ONE_BASH_IT_BRANCH=${ONE_BASH_IT_BRANCH:-master}
-# The target path for git clone
-ONE_BASH_IT_DIR=${ONE_BASH_IT_DIR:-$ONE_DIR/deps/bash-it}
-
-# Add external one.bash repos
-one_l.is_array ONE_REPOS || ONE_REPOS=()
-[[ $ONE_SHARE_ENABLE == true ]] && ONE_REPOS+=("$ONE_SHARE_DIR")
-[[ $ONE_BASH_IT_ENABLE == true ]] && ONE_REPOS+=("$ONE_DIR"/deps/one-bash-it)
-
 # Reset environment variable PATH.
-# Most users don't need to modify ONE_PATHS. Use ONE_REPOS.
+# Most users don't need to modify ONE_PATHS.
 one_l.is_array ONE_PATHS || ONE_PATHS=(
   # MacOS users notice: /usr/libexec/path_helper will set the PATH.
   # Refer to https://scriptingosx.com/2017/05/where-paths-come-from/
@@ -59,7 +39,9 @@ one_l.is_array ONE_PATHS || ONE_PATHS=(
   /usr/sbin
   /sbin
 
-  ONE_REPO_BINS # The path "$ONE_REPO/bin" of each ONE_REPO will fill into PATH
+  "$ONE_DIR/bin"
+
+  ONE_REPO_BINS # The "bin" directory path of each ONE REPO will fill into the ONE_REPO_BINS
 )
 
 # Skip one.bash components

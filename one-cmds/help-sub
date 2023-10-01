@@ -58,12 +58,12 @@ colorful() {
 
 print_help() {
   local cmd="${1:-}"
-  local ONE_REPO file label arg
+  local repo file label arg
 
   # shellcheck disable=2153
-  for ONE_REPO in "${ONE_REPOS[@]}"; do
-    if [[ -f "$ONE_REPO/sub/$cmd" ]]; then
-      file="$ONE_REPO/sub/$cmd"
+  for repo in "${ONE_DIR}"/enabled/repos/*; do
+    if [[ -f "$repo/sub/$cmd" ]]; then
+      file="$repo/sub/$cmd"
       break
     fi
   done

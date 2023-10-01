@@ -22,7 +22,7 @@ main() {
   {
     shopt -s nullglob
     for path in "$ONE_DIR/one-cmds/"*; do
-      if [[ -x $path ]]; then
+      if [[ -x $path/main ]] || [[ -x $path ]]; then
         echo "${path##"$ONE_DIR/one-cmds/"}"
       fi
     done

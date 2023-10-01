@@ -11,11 +11,10 @@ An elegant framework to manage commands, completions, dotfiles for bash players.
 
 - Manage collections of dotfiles in one place. Using YAML file to manage soft-links via [dotbot][].
 - Manage shell scripts, completions, aliases by [modules](#modules). Support custom modules.
-- Easy to share and reuse executable files, sub commands, configs and modules by [repo](#onerepos). Read [one.share][].
-- Support custom repo and multiple repos. Managed by [`ONE_REPOS`](#onerepos).
+- Easy to share and reuse executable files, sub commands, configs and modules by [repo](#one-repo). Support custom repo and multiple repos.
 - Manage commands under your own scope. Like `a <cmd>` to invoke command that no worry about duplicated in `PATH`. Read the [ONE_SUB Commands](./docs/advanced-usage/one-sub-cmd.md).
-- Support custom one.bash. Read [ONE_CONF](#oneconf).
-- Support [bash-it][]. You can use `one` commands to manage bash-it's aliases/completions/plugins. Read [bash-it.md](./docs/advanced-usage/bash-it.md).
+- Configurable one.bash. Read [ONE_CONF](#oneconf).
+- Support [bash-it][] via [one-bash-it][]. You can use `one` commands to manage bash-it's aliases/completions/plugins. Read [bash-it.md](./docs/advanced-usage/bash-it.md).
 - Support [Fig][]. Read [docs/advanced-usage/fig.md](./docs/advanced-usage/fig.md).
 
 ## Environments
@@ -95,9 +94,6 @@ cat <<-EOF >"$ONE_CONF"
 DOTFILES_DIR="$DOTFILES_DIR"
 
 ONE_DEBUG=false
-ONE_REPOS=(
-  "$DOTFILES_DIR"
-)
 ONE_LINKS_CONF() {
   case "$1" in
     *) echo "$DOTFILES_DIR"/one.links.yaml ;;
@@ -139,13 +135,7 @@ ONE_LINKS_CONF() {
 The [dotbot][] is a tool to manage symbol links of dotfiles and any other files. It is a part of one.bash.
 You can use it to create symbol links to any files.
 
-There is a dotbot config template in [one.share][]. You can copy [one.links.example.yaml][] to your directory.
-
-```sh
-cp "$ONE_SHARE_DIR"/one.links.example.yaml "$DOTFILES_DIR"/one.links.yaml
-# Edit the one.links.yaml for your demand
-$EDITOR "$DOTFILES_DIR"/one.links.yaml
-```
+[one.share][] provides a dotbot config template [one.links.example.yaml][]. You can copy its content to `one.links.yaml`.
 
 Invoke `one link` to create symbol links based on ONE_LINKS_CONF file.
 **Notice: Do not invoke `one link` with sudo.**
@@ -157,27 +147,29 @@ See https://github.com/anishathalye/dotbot/wiki/Plugins
 
 ## Usage
 
-If `ONE_SHARE_ENABLE` is true, invoke `$ONE_SHARE_ENABLE/recommended-modules` to enable recommended modules in one.share.
-
-If `ONE_BASH_IT_ENABLE` is true, invoke `one completion enable aliases.completion`.
-
 ## ONE Commands
 
 The `one` command is used to manage one.bash modules, one.config, and dependencies.
 
-Invoke `one` to show usage of it.
-
 ```
+# Enter "one" to show the usage.
+$ one
 Usage:
     one help [<CMD>]            Show the usage of one command
     one [<CMD>] [-h|--help]     Show the usage of one command
     one help-sub [<SUB_CMD>]    Show the usage of ONE_SUB command
 
+    one r
     one repo                    Manage one.bash repos
+    one a
     one alias                   Manage aliases in ONE_REPO/aliases/
+    one c
     one completion              Manage completions in ONE_REPO/completions/
+    one p
     one plugin                  Manage plugins in ONE_REPO/plugins/
-    one enabled                 List enabled modules (alias/completion/plugin)
+
+    one enabled                 Manage enabled modules (alias/completion/plugin)
+    one disable-all             Disable all modules (alias/completion/plugin)
 
     one config                  Manage user's ONE_CONF
     one commands                List one commands
@@ -193,7 +185,6 @@ Usage:
 Desc:
     An elegant framework to manage commands, completions, dotfiles for terminal players.
     Source code: https://github.com/one-bash/one.bash
-    /Users/adoyle/.config/one.bash/one.config.bash
 
 Arguments:
     <CMD>                       The one command
@@ -225,19 +216,22 @@ It's suggested to move your shell codes to modules for management.
 
 Read the [Module document](./docs/advanced-usage/module.md) for details.
 
-## ONE_REPOS
+## One Repo
 
 one.bash is just a management framework. It does not contain any dotfiles, configs.
-The official repo [one.share][] provides them to enhance shell.
+The official repo [one.share][] and [one-bash-it][] provides them to enhance shell.
 
-one.bash enable [one.share][] and [bash-it][] by default.
-You can disable them by `ONE_SHARE_ENABLE=false` and `ONE_BASH_IT_ENABLE=false` in `ONE_CONF`.
+- List all local repos: `one repo list`
+- Download and enable repo:
+  - `one repo add https://github.com/one-bash/one.share`
+  - `one repo add git@github.com:one-bash/one.share.git`
+  - `one repo add /local/directory`
+- Enable repo: `one repo enable one.share`
+- Disable repo: `one repo disable one.share`
+- Update repo: `one repo update one.share`
+- Remove repo: `one repo remove one.share`
+- Create repo: You can create your own repo. Read the [document](./docs/advanced-usage/repo.md#create-repo) for details.
 
-You can create your own ONE repo. Read the [Create Repo](./docs/advanced-usage/repo.md#create-repo) for details.
-
-Just add repo's filepath to `ONE_REPOS` to enable the repo, or remove from `ONE_REPOS` to disable it.
-
-Invoke `one repo l` to list ONE repos based on `ONE_CONF`.
 
 ## ONE_SUB Commands
 
@@ -289,6 +283,7 @@ Read the [NOTICE][] file distributed with this work for additional information r
 <!-- links -->
 
 [one.share]: https://github.com/one-bash/one.share
+[one-bash-it]: https://github.com/one-bash/one-bash-it
 [one.config.default]: ./one.config.default.bash
 [one.links.example.yaml]: https://github.com/one-bash/one.share/blob/master/one.links.example.yaml
 [composure]: https://github.com/adoyle-h/composure.git

@@ -1,16 +1,18 @@
 # ONE Repo
 
 one.bash is just a management framework. It does not contain any dotfiles, configs.
-I have created [one.share][] (an official repo) to enhance shell.
+The official repo [one.share][] and [one-bash-it][] provides them to enhance shell.
 
-one.bash enable [one.share][] (an official repo) and [bash-it][] (not one.bash official repo) by default.
-You can disable them by `ONE_SHARE_ENABLE=false` and `ONE_BASH_IT_ENABLE=false` in `ONE_CONF`.
-
-You can create your own ONE repo. Read the [Create Repo](#create-repo).
-
-Just add repo's filepath to `ONE_REPOS` to enable the repo, or remove from `ONE_REPOS` to disable it.
-
-Invoke `one repo l` to list ONE repos based on `ONE_CONF`.
+- List all local repos: `one repo list`
+- Download and enable repo:
+  - `one repo add https://github.com/one-bash/one.share`
+  - `one repo add git@github.com:one-bash/one.share.git`
+  - `one repo add /local/directory`
+- Enable repo: `one repo enable one.share`
+- Disable repo: `one repo disable one.share`
+- Update repo: `one repo update one.share`
+- Remove repo: `one repo remove one.share`
+- Create repo: You can create your own repo. Read the [document](#create-repo) for details.
 
 ## File Structure
 
@@ -49,4 +51,5 @@ A ONE Repo's file structure should be that.
 <!-- links -->
 
 [one.share]: https://github.com/one-bash/one.share
+[one-bash-it]: https://github.com/one-bash/one-bash-it
 [bash-it]: https://github.com/Bash-it/bash-it

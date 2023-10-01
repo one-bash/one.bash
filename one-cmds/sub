@@ -19,13 +19,14 @@ scan_dir() {
 
 list_subs() {
   local full=${1:-}
+  local repo
 
   shopt -s nullglob
 
   # shellcheck disable=2153
-  for ONE_REPO in "${ONE_REPOS[@]}"; do
-    if [[ ! -d $ONE_REPO/sub ]]; then continue; fi
-    scan_dir "$ONE_REPO/sub"
+  for repo in "$ONE_DIR"/enabled/repos/*; do
+    if [[ ! -d $repo/sub ]]; then continue; fi
+    scan_dir "$repo/sub"
   done | uniq
 }
 
@@ -97,11 +98,11 @@ fi
 
 which_sub() {
   local name=$1
-  local path
+  local path repo
 
-  for ONE_REPO in "${ONE_REPOS[@]}"; do
-    if [[ -x $ONE_REPO/sub/$name ]]; then
-      echo "$ONE_REPO/sub/$name"
+  for repo in "$ONE_DIR"/enabled/repos/*; do
+    if [[ -x $repo/sub/$name ]]; then
+      echo "$repo/sub/$name"
       return 0
     fi
   done

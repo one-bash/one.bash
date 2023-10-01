@@ -18,5 +18,5 @@ It will execute scripts in order:
   - Load settings for OS.
   - Enable Fig if `$ONE_FIG` is true
   - Enable `one` and `$ONE_SUB` auto-completions. [bash/one-complete.bash](../bash/one-complete.bash)
-  - Load bash-it.sh if `ONE_BASH_IT_ENABLE` is true.
+  - Execute `repo_load` function if it defined in `one.repo.bash` of each repo.
   - Load [enabled modules](../enabled/) if `ONE_NO_MODS` is false.

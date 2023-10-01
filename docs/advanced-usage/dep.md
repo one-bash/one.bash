@@ -4,8 +4,8 @@
 
 - [dotbot][]: To create symbol links and manage them with config.
 - [composure][]: Provides functions for modules
-- [one.share][]: It can be disabled by `ONE_SHARE_ENABLE=false` in `ONE_CONF`.
-- [bash-it](https://github.com/Bash-it/bash-it): It can be disabled by `ONE_BASH_IT_ENABLE=false` in `ONE_CONF`.
+- [one.share][]
+- [one-bash-it](https://github.com/one-bash/one-bash-it): wrapped [bash-it][].
 
 You can use `one dep` to manage these dependencies.
 

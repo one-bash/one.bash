@@ -49,7 +49,7 @@ if (( $# > 0 )); then
 else
   # shellcheck source=../bash/load-config.bash
   . "$ONE_DIR/bash/load-config.bash"
-  export ONE_DIR ONE_SUB ONE_CONF ONE_SHARE_DIR
+  export ONE_DIR ONE_SUB ONE_CONF
 
   # shellcheck disable=1090
   . "$ONE_CONF"

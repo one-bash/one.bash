@@ -1,6 +1,7 @@
-/deps/*
-!/deps/colors.bash
-!/deps/build_lobash
+/deps/composure
+/deps/dotbot
+/deps/lobash.bash
+/deps/one_l.bash
 /test/fixture/bats
 /test/fixture/assert
 /test/fixture/bats-file

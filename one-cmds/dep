@@ -32,7 +32,7 @@ if [[ "${1:-}" == --complete ]]; then
   else
     case $2 in
       i|install|u|update|s|status)
-        words=(one.share one-bash-it bash-it composure dotbot)
+        words=(composure dotbot)
         printf '%s\n' "${words[@]}"
         ;;
     esac
@@ -78,28 +78,12 @@ git_status() {
 install() {
   SUBMOD=true git_clone "https://github.com/anishathalye/dotbot.git" "$ONE_DIR/deps/dotbot"
   git_clone "https://github.com/adoyle-h/composure.git" "$ONE_DIR/deps/composure"
-
-  if [[ ${ONE_SHARE_ENABLE:-} == true ]]; then
-    SUBMOD=true git_clone "$ONE_SHARE_GIT" "$ONE_SHARE_DIR" --branch "$ONE_SHARE_BRANCH"
-  fi
-
-  if [[ ${ONE_BASH_IT_ENABLE:-} == true ]]; then
-    git_clone "$ONE_BASH_IT_GIT" "$ONE_BASH_IT_DIR" --branch "$ONE_BASH_IT_BRANCH"
-
-    local BASH_IT_ONE_REPO="$ONE_DIR"/deps/one-bash-it
-    mkdir -p "$BASH_IT_ONE_REPO"
-    ln -nfs "$ONE_BASH_IT_DIR"/aliases/available "$BASH_IT_ONE_REPO"/aliases
-    ln -nfs "$ONE_BASH_IT_DIR"/completion/available "$BASH_IT_ONE_REPO"/completions
-    ln -nfs "$ONE_BASH_IT_DIR"/plugins/available "$BASH_IT_ONE_REPO"/plugins
-  fi
 }
 
 update() {
   if (( $# == 0 )); then
     SUBMOD=true git_update "$ONE_DIR/deps/dotbot"
     git_update "$ONE_DIR/deps/composure"
-    [[ ${ONE_SHARE_ENABLE:-} == true ]] && SUBMOD=true git_update "$ONE_SHARE_DIR"
-    [[ ${ONE_BASH_IT_ENABLE:-} == true ]] && git_update "$ONE_BASH_IT_DIR"
   else
     if [[ "$1" == dotbot ]] || [[ "$1" == one.share ]]; then
       SUBMOD=yes git_update "$ONE_DIR/deps/$1"
@@ -113,8 +97,6 @@ list_status() {
   if (( $# == 0 )); then
     git_status "$ONE_DIR/deps/dotbot"
     git_status "$ONE_DIR/deps/composure"
-    [[ ${ONE_SHARE_ENABLE:-} == true ]] && git_status "$ONE_SHARE_DIR"
-    [[ ${ONE_BASH_IT_ENABLE:-} == true ]] && git_status "$ONE_BASH_IT_DIR"
   else
     git_status "$ONE_DIR/deps/$1"
   fi

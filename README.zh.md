@@ -11,11 +11,10 @@
 
 - 集中管理一系列配置文件。使用 YAML 文件通过 [dotbot][] 来管理软链接。
 - 通过[模块](#模块)管理 shell 脚本、补语、别名。支持自定义模块。
-- 通过 [repo](#onerepos) 轻松分享和重用可执行文件、子命令、配置和模块。请阅读 [one.share][]。
-- 支持自定义 repo 和多个 repo。由 [`ONE_REPOS`](#onerepos) 管理。
+- 通过 [repo](#one-repo) 轻松分享和重用可执行文件、子命令、配置和模块。支持自定义 repo 和多个 repo。
 - 可以在一个作用域下管理自己的命令。如 `a <cmd>` 来调用命令，避免在 `PATH` 中重复命令。请阅读 [ONE_SUB Commands](./docs/advanced-usage/one-sub-cmd.md)。
-- 支持 one.bash 配置。阅读 [ONE_CONF](#oneconf)。
-- 支持 [bash-it][]。你可以使用 one 命令来管理 bash-it 的 aliases/completions/plugins。请阅读 [bash-it.md](./docs/advanced-usage/bash-it.md)。
+- 可配置的 one.bash。请阅读 [ONE_CONF](#oneconf)。
+- 支持 [bash-it][]。使用 [one-bash-it][] 即可。你可以使用 one 命令来管理 bash-it 的 aliases/completions/plugins。请阅读 [bash-it.md](./docs/advanced-usage/bash-it.md)。
 - 支持 [Fig][]。请阅读 [docs/advanced-usage/fig.md](./docs/advanced-usage/fig.md)。
 
 ## 环境
@@ -95,9 +94,6 @@ cat <<-EOF >"$ONE_CONF"
 DOTFILES_DIR="$DOTFILES_DIR"
 
 ONE_DEBUG=false
-ONE_REPOS=(
-  "$DOTFILES_DIR"
-)
 ONE_LINKS_CONF() {
   case "$1" in
     *) echo "$DOTFILES_DIR"/one.links.yaml ;;
@@ -139,13 +135,7 @@ ONE_LINKS_CONF() {
 [dotbot][] 是一个通过软链接管理配置文件（或者任何文件）的工具。
 你可以用它来创建软链接，指向任何文件。
 
-[one.share][] 提供了一个 dotbot 配置模板。你可以拷贝 [one.links.example.yaml][] 到你的目录。
-
-```sh
-cp "$ONE_SHARE_DIR"/one.links.example.yaml "$DOTFILES_DIR"/one.links.yaml
-# Edit the one.links.yaml for your demand
-$EDITOR "$DOTFILES_DIR"/one.links.yaml
-```
+[one.share][] 提供了 dotbot 配置模板 [one.links.example.yaml][]。你可以拷贝内容到 `one.links.yaml`。
 
 调用 `one link` 会根据 ONE_LINKS_CONF 创建软链接。
 **注意: 不要用 sudo 调用 `one link`。**
@@ -157,27 +147,29 @@ $EDITOR "$DOTFILES_DIR"/one.links.yaml
 
 ## 用法
 
-如果 `ONE_SHARE_ENABLE` 为 true，调用 `$ONE_SHARE_ENABLE/recommended-modules` 来启动 one.share 推荐的模块。
-
-如果 `ONE_BASH_IT_ENABLE` 为 true，调用 `one completion enable aliases.completion`。
-
 ## ONE 命令
 
 `one` 命令用来管理 one.bash 模块、配置以及依赖。
 
-调用 `one` 会显示用法。
-
 ```
+# 调用 `one` 会显示用法。
+$ one
 Usage:
     one help [<CMD>]            Show the usage of one command
     one [<CMD>] [-h|--help]     Show the usage of one command
     one help-sub [<SUB_CMD>]    Show the usage of ONE_SUB command
 
+    one r
     one repo                    Manage one.bash repos
+    one a
     one alias                   Manage aliases in ONE_REPO/aliases/
+    one c
     one completion              Manage completions in ONE_REPO/completions/
+    one p
     one plugin                  Manage plugins in ONE_REPO/plugins/
-    one enabled                 List enabled modules (alias/completion/plugin)
+
+    one enabled                 Manage enabled modules (alias/completion/plugin)
+    one disable-all             Disable all modules (alias/completion/plugin)
 
     one config                  Manage user's ONE_CONF
     one commands                List one commands
@@ -193,7 +185,6 @@ Usage:
 Desc:
     An elegant framework to manage commands, completions, dotfiles for terminal players.
     Source code: https://github.com/one-bash/one.bash
-    /Users/adoyle/.config/one.bash/one.config.bash
 
 Arguments:
     <CMD>                       The one command
@@ -225,17 +216,23 @@ one.bash 使用模块来管理脚本。
 
 详见[模块文档](./docs/advanced-usage/module.md)。
 
-## ONE_REPOS
+## One Repo
 
 one.bash 只是一个管理框架。它不包含任何配置文件。
-推荐使用官方的 REPO [one.share][]，它提供了很多配置来增强 shell 体验。
-
-one.bash 默认启用 [one.share][] 和 [bash-it][] 。
-你可以通过`ONE_SHARE_ENABLE=false` 和 `ONE_BASH_IT_ENABLE=false` 在 `ONE_CONF` 中禁用它们。
+推荐使用官方的 REPO [one.share][] 和 [one-bash-it][] ，它们提供了很多配置来增强 shell 体验。
 
 你可以创建你自己的 ONE REPO。阅读 [Create Repo](./docs/advanced-usage/repo.md#create-repo) 了解详情。
 
-只需将 REPO 的文件路径添加到 `ONE_REPOS` 中即可启用该 REPO，或从 `ONE_REPOS` 中删除以禁用它。
+- 列出所有本地 repo: `one repo list`
+- 下载并启用 repo:
+  - `one repo add https://github.com/one-bash/one.share`
+  - `one repo add git@github.com:one-bash/one.share.git`
+  - `one repo add /local/directory`
+- 启用 repo: `one repo enable one.share`
+- 禁用 repo: `one repo disable one.share`
+- 更新 repo: `one repo update one.share`
+- 删除 repo: `one repo remove one.share`
+- 创建 repo: You can create your own repo. Read the [document](./docs/advanced-usage/repo.md#create-repo) for details.
 
 调用 `one repo l` 来列出当前使用的所有 REPO（根据 `ONE_CONF` 配置）。
 
@@ -288,6 +285,7 @@ Read the [NOTICE][] file distributed with this work for additional information r
 <!-- links -->
 
 [one.share]: https://github.com/one-bash/one.share
+[one-bash-it]: https://github.com/one-bash/one-bash-it
 [one.config.default]: ./one.config.default.bash
 [one.links.example.yaml]: https://github.com/one-bash/one.share/blob/master/one.links.example.yaml
 [composure]: https://github.com/adoyle-h/composure.git

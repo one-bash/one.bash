@@ -5,15 +5,11 @@ _one_is_completable() {
 # @param cmd_dir  command directory
 # @param cmd  command name
 _one_sub_cmd_completion() {
-  local cmd_dir="$1"
-  local cmd="${2:-}"
-
-  local cmd_path
-  cmd_path="$cmd_dir/$cmd"
+  local cmd_path="$1"
   if [[ ! -x "$cmd_path" ]]; then return 0; fi
 
   if _one_is_completable "$cmd_path"; then
-    shift 2
+    shift 1
     # shellcheck disable=2097,2098
     COMP_CWORD=$COMP_CWORD "$cmd_path" --complete "$@"
   fi
@@ -45,16 +41,17 @@ _comp_sub() {
   else
     # Expend options of sub command
     local cmd="${COMP_WORDS[1]}"
+    local repo
 
     if [[ $cmd == help ]]; then
-      _one_COMP_REPLY < <(_one_sub_cmd_completion "$ONE_DIR/one-cmds" "help-sub" "${COMP_WORDS[@]:2}")
+      _one_COMP_REPLY < <(_one_sub_cmd_completion "$ONE_DIR/one-cmds/help-sub" "${COMP_WORDS[@]:2}")
       return 0
     fi
 
-    for repo_path in "${ONE_REPOS[@]}"; do
-      if [[ ! -d "$repo_path/sub" ]]; then continue; fi
+    for repo in "${ONE_DIR}"/enabled/repos/*; do
+      if [[ ! -d "$repo/sub" ]]; then continue; fi
 
-      _one_COMP_REPLY < <(_one_sub_cmd_completion "$repo_path/sub" "$cmd" "${COMP_WORDS[@]:2}")
+      _one_COMP_REPLY < <(_one_sub_cmd_completion "$repo/sub/$cmd" "${COMP_WORDS[@]:2}")
     done
   fi
 }
@@ -89,8 +86,20 @@ _comp_one() {
       COMP_CWORD=$(( COMP_CWORD - 1 ))
       _comp_sub
     else
-      # Expend options of one command
-      _one_COMP_REPLY < <(_one_sub_cmd_completion "$ONE_DIR/one-cmds" "$cmd" "${COMP_WORDS[@]:2}")
+      case $cmd in
+        r) cmd=repo;;
+        a) cmd='alias';;
+        c) cmd=completion;;
+        p) cmd=plugin;;
+      esac
+
+      if [[ -d "$ONE_DIR/one-cmds/$cmd" ]]; then
+        # Expend options of one command
+        _one_COMP_REPLY < <(_one_sub_cmd_completion "$ONE_DIR/one-cmds/$cmd/main" "${COMP_WORDS[@]:2}")
+      else
+        # Expend options of one command
+        _one_COMP_REPLY < <(_one_sub_cmd_completion "$ONE_DIR/one-cmds/$cmd" "${COMP_WORDS[@]:2}")
+      fi
     fi
   fi
 }

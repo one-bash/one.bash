@@ -11,7 +11,7 @@ if [[ -z ${ONE_DIR:-} ]]; then
   return 78
 fi
 
-export ONE_DIR ONE_SUB ONE_CONF ONE_SHARE_DIR
+export ONE_DIR ONE_SUB ONE_CONF
 
 if [[ -z ${EPOCHREALTIME:-} ]]; then
   _one_now() { date +%s000; }
@@ -80,8 +80,8 @@ fi
 # shellcheck source=./one-complete.bash
 _one_load "bash/one-complete.bash"
 
-# shellcheck source=../deps/bash-it/lib/utilities.bash
-[[ $ONE_BASH_IT_ENABLE == true ]] && _one_load "$ONE_BASH_IT_DIR/bash_it.sh"
+# shellcheck source=./repo.bash
+_one_load "bash/repo.bash"
 
 # shellcheck source=./enable-mods.bash
 [[ $ONE_NO_MODS == false ]] && _one_load "bash/enable-mods.bash"

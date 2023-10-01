@@ -38,9 +38,25 @@ _one_load() {
   fi
 }
 
+_one_run() {
+  one_debug "Todo: $*"
+  before=$(_one_now)
+
+  "$@"
+
+  now=$(_one_now)
+  local elapsed=$(( now - before ))
+
+  if (( elapsed > ONE_DEBUG_SLOW_LOAD )); then
+    one_debug '%bRun %s in %sms%b' "$YELLOW" "$cmd" $elapsed "$RESET_ALL"
+  else
+    one_debug '%bRun %s in %sms%b' "$GREY" "$cmd" $elapsed "$RESET_ALL"
+  fi
+}
+
 _one_eval() {
   local cmd="eval \$($*)"
-  one_debug "To $cmd"
+  one_debug "Todo: $cmd"
   before=$(_one_now)
 
   eval "$("$@")"

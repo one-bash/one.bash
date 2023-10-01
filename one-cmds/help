@@ -9,7 +9,9 @@ if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
 Usage: one help [<CMD>]
        one help -a
 
-Desc: Print the usage of One Command.
+Desc:
+  Print the usage of One Command.
+  Enter "one -h" to see all command usages.
 
 Arguments:
   <CMD>  The sub command of one
