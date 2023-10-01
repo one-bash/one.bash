@@ -89,6 +89,7 @@ _comp_one() {
       case $cmd in
         r) cmd=repo;;
         a) cmd='alias';;
+        b) cmd=bin;;
         c) cmd=completion;;
         p) cmd=plugin;;
       esac

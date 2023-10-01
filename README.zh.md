@@ -163,6 +163,8 @@ Usage:
     one repo                    Manage one.bash repos
     one a
     one alias                   Manage aliases in ONE_REPO/aliases/
+    one b
+    one bin                     Manage executable files in ONE_REPO/bins/
     one c
     one completion              Manage completions in ONE_REPO/completions/
     one p

@@ -1,6 +1,7 @@
 # you can extend the mod map
 # shellcheck disable=2034
 readonly -A t_map=(
+  [bin]=bins
   [plugin]=plugins
   [completion]=completions
   [alias]=aliases
@@ -100,7 +101,7 @@ disable_mod() {
   done < <(match_enabled_modules "$name")
 
   if [[ $silent == false ]] && [[ $found == false ]]; then
-    echo "Not found enabled $t '$name'." >&2
+    echo "No matched enabled $t '$name'." >&2
   fi
 }
 
@@ -124,22 +125,27 @@ check_file() {
   local name=$1
   # shellcheck disable=2154
   if [[ ! -f "$t_dir/$name.bash" ]]; then
-    echo "No found $t '$name'" >&2
+    echo "No matched $t '$name'" >&2
     exit 1
   fi
 }
 
-# Search in ONE_REPO/<mod_type>/<name>.bash
+# Search in repo/<mod_type>/<name>.bash or repo/<mod_type>/<name>.opt.bash
 search_mod() {
   local name=$1
-  local repo
+  local -n output=$2
+  local path
 
-  for repo in "${ONE_DIR}"/enabled/repos/* ; do
-    if [[ -f "$repo/$ts/$name.bash" ]]; then
-      echo "$repo/$ts/$name.bash"
-      return
-    fi
+  shopt -s nullglob
+  for path in "$ONE_DIR"/enabled/repos/*/"$ts/$name"{.bash,.opt.bash} ; do
+    output+=( "$path" )
   done
+}
+
+search_it() {
+  local -a filepaths=()
+  search_mod "$1" filepaths
+  printf '%s\n' "${filepaths[@]}"
 }
 
 _ask_update_mod_data() {
@@ -154,29 +160,37 @@ _ask_update_mod_data() {
       return 1;
     fi
   fi
-  echo "To download data..."
 }
 
 download_mod_data() {
-  local name=$1 url answer
+  local name=$1 opt_path=$2 url answer
   url=$(get_opt "$opt_path" URL)
 
   local MOD_DATA_ROOT="$ONE_DIR/data/$ts"
   local MOD_DATA_DIR="$MOD_DATA_ROOT/${name}"
   mkdir -p "$MOD_DATA_DIR"
 
-  if l.end_with "$url" '.git'; then
-    local target="$MOD_DATA_DIR/git"
-    if _ask_update_mod_data "$target"; then
-      printf 'To git clone "%s" "%s"\n' "$url" "$target" >&2
-      git clone --depth 1 --single-branch --recurse-submodules --shallow-submodules "$url" "$target"
+  if [[ -n $url ]]; then
+    if l.end_with "$url" '.git'; then
+      local target="$MOD_DATA_DIR/git"
+      if _ask_update_mod_data "$target"; then
+        printf 'To git clone "%s" "%s"\n' "$url" "$target" >&2
+        git clone --depth 1 --single-branch --recurse-submodules --shallow-submodules "$url" "$target"
+      fi
+    else
+      local target="$MOD_DATA_DIR/script.bash"
+      if _ask_update_mod_data "$target"; then
+        printf 'To curl -Lo "%s" "%s"\n' "$target" "$url" >&2
+        curl -Lo "$target" "$url"
+      fi
     fi
-  elif [[ -n $url ]]; then
-    local target="$MOD_DATA_DIR/script.bash"
-    if _ask_update_mod_data "$target"; then
-      printf 'To curl -Lo "%s" "%s"\n' "$target" "$url" >&2
-      curl -Lo "$target" "$url"
-    fi
+  else
+    (
+      install() { return 0; };
+      # shellcheck disable=1090
+      source "$opt_path"
+      eval "install" "$MOD_DATA_DIR"
+    )
   fi
 }
 
@@ -187,9 +201,16 @@ get_opt() {
   (source "$1" && eval "echo \"\${$2:-}\"")
 }
 
+# @param $1 The filepath that stores options
+# @param $2 The key
+get_opt_array() {
+  # shellcheck disable=1090
+  (source "$1" && eval "echo \"\${$2[@]:-}\"")
+}
+
 # Create completion mod file
 create_mod() {
-  local name=$1
+  local name=$1 opt_path=$2
   local MOD_DATA_ROOT="$ONE_DIR/data/$ts"
   local MOD_DATA_DIR="$MOD_DATA_ROOT/${name}"
   local MOD_FILE="$MOD_DATA_DIR/mod.bash"
@@ -270,7 +291,6 @@ get_enabled_link_to() {
   local path
   shopt -s nullglob
   path=$(echo "$ENABLED_DIR/"*---"$name.$t.bash")
-  shopt -u nullglob
   if [[ -n $path ]]; then
     readlink "$path"
   fi
@@ -288,9 +308,10 @@ enable_file() {
 }
 
 check_opt_mod_dep_cmds() {
+  local path=$1
   local -a DEP_CMDS
   # shellcheck disable=2207
-  IFS=' ' DEP_CMDS=( $(get_opt "$opt_path" DEP_CMDS) )
+  IFS=' ' DEP_CMDS=( $(get_opt "$path" DEP_CMDS) )
 
   local cmd
   for cmd in "${DEP_CMDS[@]}"; do
@@ -302,31 +323,38 @@ check_opt_mod_dep_cmds() {
 }
 
 enable_mod() {
-  local name=$1 filepath
+  local name=$1
+  local -a filepaths=()
 
-  filepath=$(search_mod "$name")
+  search_mod "$name" filepaths
 
-  if [[ -n $filepath ]]; then
-    # Disable first, prevent duplicated module enabled with different weight
-    disable_mod "$name" true
-    enable_file "$name" "$filepath" || echo "Failed to enable '$name'."
-  else
-    local opt_path
-    opt_path=$(search_mod "$name.opt")
-
-    if [[ -n $opt_path ]]; then
-      check_opt_mod_dep_cmds
-      # Disable first, prevent duplicated module enabled with different weight
-      disable_mod "$name" true
-      download_mod_data "$name" "$opt_path"
-      filepath=$(create_mod "$name")
-      [[ -z $filepath ]] && return
+  case ${#filepaths[@]} in
+    1)
+      local filepath=${filepaths[0]}
+      if [[ $filepath == *.opt.bash ]]; then
+        check_opt_mod_dep_cmds "$filepath"
+        # Disable first, prevent duplicated module enabled with different weight
+        disable_mod "$name" true
+        download_mod_data "$name" "$filepath"
+        filepath=$(create_mod "$name" "$filepath")
+        [[ -z $filepath ]] && return
+      else
+        # Disable first, prevent duplicated module enabled with different weight
+        disable_mod "$name" true
+      fi
 
       enable_file "$name" "$filepath" || echo "Failed to enable '$name'."
-    else
-      echo "No found $t '$name'." >&2
-    fi
-  fi
+      ;;
+    0)
+      echo "No matched $t '$name'" >&2
+      return 10
+      ;;
+    *)
+      echo "Matched multi $ts for '$name':" >&2
+      printf '  %s\n' "${filepaths[@]}" >&2
+      return 11
+      ;;
+  esac
 }
 
 enable_it() {
@@ -367,7 +395,7 @@ print_list_item() {
     fi
 
     # mod name -> real path
-    format="$format%b%s%b -> %b%s\n"
+    format="$format%b%-20s%b -> %b%s\n"
     prints+=(
       "$CYAN" "${list[1]}" "$GREY"
       "$RESET_ALL" "$(readlink "$line")"
@@ -379,11 +407,6 @@ print_list_item() {
 }
 
 list_mods() {
-  if [[ -z ${RESET_ALL:-} ]]; then
-    # shellcheck source=../deps/colors.bash
-    . "$ONE_DIR/deps/colors.bash"
-  fi
-
   if [[ -n "${opts[a]:-}" ]]; then
     # list all available mods
     if [[ -n "${opts[n]:-}" ]]; then
@@ -422,63 +445,92 @@ metafor () {
   sed -n "/$keyword / s/['\";]*\$//;s/^[      ]*\(: _\)*$keyword ['\"]*\([^([].*\)*\$/\2/p"
 }
 
+print_info_item() {
+  local key=$1
+  local val=$2
+
+  [[ -z $val ]] && return
+
+  printf '%b%10s%b: ' "$BLUE" "$key" "$RESET_ALL"
+  if [[ $val == true ]]; then
+    printf '%b%s' "$GREEN" "$val"
+  elif [[ $val == false ]]; then
+    printf '%b%s' "$RED" "$val"
+  else
+    printf '%s' "$val"
+  fi
+  printf '%b\n' "$RESET_ALL"
+}
+
 info_mod() {
   local name=$1
   local filepath
+  local -a filepaths=()
 
-  filepath=$(search_mod "$name")
+  search_mod "$name" filepaths
 
-  local ABOUT URL SCRIPT ONE_LOAD_PRIORITY
+  case ${#filepaths[@]} in
+    1)
+      local filepath=${filepaths[0]}
+      local ABOUT URL SCRIPT ONE_LOAD_PRIORITY
+      local enabled link_to repo
 
-  local enabled link_to
-  link_to=$(get_enabled_link_to "$name")
+      print_info_item Mod "$filepath"
 
-  if [[ -n $filepath ]]; then
-      echo "Mod: $filepath"
-    if [[ -n $link_to ]]; then
-      echo "Enabled: true"
-    else
-      echo "Enabled: false"
-    fi
-    ABOUT=$(metafor about-plugin <"$filepath")
-    ONE_LOAD_PRIORITY=$(get_weight "$filepath")
-    [[ -n ${ABOUT:-} ]] && echo "About: $ABOUT";
-    [[ -n ${ONE_LOAD_PRIORITY:-} ]] && echo "Priority: $ONE_LOAD_PRIORITY";
-  else
-    local opt_path
-    opt_path=$(search_mod "$name.opt")
+      link_to=$(get_enabled_link_to "$name")
+      print_info_item Enabled "$( [[ -n $link_to ]] && echo true || echo false )"
 
-    if [[ -n $opt_path ]]; then
-      echo "Mod: $opt_path"
-      # shellcheck disable=1090
-      (source "$opt_path" && {
-        if [[ -n $link_to ]]; then
-          echo "Enabled: true"
-        else
-          echo "Enabled: false"
-        fi
-        [[ -n ${ABOUT:-} ]] && echo "About: $ABOUT";
-        [[ -n ${ONE_LOAD_PRIORITY:-} ]] && echo "Priority: $ONE_LOAD_PRIORITY";
-        [[ -n ${URL:-} ]] && echo "URL: $URL";
-        [[ -n ${SCRIPT:-} ]] && echo "Script: $SCRIPT";
-        [[ -n ${DEP_CMDS:-} ]] && echo "DEP_CMDS: $DEP_CMDS";
-      })
-    else
-      echo "No found $t '$name'." >&2
+      if [[ $filepath =~ \/enabled\/repos\/([^\/]+)\/ ]]; then
+        print_info_item Repo "${BASH_REMATCH[1]}"
+      fi
+
+      if [[ $filepath == *.opt.bash ]]; then
+        (
+          # shellcheck disable=1090
+          source "$filepath"
+          print_info_item "About" "${ABOUT:-}"
+          print_info_item "Priority" "${ONE_LOAD_PRIORITY:-}"
+          print_info_item "URL" "${URL:-}"
+          print_info_item "Script" "${SCRIPT:-}"
+          print_info_item "DEP_CMDS" "${DEP_CMDS:-}"
+        )
+      else
+        ABOUT=$(metafor about-plugin <"$filepath")
+        ONE_LOAD_PRIORITY=$(get_weight "$filepath")
+        print_info_item "About" "${ABOUT:-}"
+        print_info_item "Priority" "${ONE_LOAD_PRIORITY:-}"
+      fi
+      ;;
+    0)
+      echo "No matched $t '$name'" >&2
       return 10
-    fi
-  fi
+      ;;
+    *)
+      echo "Matched multi $ts for '$name':" >&2
+      printf '  %s\n' "${filepaths[@]}" >&2
+      return 11
+      ;;
+  esac
 }
 
 edit_mod() {
   local name=$1
-  local filepath
+  local -a filepaths=()
 
-  filepath=$(search_mod "$name")
-  if [[ -z $filepath ]]; then
-    echo "Not found $t '$name'" >&2
-    return 10
-  fi
+  search_mod "$name" filepaths
 
-  ${EDITOR:-vi} "$filepath"
+  case ${#filepaths[@]} in
+    1)
+      ${EDITOR:-vi} "${filepaths[0]}"
+      ;;
+    0)
+      echo "No matched $t '$name'" >&2
+      return 10
+      ;;
+    *)
+      echo "Matched multi $ts for '$name':" >&2
+      printf '  %s\n' "${filepaths[@]}" >&2
+      return 11
+      ;;
+  esac
 }

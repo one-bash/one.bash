@@ -130,8 +130,11 @@ fi
 action=$1
 shift
 
-# shellcheck source=../../deps/lobash.bash
+# shellcheck source=../deps/lobash.bash
 . "$ONE_DIR/deps/lobash.bash"
+
+# shellcheck source=../deps/colors.bash
+. "$ONE_DIR/deps/colors.bash"
 
 declare -A opts=()
 declare -a args=()
@@ -146,7 +149,7 @@ case "$action" in
 
   i|info) if (( $# == 0 )); then usage; else info_mod "$1"; fi ;;
 
-  w|which) if (( $# == 0 )); then usage; else search_mod "$1"; fi ;;
+  w|which) if (( $# == 0 )); then usage; else search_it "$1"; fi ;;
 
   edit) if (( $# == 0 )); then usage; else edit_mod "$1"; fi ;;
 

@@ -39,9 +39,7 @@ one_l.is_array ONE_PATHS || ONE_PATHS=(
   /usr/sbin
   /sbin
 
-  "$ONE_DIR/bin"
-
-  ONE_REPO_BINS # The "bin" directory path of each ONE REPO will fill into the ONE_REPO_BINS
+  "$ONE_DIR/enabled/bin"
 )
 
 # Skip one.bash components
