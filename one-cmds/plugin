@@ -32,7 +32,7 @@ if [[ "${1:-}" == "--complete" ]]; then
     printf '%s\n' "${actions[@]}"
   elif [[ $2 =~ ^(l|list)$ ]] && (( COMP_CWORD < 4 )); then
     printf -- '--all\n-n\n'
-  elif [[ $2 =~ ^(w|which|i|info)$ ]] && (( COMP_CWORD < 4 )); then
+  elif [[ $2 =~ ^(w|which|i|info|edit)$ ]] && (( COMP_CWORD < 4 )); then
     list_mod
   elif [[ $2 =~ ^(e|enable)$ ]]; then
     compgen_enable_mod
@@ -51,11 +51,12 @@ Usage:  one $t <ACTION>
 Desc:   Manage $ts in ONE_REPO/$ts/
 
 Action:
-  e, enable           Enable matched $ts
-  d, disable          Disable matched $ts
-  l, list             List enabled $ts
-  i, info             Show info of matched $ts
-  w, which <NAME>     Show realpath of $t
+  e, enable <NAME>...            Enable matched $ts
+  d, disable <NAME>...           Disable matched $ts
+  l, list                        List enabled $ts
+  i, info <NAME>                 Show info of matched $ts
+  w, which <NAME>                Show realpath of $t
+  edit <NAME>                    Edit matched $ts
 EOF
   exit 0
 }
@@ -146,6 +147,8 @@ case "$action" in
   i|info) if (( $# == 0 )); then usage; else info_mod "$1"; fi ;;
 
   w|which) if (( $# == 0 )); then usage; else search_mod "$1"; fi ;;
+
+  edit) if (( $# == 0 )); then usage; else edit_mod "$1"; fi ;;
 
   *)
     echo "Invalid action '$action'" >&2

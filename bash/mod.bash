@@ -141,8 +141,6 @@ search_mod() {
       return
     fi
   done
-
-  printf '\n'
 }
 
 _ask_update_mod_data() {
@@ -468,6 +466,20 @@ info_mod() {
       })
     else
       echo "No found $t '$name'." >&2
+      return 10
     fi
   fi
+}
+
+edit_mod() {
+  local name=$1
+  local filepath
+
+  filepath=$(search_mod "$name")
+  if [[ -z $filepath ]]; then
+    echo "Not found $t '$name'" >&2
+    return 10
+  fi
+
+  ${EDITOR:-vi} "$filepath"
 }
