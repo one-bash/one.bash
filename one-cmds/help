@@ -36,23 +36,14 @@ if [[ $1 == '--complete' ]]; then
   exit
 fi
 
-colorful() {
-  local line
-  while IFS=$'\n' read -r line; do
-    if [[ $line =~ ^'Usage:' ]]; then
-      printf '%b%s%b\n' "$GREEN" "$line" "$RESET_ALL"
-    else
-      echo "$line"
-    fi
-  done
-}
-
 print_help() {
   local cmd="$1"
   local file="$ONE_DIR/one-cmds/$cmd"
   local label arg
 
-  if [[ ! -x "${file}" ]]; then
+  if [[ -x $ONE_DIR/one-cmds/$cmd/main ]]; then
+    file="$ONE_DIR/one-cmds/$cmd/main"
+  elif [[ ! -x "${file}" ]]; then
     printf '%bNot found command "%s".%b\n' "$YELLOW" "$cmd" "$RESET_ALL" >&2
     return "$ONE_EX_USAGE"
   fi
@@ -72,7 +63,7 @@ print_help() {
     arg=${arg#:}
   fi
 
-  "$file" "$arg" | colorful
+  "$file" "$arg"
 }
 
 print_all_helps() {
