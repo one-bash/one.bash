@@ -173,8 +173,9 @@ Usage:
     one enabled                 Manage enabled modules (alias/completion/plugin)
     one disable-all             Disable all modules (alias/completion/plugin)
 
-    one config                  Manage user's ONE_CONF
+    one backup                  Output backup scripts for current enabled modules
     one commands                List one commands
+    one config                  Manage user's ONE_CONF
     one debug                   Toggle debug mode on one.bash
     one dep                     Manage one.bash deps
     one link                    Create symlink files based on LINKS_CONF file

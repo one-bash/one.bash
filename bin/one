@@ -64,8 +64,9 @@ Usage:
     $name enabled                 Manage enabled modules (alias/completion/plugin)
     $name disable-all             Disable all modules (alias/completion/plugin)
 
-    $name config                  Manage user's ONE_CONF
+    $name backup                  Output backup scripts for current enabled modules
     $name commands                List one commands
+    $name config                  Manage user's ONE_CONF
     $name debug                   Toggle debug mode on one.bash
     $name dep                     Manage one.bash deps
     $name link                    Create symlink files based on LINKS_CONF file

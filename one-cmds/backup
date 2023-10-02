@@ -65,8 +65,14 @@ list_enabled_for_backup() {
   printf '\n'
 }
 
+list_enabled_bins() {
+  find "$ENABLED_DIR/bin" -maxdepth 1 -type l -exec basename {} \; \
+    | sort | tr '\n' ' '
+  printf '\n'
+}
+
 backup_content() {
-    cat <<EOF
+  cat <<EOF
 #!/usr/bin/env bash
 
 set -euE -o pipefail
@@ -75,13 +81,26 @@ set -euE -o pipefail
 one plugin disable --all
 one alias disable --all
 one completion disable --all
+one bin disable --all
 
 EOF
 
-    printf "%s %s\n\n" "one plugin enable" "$(list_enabled_for_backup plugin)"
-    printf "%s %s\n\n" "one alias enable" "$(list_enabled_for_backup alias)"
-    printf "%s %s\n\n" "one completion enable" "$(list_enabled_for_backup completion)"
-    printf '\necho "[All Done]"\n'
+  local path url
+  for path in "$ONE_DIR"/enabled/repos/* ; do
+    if [[ -d $path/.git ]]; then
+      url=$(git -C "$path" config --get remote.origin.url)
+    else
+      url=$(readlink "$path")
+    fi
+    echo "one repo add $url"
+  done
+
+  printf '\n'
+  printf "%s %s\n\n" "one plugin enable" "$(list_enabled_for_backup plugin)"
+  printf "%s %s\n\n" "one alias enable" "$(list_enabled_for_backup alias)"
+  printf "%s %s\n\n" "one completion enable" "$(list_enabled_for_backup completion)"
+  printf "%s %s\n\n" "one bin enable" "$(list_enabled_bins)"
+  printf '\necho "[All Done]"\n'
 }
 
 backup() {

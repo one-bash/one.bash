@@ -18,23 +18,26 @@ _show_usage() {
 }
 
 parse_help() {
+  local action
   if (( $# == 0 )); then
     _show_usage
     exit 0
   elif [[ $1 == -h ]] || [[ $1 == --help ]]; then
     if (( $# > 1 )); then
+      action=$(get_action "$2")
       # shellcheck disable=1090
       . "$ONE_DIR/one-cmds/$cmd/$action.bash"
-      usage_"$(get_action "$2")"
+      "usage_$action"
     else
       _show_usage
     fi
     exit 0
   elif [[ ${*: -1} == --help ]] ; then
     if (( $# > 1 )); then
+      action=$(get_action "$1")
       # shellcheck disable=1090
       . "$ONE_DIR/one-cmds/$cmd/$action.bash"
-      usage_"$(get_action "$1")";
+      "usage_$action";
     else
       _show_usage
     fi
