@@ -98,10 +98,14 @@ parse_cmd() {
   # shellcheck source=../deps/colors.bash
   . "$ONE_DIR/deps/colors.bash"
 
-# shellcheck source=../bash/load-config.bash
+  # shellcheck source=../bash/load-config.bash
   . "$ONE_DIR/bash/load-config.bash"
 
-# shellcheck disable=1090
+  if [[ ! -f "$ONE_DIR/one-cmds/$cmd/$action.bash" ]]; then
+    print_error "Invalid action: $action"
+    return 2
+  fi
+  # shellcheck disable=1090
   . "$ONE_DIR/one-cmds/$cmd/$action.bash"
   "${action}_${cmd}" "$@"
 }
@@ -124,7 +128,7 @@ print_info_item() {
 
   [[ -z $val ]] && return
 
-  printf '%b%-10s%b= ' "$BLUE" "$key" "$RESET_ALL"
+  printf "%b%${PRINT_INFO_KEY_WIDTH:--10}s%b= " "$BLUE" "$key" "$RESET_ALL"
 
   case ${val,,} in
     true|enabled)

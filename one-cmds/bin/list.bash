@@ -22,7 +22,7 @@ list_bin() {
   shopt -s nullglob
 
   for repo in "${ONE_DIR}"/enabled/repos/* ; do
-    printf '[%s]\n' "$repo"
+    printf '%b[%s]%b\n' "$BLUE" "$repo" "$RESET_ALL"
 
     for path in "$repo/bins"/* ; do
       name=$(basename "$path" '.opt.bash')
@@ -37,6 +37,5 @@ list_bin() {
     printf '\n'
   done
 
-
-  # list "$@" | uniq
+  printf "\n### The %bGREEN%b items are enabled. The WHITE items are availabled. ###\n" "$BOLD_GREEN" "$RESET_ALL"
 }

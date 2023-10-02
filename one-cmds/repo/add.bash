@@ -1,3 +1,14 @@
+usage_add() {
+  cat <<EOF
+Usage: one repo add <URL>
+
+Desc: Add a repo and enable it
+
+Arguments:
+  <URL>          Support http, git, local file
+EOF
+}
+
 get_repo_name() {
   local dir=$1
   local name

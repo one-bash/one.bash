@@ -1,6 +1,18 @@
+usage_remove() {
+  cat <<EOF
+Usage: one repo remove <NAME>...
+
+Desc: Remove a repo
+
+Arguments:
+  <NAME>      Repo name
+EOF
+}
+
 complete_remove() {
+  shopt -s nullglob
   local path
-  for path in "$ONE_DIR"/data/repos/*; do
+  for path in "$ONE_DIR/data/repos/${@: -1}"*; do
     if [[ -d $path ]] && [[ -f $path/one.repo.bash ]]; then
       # shellcheck disable=1091
       . "$path/one.repo.bash"

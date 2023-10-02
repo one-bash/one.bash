@@ -1,6 +1,6 @@
 complete_update() {
   local path
-  for path in "$ONE_DIR/data/repos/${1:-}"*; do
+  for path in "$ONE_DIR/data/repos/${@: -1}"*; do
     if [[ -d $path ]] && [[ -f $path/one.repo.bash ]]; then
       # shellcheck disable=1091
       . "$path/one.repo.bash"

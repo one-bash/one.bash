@@ -6,6 +6,7 @@ EOF
 }
 
 list_repo() {
+  shopt -s nullglob
   local repo name repo_status
 
   for repo in "$ONE_DIR"/data/repos/*; do

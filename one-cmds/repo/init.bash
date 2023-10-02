@@ -7,7 +7,6 @@ Desc: Scaffolding a repo in <PATH> (Defaults to \$PWD)
 Arguments:
   <PATH>  If <PATH> not passed, use current directory
 EOF
-  exit 0
 }
 
 complete_init() {

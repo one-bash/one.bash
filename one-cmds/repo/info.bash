@@ -1,13 +1,14 @@
 usage_info() {
   cat <<EOF
-Usage: one repo info
+Usage: one repo info <NAME>
 Desc:  Show the informations of repo
 EOF
 }
 
 complete_info() {
+  shopt -s nullglob
   local path
-  for path in "$ONE_DIR/data/repos/${1:-}"*; do
+  for path in "$ONE_DIR/data/repos/${@: -1}"*; do
     if [[ -d $path ]] && [[ -f $path/one.repo.bash ]]; then
       # shellcheck disable=1091
       . "$path/one.repo.bash"
@@ -22,8 +23,13 @@ search_repos() {
 }
 
 info_repo() {
-  local repo_name=$1
+  local repo_name=${1:-}
   local repo_path path
+
+  if [[ -z $repo_name ]]; then
+    usage_info
+    return 0
+  fi
 
   while read -r path; do
     repo_path=$(dirname "$path")
