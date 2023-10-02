@@ -11,9 +11,7 @@ fi
 # shellcheck source=../../one-cmds/util.bash
 . "$ONE_DIR/one-cmds/util.bash"
 
-# one.bash:completion
 actions=(init list add remove update info enable disable)
-parse_completion repo actions "$@"
 
 declare -A alias_map=(
   ['l']=list
@@ -25,6 +23,7 @@ declare -A alias_map=(
   ['i']=info
 )
 
+# one.bash:completion
+parse_completion repo actions "$@"
 # one.bash:usage
-
 parse_cmd repo "$@"

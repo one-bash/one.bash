@@ -1,3 +1,6 @@
+# shellcheck source=../one-cmds/util.bash
+. "$ONE_DIR/one-cmds/util.bash"
+
 # you can extend the mod map
 # shellcheck disable=2034
 readonly -A t_map=(
@@ -68,6 +71,18 @@ list_mod() {
 
 # -----------------------------------------------------------------------------
 
+get_enabled_repo_name() {
+  if [[ $1 =~ \/enabled\/repos\/([^\/]+)\/ ]]; then
+    echo "${BASH_REMATCH[1]}"
+  fi
+}
+
+get_repo_name() {
+  if [[ $1 =~ \/data\/repos\/([^\/]+)\/ ]]; then
+    echo "${BASH_REMATCH[1]}"
+  fi
+}
+
 # List all paths matched $ENABLED_DIR/*---$name.$t.bash
 match_enabled_modules() {
   local name=$1
@@ -101,7 +116,7 @@ disable_mod() {
   done < <(match_enabled_modules "$name")
 
   if [[ $silent == false ]] && [[ $found == false ]]; then
-    echo "No matched enabled $t '$name'." >&2
+    print_error "No matched enabled $t '$name'."
   fi
 }
 
@@ -110,11 +125,11 @@ disable_it() {
 
   if [[ ${1:-} == --all ]]; then
     for name in $(list_enabled "$t"); do
-      disable_mod "$name" || echo "Failed to disable '$name'."
+      disable_mod "$name" || print_error "Failed to disable '$name'."
     done
   else
     for name in "$@"; do
-      disable_mod "$name" || echo "Failed to disable '$name'."
+      disable_mod "$name" || print_error "Failed to disable '$name'."
     done
   fi
 }
@@ -125,7 +140,7 @@ check_file() {
   local name=$1
   # shellcheck disable=2154
   if [[ ! -f "$t_dir/$name.bash" ]]; then
-    echo "No matched $t '$name'" >&2
+    print_error "No matched $t '$name'"
     exit 1
   fi
 }
@@ -214,9 +229,13 @@ create_mod() {
   local MOD_DATA_ROOT="$ONE_DIR/data/$ts"
   local MOD_DATA_DIR="$MOD_DATA_ROOT/${name}"
   local MOD_FILE="$MOD_DATA_DIR/mod.bash"
+  local MOD_META="$MOD_DATA_DIR/meta.bash"
   local log_tag="enable:$t:$name"
-
+  local repo_name
   local ONE_LOAD_PRIORITY SCRIPT APPEND INSERT ABOUT URL RUN
+
+  repo_name=$(get_enabled_repo_name "$opt_path")
+  log_verb "$log_tag:mod_meta" "opt_path=$opt_path repo_name=$repo_name"
 
   APPEND=$(get_opt "$opt_path" APPEND)
   INSERT=$(get_opt "$opt_path" INSERT)
@@ -233,6 +252,11 @@ create_mod() {
   ABOUT=$(get_opt "$opt_path" ABOUT)
   SCRIPT=$(get_opt "$opt_path" SCRIPT)
   URL=$(get_opt "$opt_path" URL)
+
+  {
+    echo "$mod_annotation"
+    echo "repo_name=$repo_name"
+  } > "$MOD_META"
 
   echo "$mod_annotation" > "$MOD_FILE"
 
@@ -316,7 +340,8 @@ check_opt_mod_dep_cmds() {
   local cmd
   for cmd in "${DEP_CMDS[@]}"; do
     if one_l.has_not command "$cmd"; then
-      printf "The command '%s' is required but not found in host.\nSee %s to install it.\n"  "$cmd" "https://command-not-found.com/$cmd" >&2
+      printf "%bThe command '%s' is required but not found in host.\nSee %s to install it.%b\n" \
+        "$RED" "$cmd" "https://command-not-found.com/$cmd" "$RESET_ALL" >&2
       return 10
     fi
   done
@@ -343,14 +368,14 @@ enable_mod() {
         disable_mod "$name" true
       fi
 
-      enable_file "$name" "$filepath" || echo "Failed to enable '$name'."
+      enable_file "$name" "$filepath" || print_error "Failed to enable '$name'."
       ;;
     0)
-      echo "No matched $t '$name'" >&2
+      print_error "No matched $t '$name'"
       return 10
       ;;
     *)
-      echo "Matched multi $ts for '$name':" >&2
+      print_error "Matched multi $ts for '$name':"
       printf '  %s\n' "${filepaths[@]}" >&2
       return 11
       ;;
@@ -360,7 +385,7 @@ enable_mod() {
 enable_it() {
   local name
   for name in "$@"; do
-    enable_mod "$name" || echo "Failed to enable '$name'."
+    enable_mod "$name" || print_error "Failed to enable '$name'."
   done
 }
 
@@ -377,10 +402,11 @@ print_list_item() {
 
   while read -r line; do
     read -r -a list < <(basename "$line" | sed -E "s/^([[:digit:]]{3})---(.+)\.(.+)\.bash\$/\1 \2 \3/")
-    type=${list[2]:0:1}
+    type=${list[2]}
+    typeSymbol=${type:0:1}
 
     local -a prints=()
-    local format=''
+    local format='' mod_real_path repo_name
 
     # load-priority
     if [[ ${opts['priority']:-} != false ]]; then
@@ -391,14 +417,25 @@ print_list_item() {
     # mod type
     if [[ ${opts['type']:-} != false ]]; then
       format="$format%b%s "
-      prints+=("${MOD_TYPE_COLOR[${list[2]}]}" "${type^}")
+      prints+=("${MOD_TYPE_COLOR[${type}]}" "${typeSymbol^}")
     fi
 
     # mod name -> real path
-    format="$format%b%-20s%b -> %b%s\n"
+    format="$format%b%-20s%b %b%s\n"
+
+    mod_real_path="$(readlink "$line")"
+    if [[ $mod_real_path == $ONE_DIR/data/${t_map[$type]}/* ]]; then
+      repo_name="$(. "$(dirname "$mod_real_path")/meta.bash" && echo "$repo_name")"
+    elif [[ $mod_real_path =~ (.+)\/${t_map[$type]}\/ ]]; then
+      repo_path="${BASH_REMATCH[1]}"
+      repo_name="$(. "$repo_path"/one.repo.bash && echo "$name")"
+    else
+      repo_name="<noknown>"
+    fi
+
     prints+=(
       "$CYAN" "${list[1]}" "$GREY"
-      "$RESET_ALL" "$(readlink "$line")"
+      "$RESET_ALL" "$repo_name"
     )
 
     # shellcheck disable=2059
@@ -445,23 +482,6 @@ metafor () {
   sed -n "/$keyword / s/['\";]*\$//;s/^[      ]*\(: _\)*$keyword ['\"]*\([^([].*\)*\$/\2/p"
 }
 
-print_info_item() {
-  local key=$1
-  local val=$2
-
-  [[ -z $val ]] && return
-
-  printf '%b%10s%b: ' "$BLUE" "$key" "$RESET_ALL"
-  if [[ $val == true ]]; then
-    printf '%b%s' "$GREEN" "$val"
-  elif [[ $val == false ]]; then
-    printf '%b%s' "$RED" "$val"
-  else
-    printf '%s' "$val"
-  fi
-  printf '%b\n' "$RESET_ALL"
-}
-
 info_mod() {
   local name=$1
   local filepath
@@ -473,16 +493,14 @@ info_mod() {
     1)
       local filepath=${filepaths[0]}
       local ABOUT URL SCRIPT ONE_LOAD_PRIORITY
-      local enabled link_to repo
-
-      print_info_item Mod "$filepath"
+      local link_to repo
 
       link_to=$(get_enabled_link_to "$name")
-      print_info_item Enabled "$( [[ -n $link_to ]] && echo true || echo false )"
 
-      if [[ $filepath =~ \/enabled\/repos\/([^\/]+)\/ ]]; then
-        print_info_item Repo "${BASH_REMATCH[1]}"
-      fi
+      print_info_item Mod "$name"
+      print_info_item Enabled "$( [[ -n $link_to ]] && echo true || echo false )"
+      print_info_item Repo "$(get_enabled_repo_name "$filepath")"
+      print_info_item "Path" "$filepath"
 
       if [[ $filepath == *.opt.bash ]]; then
         (
@@ -502,11 +520,11 @@ info_mod() {
       fi
       ;;
     0)
-      echo "No matched $t '$name'" >&2
+      print_error "No matched $t '$name'"
       return 10
       ;;
     *)
-      echo "Matched multi $ts for '$name':" >&2
+      print_error "Matched multi $ts for '$name':"
       printf '  %s\n' "${filepaths[@]}" >&2
       return 11
       ;;
@@ -524,11 +542,11 @@ edit_mod() {
       ${EDITOR:-vi} "${filepaths[0]}"
       ;;
     0)
-      echo "No matched $t '$name'" >&2
+      print_error "No matched $t '$name'"
       return 10
       ;;
     *)
-      echo "Matched multi $ts for '$name':" >&2
+      print_error "Matched multi $ts for '$name':"
       printf '  %s\n' "${filepaths[@]}" >&2
       return 11
       ;;

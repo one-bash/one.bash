@@ -11,9 +11,7 @@ fi
 # shellcheck source=../../one-cmds/util.bash
 . "$ONE_DIR/one-cmds/util.bash"
 
-# one.bash:completion
 actions=(list info enable disable which)
-parse_completion bin actions "$@"
 
 declare -A alias_map=(
   ['e']=enable
@@ -23,6 +21,7 @@ declare -A alias_map=(
   ['w']=which
 )
 
+# one.bash:completion
+parse_completion bin actions "$@"
 # one.bash:usage
-
 parse_cmd bin "$@"

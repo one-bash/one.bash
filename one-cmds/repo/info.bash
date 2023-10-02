@@ -16,20 +16,31 @@ complete_info() {
   done
 }
 
+search_repos() {
+  local repo_name=$1
+  grep -l -E "name=['\"]?${repo_name}['\"]?" "$ONE_DIR"/data/repos/*/one.repo.bash
+}
+
 info_repo() {
-  local r=$1
-  local repo=$ONE_DIR/data/repos/$r
+  local repo_name=$1
+  local repo_path path
 
-  echo "repo_dir=$repo"
+  while read -r path; do
+    repo_path=$(dirname "$path")
+    print_info_item name "$repo_name"
+    print_info_item path "$repo_path"
 
-  if [[ -f "$repo/one.repo.bash" ]]; then
     (
-      # shellcheck disable=1091
-      . "$repo/one.repo.bash"
-      echo "name=$name"
+      # shellcheck disable=1090
+      . "$path"
       declare -f repo_add_post || true
       declare -f repo_update || true
       declare -f repo_load || true
     )
+  done < <(search_repos "$1")
+
+  if [[ -z "${repo_path:-}" ]]; then
+    print_error "No matched repo '$repo_name'"
+    return 2
   fi
 }

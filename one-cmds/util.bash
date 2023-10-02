@@ -66,7 +66,9 @@ parse_completion() {
   elif [[ $2 == -h ]] || [[ $2 == --help ]]; then
     printf '%s\n' "${_actions[@]}"
   else
-    local action=$2
+    local action
+    action="$(get_action "$2")"
+
     if [[ -f $ONE_DIR/one-cmds/$cmd/$action.bash ]]; then
       # shellcheck disable=1090
       . "$ONE_DIR/one-cmds/$cmd/$action.bash"
@@ -111,4 +113,33 @@ print_success() {
 
 print_verb() {
   printf "%b[Verbose] %s%b\n" "$GREY" "$1" "$RESET_ALL"
+}
+
+print_info_item() {
+  local key=$1
+  local val=$2
+
+  [[ -z $val ]] && return
+
+  printf '%b%-10s%b= ' "$BLUE" "$key" "$RESET_ALL"
+
+  case ${val,,} in
+    true|enabled)
+      printf '%b%s' "$GREEN" "$val"
+      ;;
+    false)
+      printf '%b%s' "$RED" "$val"
+      ;;
+    disabled)
+      printf '%b%s' "$GREY" "$val"
+      ;;
+    invalid)
+      printf '%b%s' "$YELLOW" "$val"
+      ;;
+    *)
+      printf '%s' "$val"
+      ;;
+  esac
+
+  printf '%b\n' "$RESET_ALL"
 }
