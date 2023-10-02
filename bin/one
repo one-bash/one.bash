@@ -71,6 +71,7 @@ Usage:
     $name link                    Create symlink files based on LINKS_CONF file
     $name unlink                  remove all symbol links based on LINKS_CONF file
     $name log                     Tail the logs of one.bash
+    $name search                  Search alias/bin/completion/plugin of each enabled repo.
     $name sub [<SUB_CMD>]         Run ONE_SUB command
     $name subs                    List ONE_SUB commands
     $name [--bashrc]              Print one.bash entry codes for bashrc

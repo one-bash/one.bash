@@ -180,6 +180,7 @@ Usage:
     one link                    Create symlink files based on LINKS_CONF file
     one unlink                  remove all symbol links based on LINKS_CONF file
     one log                     Tail the logs of one.bash
+    one search                  Search alias/bin/completion/plugin of each enabled repo.
     one sub [<SUB_CMD>]         Run ONE_SUB command
     one subs                    List ONE_SUB commands
     one [--bashrc]              Print one.bash entry codes for bashrc
