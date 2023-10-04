@@ -23,9 +23,9 @@ It's suggested to move your shell codes to modules.
 
 ## Write a module
 
-All modules must be put in one of aliases/completions/plugins folders. And its filename must be suffixed with `.bash`.
+All modules must be put in one of aliases/completions/plugins folders. And its filename must be suffixed with `.bash` or `.opt.bash`.
 
-### Module Template
+### Template of module.bash
 
 ```sh
 about-plugin 'Module Description'
@@ -34,6 +34,66 @@ about-plugin 'Module Description'
 ```
 
 Invoke `one <mod_type> enable <name>` and restart shell to enable the module.
+
+### Template of module.opt.bash
+
+For plugin,
+
+```sh
+ABOUT='Description of module'
+
+# URL can be a git protocal or http(s) resource url
+URL='https://github.com/akinomyoga/ble.sh.git'
+
+# To run command when `one <mod> enable`
+RUN='make -C "$MOD_DATA_DIR/git" install PREFIX="$MOD_DATA_DIR/dist"'
+
+# After "RUN" finish, then execute APPEND. The stdout will append to module content.
+APPEND='cat <<EOF
+. $MOD_DATA_DIR/dist/share/blesh/ble.sh &> "\$(tty)"
+EOF'
+
+# Execute INSERT before "RUN" start. The stdout will insert to module content.
+# INSERT=""
+
+# To check commands in host when `one <mod> enable`.
+# The DEP_CMDS is a string which includes one or more command names separated with spaces.
+DEP_CMDS='gawk'
+
+# If URL is omit, you may set an install() function to download the module requirements.
+# Download files to MOD_DATA_DIR directory.
+# install() {
+#   curl -o "$MOD_DATA_DIR"/file "http://..."
+# }
+```
+
+or
+
+```sh
+IFS='' # for multi-line string
+ABOUT='Tab completion using fzf. https://github.com/lincheney/fzf-tab-completion'
+URL=https://github.com/lincheney/fzf-tab-completion.git
+# The `git/` means the downloaded git repo from `URL`.
+SCRIPT=git/bash/fzf-bash-completion.sh
+ONE_LOAD_PRIORITY=801 # aliases.completion (LOAD_PRIORITY: 800) will reset completion function
+APPEND="cat <<EOF
+bind -x '\"\\t\": fzf_bash_completion'
+_fzf_bash_completion_loading_msg() {
+  printf '%b%s \\n' \"\\\${PS1@P}\" \"\\\${READLINE_LINE}\"  | tail -n 1
+}
+FZF_TAB_OPTS=''
+FZF_TAB_TMUX_OPTS='-h ~50% -w ~80%'
+EOF"
+```
+
+For completion,
+
+```sh
+# The URL to download a completion script
+URL='https://raw.githubusercontent.com/ziglang/shell-completions/master/_zig.bash'
+```
+
+For alias, same to plugin.
 
 ### ONE_LOAD_PRIORITY
 

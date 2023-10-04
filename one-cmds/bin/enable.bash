@@ -24,12 +24,31 @@ enable() {
     ln -fs "$path" "$ONE_DIR/enabled/bin/$name"
     printf "Enabled bin: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"
   elif [[ $path == *.opt.bash ]]; then
-    local t=bin  ts=bins
+    local t=bin ts=bins
     check_opt_mod_dep_cmds "$path"
     # Disable first, prevent duplicated module enabled with different weight
     disable_mod "$name" true
     download_mod_data "$name" "$path"
-    printf "Enabled bin: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"
+
+    local url bin_name
+
+    # shellcheck disable=1090
+    url=$(. "$path" && echo "${URL:-}")
+    if [[ -n $url ]]; then
+      chmod +x "$ONE_DIR/data/bins/$name/script.bash"
+
+      # shellcheck disable=1090
+      while read -r bin_name; do
+        ln -fs "$ONE_DIR/data/bins/$name/script.bash" "$ONE_DIR/enabled/bin/$bin_name"
+        printf "Enabled bin: %b%s%b (%s)\n" "$GREEN" "$bin_name" "$RESET_ALL" "$name"
+      done < <(. "$path" && echo "${EXPORTS[@]}")
+    else
+      # shellcheck disable=1090
+      while read -r bin_name; do
+        ln -fs "$ONE_DIR/data/bins/$name/$bin_name" "$ONE_DIR/enabled/bin/$bin_name"
+        printf "Enabled bin: %b%s%b (%s)\n" "$GREEN" "$bin_name" "$RESET_ALL" "$name"
+      done < <(. "$path" && echo "${EXPORTS[@]}")
+    fi
   else
     echo "No found bin file '$name'." >&2
     return 3
@@ -40,7 +59,10 @@ enable_bin() {
   shopt -s nullglob
   local name path
 
+  # shellcheck source=../../bash/mod.bash
   . "$ONE_DIR/bash/mod.bash"
+  # shellcheck source=../../deps/lobash.bash
+  . "$ONE_DIR/deps/lobash.bash"
 
   if [[ ${1:-} == --all ]]; then
     for path in "${ONE_DIR}"/enabled/repos/*/bins/*; do

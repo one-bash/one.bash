@@ -61,6 +61,7 @@ list_enabled() {
 }
 
 list_mod() {
+  shopt -s nullglob
   local repo
   for repo in "${ONE_DIR}/enabled/repos"/*; do
     if [[ ! -d "$repo/$ts" ]]; then continue; fi
@@ -178,12 +179,14 @@ _ask_update_mod_data() {
 }
 
 download_mod_data() {
-  local name=$1 opt_path=$2 url answer
-  url=$(get_opt "$opt_path" URL)
+  local name=$1 opt_path=$2
+  local url answer
 
   local MOD_DATA_ROOT="$ONE_DIR/data/$ts"
   local MOD_DATA_DIR="$MOD_DATA_ROOT/${name}"
   mkdir -p "$MOD_DATA_DIR"
+
+  url=$(get_opt "$opt_path" URL)
 
   if [[ -n $url ]]; then
     if l.end_with "$url" '.git'; then
@@ -200,11 +203,29 @@ download_mod_data() {
       fi
     fi
   else
+    local isEmpty=yes answer
+
+    shopt -s nullglob
+    for _ in "$MOD_DATA_DIR"/*; do
+      isEmpty=no
+      break
+    done
+
+    if [[ $isEmpty == no ]] ; then
+      read -r -p "Find existed data which may be outdated. Do you want to update it to latest? (y/[n])" answer
+      if [[ ${answer:-n} == y ]]; then
+        rm -rf "$MOD_DATA_DIR"
+        mkdir "$MOD_DATA_DIR"
+      else
+        return
+      fi
+    fi
+
     (
       install() { return 0; };
       # shellcheck disable=1090
       source "$opt_path"
-      eval "install" "$MOD_DATA_DIR"
+      install
     )
   fi
 }
@@ -475,12 +496,6 @@ list_mods() {
 }
 
 # -----------------------------------------------------------------------------
-
-metafor () {
-  local keyword=$1;
-  # Copy from composure.sh
-  sed -n "/$keyword / s/['\";]*\$//;s/^[      ]*\(: _\)*$keyword ['\"]*\([^([].*\)*\$/\2/p"
-}
 
 info_mod() {
   local name=$1

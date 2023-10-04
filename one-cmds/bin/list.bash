@@ -17,12 +17,12 @@ list() {
 }
 
 list_bin() {
-  local path repo name link
-
   shopt -s nullglob
+  local path repo name link repo_name
 
   for repo in "${ONE_DIR}"/enabled/repos/* ; do
-    printf '%b[%s]%b\n' "$BLUE" "$repo" "$RESET_ALL"
+    repo_name=$(basename "$repo")
+    printf '%b[%s]%b ' "$BLUE" "$repo_name" "$RESET_ALL"
 
     for path in "$repo/bins"/* ; do
       name=$(basename "$path" '.opt.bash')

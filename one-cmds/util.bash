@@ -150,3 +150,9 @@ print_info_item() {
 
   printf '%b\n' "$RESET_ALL"
 }
+
+metafor () {
+  local keyword=$1;
+  # Copy from composure.sh
+  sed -n "/$keyword / s/['\";]*\$//;s/^[      ]*\(: _\)*$keyword ['\"]*\([^([].*\)*\$/\2/p"
+}
