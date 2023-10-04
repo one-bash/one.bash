@@ -119,7 +119,7 @@ one_sub_cmd() {
     shift
     exec "$cmd_path" "$@"
   else
-    exec "$ONE_DIR/one-cmds/sub" list
+    exec one sub list
   fi
 }
 
@@ -132,6 +132,7 @@ one_cmd() {
     b) cmd=bin;;
     c) cmd=completion;;
     p) cmd=plugin;;
+    s) cmd=sub;;
   esac
 
   if [[ -x $ONE_DIR/one-cmds/$cmd/main ]]; then

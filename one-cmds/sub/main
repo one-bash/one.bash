@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -o errexit -o nounset -o pipefail -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+if [[ -z ${ONE_DIR:-} ]]; then
+  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+  readonly SCRIPT_DIR
+  export ONE_DIR=$SCRIPT_DIR/..
+fi
+
+# shellcheck source=../../one-cmds/util.bash
+. "$ONE_DIR/one-cmds/util.bash"
+
+actions=(list info enable disable which)
+
+declare -A alias_map=(
+  ['e']=enable
+  ['d']=disable
+  ['l']=list
+  ['i']=info
+  ['w']=which
+)
+
+# one.bash:completion
+parse_completion sub actions "$@"
+# one.bash:usage
+parse_cmd sub "$@"

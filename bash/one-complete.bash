@@ -92,6 +92,7 @@ _comp_one() {
         b) cmd=bin;;
         c) cmd=completion;;
         p) cmd=plugin;;
+        s) cmd=sub;;
       esac
 
       if [[ -d "$ONE_DIR/one-cmds/$cmd" ]]; then
