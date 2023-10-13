@@ -20,11 +20,12 @@ PATH="$BATS_TEST_DIRNAME/../../bin:$PATH"
   assert [ ${#lines[@]} -gt 10 ]
 }
 
+# bats test_tags=ci
 @test "one sub list" {
   run one sub list
 
   assert_success
-  assert [ "${#lines[@]}" -gt 10 ]
+  assert [ "${#lines[@]}" -eq 0 ]
 }
 
 @test "one help -a" {

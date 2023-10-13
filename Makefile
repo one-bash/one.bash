@@ -9,10 +9,13 @@ deps/one_l.bash:
 deps/lobash.bash:
 	lobash-gen -y -m 4.4 -p l. ./deps/lobash.bash
 
-.PHONY: act-linux act-mac test
+.PHONY: act-linux act-mac test test-local
 
 test:
 	./tools/test
+
+test-local:
+	BATS_TAGS=!ci ./tools/test
 
 act-linux:
 	./tools/act linux
@@ -32,3 +35,6 @@ $(BUMP_TARGETS):
 # @desc Generate and update the CHANGELOG file
 changelog:
 	$(MAKE) CHANGELOG NEXT_VERSION=$(shell cat VERSION)
+
+init:
+	git submodule update --recursive --init

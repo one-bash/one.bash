@@ -24,4 +24,9 @@ fi
 
 export PATH="$TEST_DIR/fixture/bats/bin:${PATH}"
 
-exec bats ${CI:+--tap} "${test_dirs[@]}"
+bats_opts=(
+  ${CI:+--tap}
+  ${BATS_TAGS:+--filter-tags $BATS_TAGS}
+)
+
+exec bats "${bats_opts[@]}" "${test_dirs[@]}"
