@@ -38,3 +38,7 @@ changelog:
 
 init:
 	git submodule update --recursive --init
+
+deps/getoptions.sh:
+	@# https://github.com/ko1nksm/getoptions#use-as-a-library
+	gengetoptions library > ./deps/getoptions.sh

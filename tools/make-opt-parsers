@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -o errexit -o nounset -o pipefail -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+readonly SCRIPT_DIR
+ROOT_DIR=$(dirname "$SCRIPT_DIR")
+
+main() {
+  local path name dir
+  shopt -s nullglob
+  for path in "$ROOT_DIR"/one-cmds/*/*.opts.bash; do
+    name=$(basename "$path" .opts.bash)
+    dir=$(dirname "$path")
+    "$ROOT_DIR"/deps/getoptions parser -f "$path" parser_definition parse prog > "$dir/$name.opts.sh"
+  done
+
+  echo "DONE"
+}
+
+main "$@"
