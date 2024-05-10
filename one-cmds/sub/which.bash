@@ -15,6 +15,7 @@ which_sub() {
   local name=$1
   local path
 
+  shopt -s nullglob
   for path in "$ONE_DIR"/enabled/repos/*/sub/"$name"; do
     if [[ -x $path ]]; then
       echo "$path"

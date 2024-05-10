@@ -37,5 +37,5 @@ list_bin() {
     printf '\n'
   done
 
-  printf "\n### The %bGREEN%b items are enabled. The WHITE items are availabled. ###\n" "$BOLD_GREEN" "$RESET_ALL"
+  printf "\n### The %bGREEN%b items are enabled. The WHITE items are available. ###\n" "$BOLD_GREEN" "$RESET_ALL"
 }

@@ -3,7 +3,7 @@
 ## Use ONE_SUB Commands
 
 All executable files in `sub/` of each [repo](./repo.md) could be invoked
-by `one subs <cmd>` or `a <cmd>` (`$ONE_SUB <cmd>`, `ONE_SUB` defaults to `a`, read the usage in [`ONE_CONF`](../one.config.default.bash)).
+by `one sub run <cmd>` or `a <cmd>` (`$ONE_SUB <cmd>`, `ONE_SUB` defaults to `a`, read the usage in [`ONE_CONF`](../one.config.default.bash)).
 
 The `sub/` path is not included in `$PATH`. So you cannot invoke ONE_SUB commands directly.
 
@@ -57,10 +57,10 @@ Invoke `$ONE_SUB help <cmd>` for the usage of this ONE_SUB command.
 
 ### ONE_SUB Command Completion
 
-Add `# one.bash:completion` in file, so that user can type `<Tab>` for completion `one subs` commands.
+Add `# one.bash:completion` in file, so that user can type `<Tab>` for completion ONE_SUB commands.
 one.bash will pass `--complete` to file.
 
-If not set `# one.bash:completion`, the `one subs` completion will not work.
+If not set `# one.bash:completion`, the shell completion will not work for ONE_SUB commands.
 
 ```sh
 # one.bash:completion

@@ -183,7 +183,6 @@ Usage:
     one log                     Tail the logs of one.bash
     one search                  Search alias/bin/completion/plugin of each enabled repo.
     one sub [<SUB_CMD>]         Run ONE_SUB command
-    one subs                    List ONE_SUB commands
     one [--bashrc]              Print one.bash entry codes for bashrc
 
 Desc:
@@ -242,7 +241,7 @@ one.bash 只是一个管理框架。它不包含任何配置文件。
 
 ## ONE_SUB 命令
 
-放在每个 [REPO](./docs/advanced-usage/repo.md) 的 `sub/` 目录下的可执行文件，都可以使用 `one subs <cmd>` 或 `a <cmd>` 调用。（`$ONE_SUB <cmd>`, `ONE_SUB` 默认值为 `a`，详见 [`ONE_CONF`][one.config.default]）
+放在每个 [REPO](./docs/advanced-usage/repo.md) 的 `sub/` 目录下的可执行文件，都可以使用 `one sub run <cmd>` 或 `a <cmd>` 调用。（`$ONE_SUB <cmd>`, `ONE_SUB` 默认值为 `a`，详见 [`ONE_CONF`][one.config.default]）
 
 `sub/` 路径没有包含在 `$PATH`，所有你无法直接调用 ONE_SUB 命令。
 

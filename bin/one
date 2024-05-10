@@ -3,7 +3,7 @@
 set -o errexit -o nounset -o pipefail -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
-
+# If ONE_DIR environment variable not defined, search the path of ONE_DIR and export it
 if [[ -z ${ONE_DIR:-} ]]; then
   # Copy from https://github.com/ko1nksm/readlinkf
   readlinkf() {
@@ -74,7 +74,6 @@ Usage:
     $name log                     Tail the logs of one.bash
     $name search                  Search alias/bin/completion/plugin of each enabled repo.
     $name sub [<SUB_CMD>]         Run ONE_SUB command
-    $name subs                    List ONE_SUB commands
     $name [--bashrc]              Print one.bash entry codes for bashrc
 
 Desc:
@@ -149,6 +148,7 @@ one_cmd() {
 
 bashrc() {
   cat <<-EOF
+# Add below code to ~/.bashrc
 ONE_DIR=$ONE_DIR
 . "\$ONE_DIR/bash/entry.bash"
 EOF
@@ -163,9 +163,6 @@ main() {
 
   case "$cmd" in
     "--bashrc") bashrc ;;
-
-    subs ) one_sub_cmd "$@" ;;
-
     * ) one_cmd "$@" ;;
   esac
 }

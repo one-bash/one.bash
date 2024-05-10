@@ -1,9 +1,11 @@
 usage_disable() {
   cat <<EOF
-Usage: one bin disable <NAME>...
+Usage: one bin disable [-a|--all] <NAME>...
 Desc:  Disable matched bin files
 Arguments:
-  <name>  bin name
+  <name>       bin name
+Options:
+  -a, --all    Disable all bin files
 EOF
 }
 
@@ -20,12 +22,15 @@ complete_disable() {
 
 disable_it() {
   local name=$1
-  local path="$ONE_DIR/enabled/bin/$name"
+  local path="${2:-$ONE_DIR/enabled/bin/$name}"
+  local src
+
   if [[ -h $path ]]; then
+    src=$(readlink "$path")
     unlink "$path"
-    printf "Disabled bin: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"
+    printf "Disabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$src"
   else
-    print_error "No matched bin '$name'"
+    print_error "No matched file '$name'"
     return 4
   fi
 }
@@ -33,13 +38,10 @@ disable_it() {
 disable_bin() {
   local name path
 
-  if [[ ${1:-} == --all ]]; then
+  if [[ ${1:-} == -a ]] || [[ ${1:-} == --all ]]; then
     for path in "${ONE_DIR}"/enabled/bin/*; do
-      if [[ -h $path ]]; then
-        unlink "$path"
-        name=$(basename "$path")
-        printf "Disabled bin: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"
-      fi
+      name=$(basename "$path")
+      disable_it "$name" "$path" || true
     done
   else
     for name in "$@"; do

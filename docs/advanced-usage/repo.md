@@ -40,7 +40,7 @@ A ONE Repo's file structure should be that.
 - `completion/` stores completion modules.
 - `configs/` stores dotfile, rcfile and config files.
 - `bin/` stores user commands. Just like `/usr/local/bin/`. They must be executable. The path of bin has been added to `$PATH`.
-- `sub/` stores ONE_SUB commands. User can invoke it be `$ONE_SUB <cmd>` and `one subs <cmd>`. They must be executable.
+- `sub/` stores ONE_SUB commands. User can invoke it be `$ONE_SUB <cmd>` and `one sub run <cmd>`. They must be executable.
 
 ## Create Repo
 

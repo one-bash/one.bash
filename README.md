@@ -183,7 +183,6 @@ Usage:
     one log                     Tail the logs of one.bash
     one search                  Search alias/bin/completion/plugin of each enabled repo.
     one sub [<SUB_CMD>]         Run ONE_SUB command
-    one subs                    List ONE_SUB commands
     one [--bashrc]              Print one.bash entry codes for bashrc
 
 Desc:
@@ -240,7 +239,7 @@ The official repo [one.share][] and [one-bash-it][] provides them to enhance she
 ## ONE_SUB Commands
 
 All executable files in `sub/` of each [repo](./docs/advanced-usage/repo.md) could be invoked
-by `one subs <cmd>` or `a <cmd>` (`$ONE_SUB <cmd>`, `ONE_SUB` defaults to `a`, read the usage in [`ONE_CONF`][one.config.default]).
+by `one sub run <cmd>` or `a <cmd>` (`$ONE_SUB <cmd>`, `ONE_SUB` defaults to `a`, read the usage in [`ONE_CONF`][one.config.default]).
 
 The `sub/` path is not included in `$PATH`. So you cannot invoke ONE_SUB commands directly.
 

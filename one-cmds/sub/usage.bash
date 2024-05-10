@@ -6,10 +6,11 @@ Usage:  one sub [-h|--help] <ACTION>
 Desc:  Manage ONE_SUB commands
 
 ACTION:
-  e, enable           Enable matched executable files
-  d, disable          Disable matched executable files
-  l, list             List executable files in each REPO/sub
-  i, info             Show info of matched executable files
-  w, which <NAME>     Show realpath of executable files
+  e, enable <NAME>...    Enable matched executable files
+  d, disable <NAME>...   Disable matched executable files
+  l, list                List executable files in each REPO/sub
+  list-enabled           List all enabled sub commands
+  i, info <NAME>         Show info of matched executable files
+  w, which <NAME>        Show realpath of executable files
 EOF
 }

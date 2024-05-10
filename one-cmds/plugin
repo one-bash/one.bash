@@ -31,7 +31,7 @@ if [[ "${1:-}" == "--complete" ]]; then
   elif [[ $2 == -h ]] || [[ $2 == --help ]]; then
     printf '%s\n' "${actions[@]}"
   elif [[ $2 =~ ^(l|list)$ ]] && (( COMP_CWORD < 4 )); then
-    printf -- '--all\n-n\n'
+    printf -- '--all\n-n\n--help\n'
   elif [[ $2 =~ ^(w|which|i|info|edit)$ ]] && (( COMP_CWORD < 4 )); then
     list_mod
   elif [[ $2 =~ ^(e|enable)$ ]]; then
@@ -89,7 +89,7 @@ usage_list() {
 Usage: one $t list [<OPTIONS>]
 Desc: List enabled $ts
 Options:
-  -a                  If set, list all available $ts in each repo
+  -a, --all           If set, list all available $ts in each repo
   -n                  If set, list module names instead of filepaths
 EOF
   exit 0

@@ -31,12 +31,17 @@ _one_COMP_REPLY() {
   fi
 }
 
-_comp_sub() {
+_comp_one_bash_sub() {
   local word="${COMP_WORDS[COMP_CWORD]}"
 
   if (( COMP_CWORD == 1 )); then
-      # Expend sub commands
-      _one_COMP_REPLY < <("$ONE_DIR"/one-cmds/sub list)
+    shopt -s nullglob
+    for path in "$ONE_DIR"/enabled/sub/* ; do
+      if [[ -x $path ]]; then
+        COMPREPLY+=( "$(basename "$path")" )
+      fi
+    done
+
     _one_COMP_REPLY <<< 'help'
   else
     # Expend options of sub command
@@ -56,60 +61,41 @@ _comp_sub() {
   fi
 }
 
-_comp_one() {
+_comp_one_bash() {
   local word="${COMP_WORDS[COMP_CWORD]}"
   COMPREPLY=()
 
   if (( COMP_CWORD == 1 )); then
     # Expend one commands
     _one_COMP_REPLY < <("$ONE_DIR/one-cmds/commands")
-    local words=(subs -h --help --bashrc)
+    local words=(-h --help --bashrc)
     _one_COMP_REPLY < <(printf '%s\n' "${words[@]}")
   else
     local cmd="${COMP_WORDS[1]}"
 
-    if [[ $cmd == subs ]]; then
-      # Expend sub commands
+    case $cmd in
+      r) cmd=repo;;
+      a) cmd='alias';;
+      b) cmd=bin;;
+      c) cmd=completion;;
+      p) cmd=plugin;;
+      s) cmd=sub;;
+    esac
 
-      # Shift first item on COMP_WORDS
-      local -a words
-      local w
-      # Because COMP_WORDS may contain empty argument ""
-      for w in "${COMP_WORDS[@]:1}"; do
-        words+=("$w")
-      done
-      COMP_WORDS=()
-      for w in "${words[@]}"; do
-        COMP_WORDS+=("$w")
-      done
-
-      COMP_CWORD=$(( COMP_CWORD - 1 ))
-      _comp_sub
+    if [[ -d "$ONE_DIR/one-cmds/$cmd" ]]; then
+      # Expend options of one command
+      _one_COMP_REPLY < <(_one_sub_cmd_completion "$ONE_DIR/one-cmds/$cmd/main" "${COMP_WORDS[@]:2}")
     else
-      case $cmd in
-        r) cmd=repo;;
-        a) cmd='alias';;
-        b) cmd=bin;;
-        c) cmd=completion;;
-        p) cmd=plugin;;
-        s) cmd=sub;;
-      esac
-
-      if [[ -d "$ONE_DIR/one-cmds/$cmd" ]]; then
-        # Expend options of one command
-        _one_COMP_REPLY < <(_one_sub_cmd_completion "$ONE_DIR/one-cmds/$cmd/main" "${COMP_WORDS[@]:2}")
-      else
-        # Expend options of one command
-        _one_COMP_REPLY < <(_one_sub_cmd_completion "$ONE_DIR/one-cmds/$cmd" "${COMP_WORDS[@]:2}")
-      fi
+      # Expend options of one command
+      _one_COMP_REPLY < <(_one_sub_cmd_completion "$ONE_DIR/one-cmds/$cmd" "${COMP_WORDS[@]:2}")
     fi
   fi
 }
 
-complete -F _comp_one one
+complete -F _comp_one_bash one
 
 if [[ -n ${ONE_SUB:-} ]]; then
   # shellcheck disable=SC2139
-  alias "$ONE_SUB"='one subs '  # NOTE: last space is import for _comp_sub
-  complete -F _comp_sub "$ONE_SUB"
+  alias "$ONE_SUB"='one sub run '  # NOTE: the last space is essential
+  complete -F _comp_one_bash_sub "$ONE_SUB"
 fi

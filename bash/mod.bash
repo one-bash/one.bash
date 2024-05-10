@@ -10,7 +10,7 @@ readonly -A t_map=(
   [alias]=aliases
 )
 
-readonly -A default_weight_map=(
+readonly -A default_priority_map=(
   [plugin]=400
   [completion]=600
   [alias]=750
@@ -212,7 +212,7 @@ download_mod_data() {
     done
 
     if [[ $isEmpty == no ]] ; then
-      read -r -p "Find existed data which may be outdated. Do you want to update it to latest? (y/[n])" answer
+      read -r -p "Found existed data which may be outdated. Do you want to update it to latest? (y/[n])" answer
       if [[ ${answer:-n} == y ]]; then
         rm -rf "$MOD_DATA_DIR"
         mkdir "$MOD_DATA_DIR"
@@ -253,7 +253,7 @@ create_mod() {
   local MOD_META="$MOD_DATA_DIR/meta.bash"
   local log_tag="enable:$t:$name"
   local repo_name
-  local ONE_LOAD_PRIORITY SCRIPT APPEND INSERT ABOUT URL RUN
+  local PRIORITY SCRIPT APPEND INSERT ABOUT URL RUN
 
   repo_name=$(get_enabled_repo_name "$opt_path")
   log_verb "$log_tag:mod_meta" "opt_path=$opt_path repo_name=$repo_name"
@@ -269,7 +269,7 @@ create_mod() {
       { log_err "$log_tag:RUN" "Failed to execute cmd: $RUN"; return 7; }
   fi
 
-  ONE_LOAD_PRIORITY=$(get_opt "$opt_path" ONE_LOAD_PRIORITY)
+  PRIORITY=$(get_opt "$opt_path" PRIORITY)
   ABOUT=$(get_opt "$opt_path" ABOUT)
   SCRIPT=$(get_opt "$opt_path" SCRIPT)
   URL=$(get_opt "$opt_path" URL)
@@ -286,8 +286,8 @@ create_mod() {
       printf '# About: %s\n' "$ABOUT"
     fi
 
-    if [[ -n "${ONE_LOAD_PRIORITY:-}" ]]; then
-      echo "# ONE_LOAD_PRIORITY: $ONE_LOAD_PRIORITY"
+    if [[ -n "${PRIORITY:-}" ]]; then
+      echo "# ONE_LOAD_PRIORITY: $PRIORITY"
     fi
 
     if [[ -n "${INSERT:-}" ]]; then
@@ -318,16 +318,16 @@ create_mod() {
   echo "$MOD_FILE"
 }
 
-get_weight() {
-  local weight
+get_priority() {
+  local priority
 
   # NOTE: grep -Eo not match "\d" in Linux. "\d" is part of a Perl-compatible regular expression (PCRE).
-  weight=$(head "$1" | grep -Eo '^# (ONE|BASH_IT)_LOAD_PRIORITY: [0-9]{3}$' | grep -Eo '[0-9]{3}' || true)
+  priority=$(head "$1" | grep -Eo '^# (ONE|BASH_IT)_LOAD_PRIORITY: [0-9]{3}$' | grep -Eo '[0-9]{3}' || true)
 
-  if [[ -z "$weight" ]]; then
-    echo "${default_weight_map[$t]}"
+  if [[ -z "$priority" ]]; then
+    echo "${default_priority_map[$t]}"
   else
-    echo "$weight"
+    echo "$priority"
   fi
 }
 
@@ -342,14 +342,12 @@ get_enabled_link_to() {
 }
 
 enable_file() {
-  local name=$1
-  local filepath=$2
-  local weight
-  weight=$(get_weight "$filepath")
+  local name=$1 filepath=$2 priority
+  priority=$(get_priority "$filepath")
 
-  ln -sf "$filepath" "$ENABLED_DIR/$weight---$name.$t.bash"
+  ln -sf "$filepath" "$ENABLED_DIR/$priority---$name.$t.bash"
 
-  echo "Enabled $weight---$name.$t.bash. Please restart shell to take effect."
+  echo "Enabled $priority---$name.$t.bash. Please restart shell to take effect."
 }
 
 check_opt_mod_dep_cmds() {
@@ -379,13 +377,13 @@ enable_mod() {
       local filepath=${filepaths[0]}
       if [[ $filepath == *.opt.bash ]]; then
         check_opt_mod_dep_cmds "$filepath"
-        # Disable first, prevent duplicated module enabled with different weight
+        # Disable first, prevent duplicated module enabled with different priority
         disable_mod "$name" true
         download_mod_data "$name" "$filepath"
         filepath=$(create_mod "$name" "$filepath")
         [[ -z $filepath ]] && return
       else
-        # Disable first, prevent duplicated module enabled with different weight
+        # Disable first, prevent duplicated module enabled with different priority
         disable_mod "$name" true
       fi
 
@@ -465,7 +463,7 @@ print_list_item() {
 }
 
 list_mods() {
-  if [[ -n "${opts[a]:-}" ]]; then
+  if [[ -n "${opts[a]:-}" ]] || [[ -n "${opts[all]:-}" ]]; then
     # list all available mods
     if [[ -n "${opts[n]:-}" ]]; then
       # list only mod names
@@ -507,31 +505,32 @@ info_mod() {
   case ${#filepaths[@]} in
     1)
       local filepath=${filepaths[0]}
-      local ABOUT URL SCRIPT ONE_LOAD_PRIORITY
+      local ABOUT URL SCRIPT PRIORITY
       local link_to repo
 
       link_to=$(get_enabled_link_to "$name")
 
-      print_info_item Mod "$name"
-      print_info_item Enabled "$( [[ -n $link_to ]] && echo true || echo false )"
+      print_info_item Name "$name"
+      print_info_item Status "$( [[ -n $link_to ]] && echo enabled || echo disabled )"
       print_info_item Repo "$(get_enabled_repo_name "$filepath")"
-      print_info_item "Path" "$filepath"
+      print_info_item "Path" "$link_to"
+      print_info_item "Source" "$filepath"
 
       if [[ $filepath == *.opt.bash ]]; then
         (
           # shellcheck disable=1090
           source "$filepath"
           print_info_item "About" "${ABOUT:-}"
-          print_info_item "Priority" "${ONE_LOAD_PRIORITY:-}"
+          print_info_item "Priority" "${PRIORITY:-}"
           print_info_item "URL" "${URL:-}"
           print_info_item "Script" "${SCRIPT:-}"
           print_info_item "DEP_CMDS" "${DEP_CMDS:-}"
         )
       else
         ABOUT=$(metafor about-plugin <"$filepath")
-        ONE_LOAD_PRIORITY=$(get_weight "$filepath")
+        PRIORITY=$(get_priority "$filepath")
         print_info_item "About" "${ABOUT:-}"
-        print_info_item "Priority" "${ONE_LOAD_PRIORITY:-}"
+        print_info_item "Priority" "${PRIORITY:-}"
       fi
       ;;
     0)
