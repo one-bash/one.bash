@@ -11,7 +11,7 @@ fi
 # shellcheck source=../../one-cmds/util.bash
 . "$ONE_DIR/one-cmds/util.bash"
 
-actions=(list info enable disable which)
+actions=(list info enable disable which run help)
 
 declare -A alias_map=(
   ['e']=enable
@@ -19,6 +19,7 @@ declare -A alias_map=(
   ['l']=list
   ['i']=info
   ['w']=which
+  ['r']=run
 )
 
 # one.bash:completion

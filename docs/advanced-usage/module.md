@@ -42,6 +42,8 @@ For plugin,
 ```sh
 ABOUT='Description of module'
 
+PRIORITY=400
+
 # URL can be a git protocal or http(s) resource url
 URL='https://github.com/akinomyoga/ble.sh.git'
 
@@ -75,7 +77,7 @@ ABOUT='Tab completion using fzf. https://github.com/lincheney/fzf-tab-completion
 URL=https://github.com/lincheney/fzf-tab-completion.git
 # The `git/` means the downloaded git repo from `URL`.
 SCRIPT=git/bash/fzf-bash-completion.sh
-ONE_LOAD_PRIORITY=801 # aliases.completion (LOAD_PRIORITY: 800) will reset completion function
+PRIORITY=801 # aliases.completion (LOAD_PRIORITY: 800) will reset completion function
 APPEND="cat <<EOF
 bind -x '\"\\t\": fzf_bash_completion'
 _fzf_bash_completion_loading_msg() {
@@ -95,19 +97,23 @@ URL='https://raw.githubusercontent.com/ziglang/shell-completions/master/_zig.bas
 
 For alias, same to plugin.
 
-### ONE_LOAD_PRIORITY
+### PRIORITY
 
-The modules are loaded by one.bash in order (`ONE_LOAD_PRIORITY` from lower to higher).
+The modules are loaded by one.bash in order (from lower to higher based on PRIORITY).
 
-Put `# ONE_LOAD_PRIORITY: <PRIORITY>` at the head of script to set loading priority.
+This property is optional, each module has default priority.
 
-`# ONE_LOAD_PRIORITY: 400` means the load priority of module is 400. It is optional, each module has default priority.
-
-The priority range of each module type:
+The value of priority range of each module type:
 
 - `plugin`: 300~499, default 400.
 - `completion`: 500~699, default 600.
 - `alias`: 700~799, default 750.
+
+For `.bash` file, put `# ONE_LOAD_PRIORITY: <PRIORITY>` at the head of script to set loading priority.
+
+For `.opt.bash` file, put `PRIORITY=<PRIORITY>` in file.
+
+`# ONE_LOAD_PRIORITY: 400` or `PRIORITY=400` means the load priority of module is `400`.
 
 
 <!-- links -->

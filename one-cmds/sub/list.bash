@@ -6,7 +6,7 @@ EOF
 }
 
 complete_list() {
-  echo '-f'
+  echo ''
 }
 
 list() {
@@ -28,8 +28,9 @@ list_sub() {
     repo_name=$(basename "$repo")
     printf '%b[%s]%b' "$BLUE" "$repo_name" "$RESET_ALL"
 
-    for path in "$repo/sub"/* ; do
-      name=$(basename "$path" '.opt.bash')
+    for path in "$repo"/sub/* ; do
+      name=$(basename "$path" '.bash')
+      name="${name%.sh}"
       link=${ONE_DIR}/enabled/sub/$name
 
       if [[ -h "$link" ]] && [[ $(readlink "$link") == "$path" ]]; then
@@ -41,5 +42,5 @@ list_sub() {
     printf '\n'
   done
 
-  printf "\n### The %bGREEN%b items are enabled. The WHITE items are availabled. ###\n" "$BOLD_GREEN" "$RESET_ALL"
+  printf "\n### The %bGREEN%b items are enabled. The WHITE items are available. ###\n" "$BOLD_GREEN" "$RESET_ALL"
 }

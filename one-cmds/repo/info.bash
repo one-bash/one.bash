@@ -41,7 +41,7 @@ info_repo() {
       . "$path"
       declare -f repo_add_post || true
       declare -f repo_update || true
-      declare -f repo_load || true
+      declare -f repo_onload || true
     )
   done < <(search_repos "$1")
 

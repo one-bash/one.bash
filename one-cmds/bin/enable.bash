@@ -1,9 +1,11 @@
 usage_enable() {
   cat <<EOF
-Usage: one bin enable <NAME>...
+Usage: one bin enable [-a|--all] <NAME>...
 Desc:  Enable matched bin files
 Arguments:
-  <name>  bin name
+  <name>       bin name
+Options:
+  -a, --all    Enable all bin files
 EOF
 }
 
@@ -16,17 +18,23 @@ complete_enable() {
   done
 }
 
+create_symlink() {
+  local name=$1
+  local path=$2
+  ln -fs "$path" "$ONE_DIR/enabled/bin/$name"
+  printf "Enabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"
+}
+
 enable() {
   local path=$1
   local name=$2
 
   if [[ -x "$path" ]]; then
-    ln -fs "$path" "$ONE_DIR/enabled/bin/$name"
-    printf "Enabled bin: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"
+    create_symlink "$name" "$path"
   elif [[ $path == *.opt.bash ]]; then
     local t=bin ts=bins
     check_opt_mod_dep_cmds "$path"
-    # Disable first, prevent duplicated module enabled with different weight
+    # Disable first, prevent duplicated module enabled with different priority
     disable_mod "$name" true
     download_mod_data "$name" "$path"
 
@@ -39,19 +47,17 @@ enable() {
 
       # shellcheck disable=1090
       while read -r bin_name; do
-        ln -fs "$ONE_DIR/data/bins/$name/script.bash" "$ONE_DIR/enabled/bin/$bin_name"
-        printf "Enabled bin: %b%s%b (%s)\n" "$GREEN" "$bin_name" "$RESET_ALL" "$name"
+        create_symlink "$bin_name" "$ONE_DIR/data/bins/$name/script.bash"
       done < <(. "$path" && echo "${EXPORTS[@]}")
     else
       # shellcheck disable=1090
       while read -r bin_name; do
-        ln -fs "$ONE_DIR/data/bins/$name/$bin_name" "$ONE_DIR/enabled/bin/$bin_name"
-        printf "Enabled bin: %b%s%b (%s)\n" "$GREEN" "$bin_name" "$RESET_ALL" "$name"
+        create_symlink "$bin_name" "$ONE_DIR/data/bins/$name/$bin_name"
       done < <(. "$path" && echo "${EXPORTS[@]}")
     fi
   else
-    echo "No found bin file '$name'." >&2
-    return 3
+    echo "The file is not executable: $path" >&2
+    return "$ONE_EX_DATAERR"
   fi
 }
 
@@ -64,7 +70,7 @@ enable_bin() {
   # shellcheck source=../../deps/lobash.bash
   . "$ONE_DIR/deps/lobash.bash"
 
-  if [[ ${1:-} == --all ]]; then
+  if [[ ${1:-} == -a ]] || [[ ${1:-} == --all ]]; then
     for path in "${ONE_DIR}"/enabled/repos/*/bins/*; do
       name=$(basename "$path" .opt.bash)
       enable "$path" "$name" || true
@@ -86,11 +92,11 @@ enable_bin() {
             ;;
 
           0)
-            print_error "No matched bin '$name'"
+            print_error "No matched file '$name'"
             ;;
 
           *)
-            print_error "Matched multi bins for '$name':"
+            print_error "Matched multi files for '$name':"
             printf '  %s\n' "${paths[@]}" >&2
             ;;
         esac

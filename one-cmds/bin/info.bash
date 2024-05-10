@@ -29,11 +29,13 @@ info_bin() {
 
   shopt -s nullglob
   for path in "$ONE_DIR"/data/repos/*/bins/"$name"{,.opt.bash}; do
-    print_info_item Path "$path"
+    print_info_item Name "$name"
 
     if [[ $path =~ \/data\/repos\/([^\/]+)\/ ]]; then
       print_info_item Repo "${BASH_REMATCH[1]}"
     fi
+
+    print_info_item Path "$path"
 
     if [[ $path == *.opt.bash ]]; then
       (

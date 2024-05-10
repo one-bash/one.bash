@@ -83,8 +83,8 @@ _one_load "bash/one-complete.bash"
 # shellcheck source=./repo.bash
 _one_load "bash/repo.bash"
 
-# shellcheck source=./enable-mods.bash
-[[ $ONE_NO_MODS == false ]] && _one_load "bash/enable-mods.bash"
+# shellcheck source=./load-enabled-mods.bash
+[[ $ONE_NO_MODS == false ]] && _one_load "bash/load-enabled-mods.bash"
 
 if [[ $ONE_FIG == true ]]; then
   if one_l.has command fig; then

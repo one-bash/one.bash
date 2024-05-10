@@ -2,7 +2,7 @@
 # shellcheck disable=2034
 
 # The trigger name for sub commands. [Default: a]
-# If set empty string, ONE_SUB will not be set, so only `one subs <cmd>` is available.
+# If set empty string, the `$ONE_SUB <cmd>` is not available, only `one sub run <cmd>` is available.
 ONE_SUB=${ONE_SUB:-a}
 # Filepath to script. If set, use this file as bashrc.
 ONE_RC=${ONE_RC:-}
