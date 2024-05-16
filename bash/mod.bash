@@ -30,14 +30,14 @@ compgen_enable_mod() {
   local repo
 
   # shellcheck disable=2153
-  for repo in "${ONE_DIR}/enabled/repos"/* ; do
+  for repo in "${ONE_DIR}/enabled/repos"/*; do
     # shellcheck disable=2154
     if [[ -d "$repo/$ts" ]]; then
-      plugin_dirs+=( "$repo/$ts" )
+      plugin_dirs+=("$repo/$ts")
     fi
   done
 
-  for dir in "${plugin_dirs[@]}" ; do
+  for dir in "${plugin_dirs[@]}"; do
     find -L "$dir" -maxdepth 1 -type f -name "*.bash" -exec basename {} ".bash" \; | sed -E 's/\.opt$//'
   done
 }
@@ -46,9 +46,9 @@ compgen_disable_mod() {
   echo '--all'
 
   # shellcheck disable=2154
-  find "$ENABLED_DIR" -maxdepth 1 -name "*---*.$t.bash" -print0 \
-    | xargs -0 -I{} basename '{}' ".$t.bash" \
-    | sed -E 's/^[[:digit:]]{3}---(.+)$/\1/' || true
+  find "$ENABLED_DIR" -maxdepth 1 -name "*---*.$t.bash" -print0 |
+    xargs -0 -I{} basename '{}' ".$t.bash" |
+    sed -E 's/^[[:digit:]]{3}---(.+)$/\1/' || true
 }
 
 # -----------------------------------------------------------------------------
@@ -56,8 +56,8 @@ compgen_disable_mod() {
 list_enabled() {
   find "$ENABLED_DIR" -maxdepth 1 \
     -name "*---*.$1.bash" \
-    -exec basename {} ".$1.bash" \; \
-    | sed -E 's/^[[:digit:]]{3}---(.+)$/\1/'
+    -exec basename {} ".$1.bash" \; |
+    sed -E 's/^[[:digit:]]{3}---(.+)$/\1/'
 }
 
 list_mod() {
@@ -95,7 +95,7 @@ _disable_mod() {
   local target
   target=$(readlink "$filepath")
 
-  if [[ -e "$target" ]] && grep "^$mod_annotation" "$filepath" &>/dev/null ; then
+  if [[ -e "$target" ]] && grep "^$mod_annotation" "$filepath" &> /dev/null; then
     unlink "$target"
   fi
 
@@ -109,7 +109,7 @@ disable_mod() {
   local found=false
 
   while read -r -d $'\n' filepath; do
-    if [[ -h $filepath ]] || [[ -f $filepath ]]; then
+    if [[ -L $filepath ]] || [[ -f $filepath ]]; then
       _disable_mod "$filepath"
       echo "Disabled $(basename "$filepath"). Please restart shell to take effect."
       found=true
@@ -153,8 +153,8 @@ search_mod() {
   local path
 
   shopt -s nullglob
-  for path in "$ONE_DIR"/enabled/repos/*/"$ts/$name"{.bash,.opt.bash} ; do
-    output+=( "$path" )
+  for path in "$ONE_DIR"/enabled/repos/*/"$ts/$name"{.bash,.opt.bash}; do
+    output+=("$path")
   done
 }
 
@@ -173,7 +173,7 @@ _ask_update_mod_data() {
     if [[ ${answer:-n} == y ]]; then
       rm -rf "$target"
     else
-      return 1;
+      return 1
     fi
   fi
 }
@@ -211,7 +211,7 @@ download_mod_data() {
       break
     done
 
-    if [[ $isEmpty == no ]] ; then
+    if [[ $isEmpty == no ]]; then
       read -r -p "Found existed data which may be outdated. Do you want to update it to latest? (y/[n])" answer
       if [[ ${answer:-n} == y ]]; then
         rm -rf "$MOD_DATA_DIR"
@@ -222,7 +222,7 @@ download_mod_data() {
     fi
 
     (
-      install() { return 0; };
+      install() { return 0; }
       # shellcheck disable=1090
       source "$opt_path"
       install
@@ -265,8 +265,11 @@ create_mod() {
   if [[ -n "${RUN:-}" ]]; then
     log_verb "$log_tag:RUN" "$RUN"
     # shellcheck disable=2094
-    (eval "$RUN" 2>&1 1>>"$ONE_LOG_FILE" | tee -a "$ONE_LOG_FILE" >&2) ||
-      { log_err "$log_tag:RUN" "Failed to execute cmd: $RUN"; return 7; }
+    (eval "$RUN" 2>&1 1>> "$ONE_LOG_FILE" | tee -a "$ONE_LOG_FILE" >&2) ||
+      {
+        log_err "$log_tag:RUN" "Failed to execute cmd: $RUN"
+        return 7
+      }
   fi
 
   PRIORITY=$(get_opt "$opt_path" PRIORITY)
@@ -294,7 +297,10 @@ create_mod() {
       log_verb "$log_tag:INSERT" "$INSERT"
       printf '\n'
       (eval "$INSERT" 2> >(tee -a "$ONE_LOG_FILE" >&2)) ||
-        { log_err "$log_tag:INSERT" "[Failed] $INSERT"; return 8; }
+        {
+          log_err "$log_tag:INSERT" "[Failed] $INSERT"
+          return 8
+        }
     fi
 
     if [[ -n ${URL:-} ]]; then
@@ -311,7 +317,10 @@ create_mod() {
       log_verb "$log_tag:APPEND" "$APPEND"
       printf '\n'
       (eval "$APPEND" 2> >(tee -a "$ONE_LOG_FILE" >&2)) ||
-        { log_err "$log_tag:APPEND" "[Failed] $APPEND"; return 9; }
+        {
+          log_err "$log_tag:APPEND" "[Failed] $APPEND"
+          return 9
+        }
     fi
   } >> "$MOD_FILE"
 
@@ -354,7 +363,7 @@ check_opt_mod_dep_cmds() {
   local path=$1
   local -a DEP_CMDS
   # shellcheck disable=2207
-  IFS=' ' DEP_CMDS=( $(get_opt "$path" DEP_CMDS) )
+  IFS=' ' DEP_CMDS=($(get_opt "$path" DEP_CMDS))
 
   local cmd
   for cmd in "${DEP_CMDS[@]}"; do
@@ -511,7 +520,7 @@ info_mod() {
       link_to=$(get_enabled_link_to "$name")
 
       print_info_item Name "$name"
-      print_info_item Status "$( [[ -n $link_to ]] && echo enabled || echo disabled )"
+      print_info_item Status "$([[ -n $link_to ]] && echo enabled || echo disabled)"
       print_info_item Repo "$(get_enabled_repo_name "$filepath")"
       print_info_item "Path" "$link_to"
       print_info_item "Source" "$filepath"
@@ -527,7 +536,7 @@ info_mod() {
           print_info_item "DEP_CMDS" "${DEP_CMDS:-}"
         )
       else
-        ABOUT=$(metafor about-plugin <"$filepath")
+        ABOUT=$(metafor about-plugin < "$filepath")
         PRIORITY=$(get_priority "$filepath")
         print_info_item "About" "${ABOUT:-}"
         print_info_item "Priority" "${PRIORITY:-}"

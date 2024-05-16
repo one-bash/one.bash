@@ -18,6 +18,7 @@ update_repo() {
     return 4
   fi
 
+  print_verb "[TODO] git -C $repo_dir pull"
   git -C "$repo_dir" pull
 
   (
@@ -27,5 +28,5 @@ update_repo() {
     if type -t repo_update >/dev/null; then repo_update; fi
   )
 
-  print_success "%bUpdated repo: %s%b\n" "$GREEN" "$name" "$RESET_ALL"
+  print_success "Updated repo: $name"
 }

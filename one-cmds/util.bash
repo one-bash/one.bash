@@ -133,11 +133,11 @@ parse_cmd() {
 }
 
 print_error() {
-  printf "%b%s%b\n" "$RED" "$1" "$RESET_ALL" >&2
+  printf "%b[Error] %s%b\n" "$RED" "$1" "$RESET_ALL" >&2
 }
 
 print_success() {
-  printf "%b%s%b\n" "$GREEN" "$1" "$RESET_ALL"
+  printf "%b[Success] %s%b\n" "$GREEN" "$1" "$RESET_ALL"
 }
 
 print_verb() {

@@ -26,6 +26,7 @@ list_bin() {
 
     for path in "$repo/bins"/* ; do
       name=$(basename "$path" '.opt.bash')
+      name=${name%.bash}
       link=${ONE_DIR}/enabled/bin/$name
 
       if [[ -h "$link" ]] && [[ $(readlink "$link") == "$path" ]]; then
