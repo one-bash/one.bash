@@ -1,5 +1,5 @@
 usage_enable() {
-  cat <<EOF
+  cat << EOF
 Usage: one bin enable [-a|--all] <NAME>...
 Desc:  Enable matched bin files
 Arguments:
@@ -23,6 +23,23 @@ create_symlink() {
   local path=$2
   ln -fs "$path" "$ONE_DIR/enabled/bin/$name"
   printf "Enabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"
+}
+
+set_exports() {
+  if [[ ! -v EXPORTS ]]; then
+    return
+  fi
+
+  local name=$1
+
+  local file
+  for file in "${EXPORTS[@]}"; do
+    if [[ -f "$ONE_DIR/data/bins/${name}/$file" ]]; then
+      chmod +x "$ONE_DIR/data/bins/${name}/$file"
+    else
+      print_error "Not found file \"$file\" to export"
+    fi
+  done
 }
 
 enable() {
@@ -50,10 +67,15 @@ enable() {
         create_symlink "$bin_name" "$ONE_DIR/data/bins/$name/script.bash"
       done < <(. "$path" && echo "${EXPORTS[@]}")
     else
-      # shellcheck disable=1090
-      while read -r bin_name; do
-        create_symlink "$bin_name" "$ONE_DIR/data/bins/$name/$bin_name"
-      done < <(. "$path" && echo "${EXPORTS[@]}")
+      (
+        # shellcheck disable=1090
+        . "$path"
+        set_exports "$name"
+        # shellcheck disable=1090
+        while read -r bin_name; do
+          create_symlink "$bin_name" "$ONE_DIR/data/bins/$name/$bin_name"
+        done < <(. "$path" && echo "${EXPORTS[@]}")
+      )
     fi
   else
     echo "The file is not executable: $path" >&2

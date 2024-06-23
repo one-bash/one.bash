@@ -178,6 +178,26 @@ _ask_update_mod_data() {
   fi
 }
 
+download_github_release_files() {
+  if [[ -z ${GITHUB_REPO:-} ]] || [[ ! -v GITHUB_DOWNLOAD ]]; then
+    return
+  fi
+
+  local version="${GITHUB_VERSION:-latest}"
+
+  local file
+  for file in "${GITHUB_DOWNLOAD[@]}"; do
+    if [[ $version == latest ]]; then
+      url="https://github.com/$GITHUB_REPO/releases/latest/download/$file"
+    else
+      url="https://github.com/$GITHUB_REPO/releases/download/$version/$file"
+    fi
+
+    printf 'To download file "%s" from %s\n' "$file" "$url" >&2
+    curl -Lo "$MOD_DATA_DIR/$file" "$url"
+  done
+}
+
 download_mod_data() {
   local name=$1 opt_path=$2
   local url answer
@@ -225,6 +245,7 @@ download_mod_data() {
       install() { return 0; }
       # shellcheck disable=1090
       source "$opt_path"
+      download_github_release_files
       install
     )
   fi
@@ -472,6 +493,8 @@ print_list_item() {
 }
 
 list_mods() {
+  shopt -s nullglob
+
   if [[ -n "${opts[a]:-}" ]] || [[ -n "${opts[all]:-}" ]]; then
     # list all available mods
     if [[ -n "${opts[n]:-}" ]]; then
@@ -479,14 +502,40 @@ list_mods() {
       list_mod | tr '\n' ' '
       printf '\n'
     else
-      local repo
+      local repo repo_name path name priority link link_to
+
       # shellcheck disable=2153
       for repo in "${ONE_DIR}"/enabled/repos/*; do
         # shellcheck disable=2154
         if [[ ! -d "$repo/$ts" ]]; then continue; fi
 
-        printf '%b%s%b\n' "$BLUE" "[$repo/$ts]" "$RESET_ALL"
-        find -L "$repo/$ts" -maxdepth 1 -type f -exec basename {} .bash \; | sed -E 's/\.opt$//'| tr '\n' ' '
+        repo_name=$(basename "$repo")
+        printf '%b%s%b ' "$BLUE" "[$repo_name]" "$RESET_ALL"
+
+        for path in "$repo/$ts"/*; do
+          name=$(basename "$path")
+
+          if [[ $name == *.opt.bash ]]; then
+            name=${name%.opt.bash}
+            mod_path="$ONE_DIR/data/$ts/$name/mod.bash"
+            link_to=$mod_path
+            priority=$(get_opt "$path" PRIORITY)
+          else
+            name=${name%.bash}
+            link_to=$path
+            priority=$(get_priority "$path")
+          fi
+
+          link="$ONE_DIR/enabled/${priority}--$name.$t.bash"
+
+          if ((priority > 0)) && [[ -L "$link" ]] && [[ $(readlink "$link") == "$link_to" ]]; then
+            printf '%b%s%b ' "$BOLD_GREEN" "$name" "$RESET_ALL"
+          else
+            printf '%s ' "$name"
+          fi
+        done
+
+        # find -L "$repo/$ts" -maxdepth 1 -type f -exec basename {} .bash \; | sed -E 's/\.opt$//'| tr '\n' ' '
         printf '\n'
       done
     fi
