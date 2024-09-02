@@ -30,7 +30,7 @@ disable_it() {
     unlink "$path"
     printf "Disabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$src"
   else
-    print_error "No matched file '$name'"
+    print_err "No matched file '$name'"
     return 4
   fi
 }

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 set -o errexit -o nounset -o pipefail -o errtrace
-(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+(shopt -p inherit_errexit &> /dev/null) && shopt -s inherit_errexit
 
 # one.bash:completion
 if [[ "${1:-}" == --complete ]]; then
-  if (( COMP_CWORD < 3 )); then
+  if ((COMP_CWORD < 3)); then
     printf 'true\nfalse\n--help\n'
   fi
 
@@ -13,8 +13,8 @@ if [[ "${1:-}" == --complete ]]; then
 fi
 
 # one.bash:usage
-if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
-  cat <<EOF
+if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+  cat << EOF
 Usage: one $(basename "$0") <value>
 Desc: Toggle debug mode on one.bash
 Arguments:
@@ -24,12 +24,12 @@ EOF
 fi
 
 case $1 in
-  true|false )
+  true | false)
     one config debug "$1"
     echo "Please restart shell to take effect"
     ;;
 
-  * )
+  *)
     echo "Invalid value: $1"
     exit 2
     ;;

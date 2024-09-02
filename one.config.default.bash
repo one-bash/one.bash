@@ -47,4 +47,4 @@ one_l.is_array ONE_SKIP_COMPS || ONE_SKIP_COMPS=()
 
 # User should print the path of one.bash env file
 # @param os type
-one_l.is_function ONE_LINKS_CONF || ONE_LINKS_CONF() { true; }
+one_l.is_function ONE_LINKS_CONF || ONE_LINKS_CONF="${ONE_LINKS_CONF:-$ONE_CONF_DIR/one.links.yaml}"

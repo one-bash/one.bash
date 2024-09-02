@@ -1,5 +1,5 @@
 usage() {
-  cat <<EOF
+  cat << EOF
 Usage:  one bin [-h|--help] <ACTION>
         one bin [-h|--help]
 

@@ -14,7 +14,7 @@ update_repo() {
   local repo_dir=$ONE_DIR/data/repos/$name
 
   if [[ ! -d "$repo_dir/.git" ]]; then
-    print_error "The repo is not a git project"
+    print_err "The repo is not a git project"
     return 4
   fi
 

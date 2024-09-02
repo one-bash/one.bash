@@ -5,7 +5,7 @@ set -o errexit -o nounset -o pipefail -o errtrace
 
 # one.bash:completion
 if [[ "${1:-}" == --complete ]]; then
-  if (( COMP_CWORD < 3 )); then
+  if ((COMP_CWORD < 3)); then
     result=$(compgen -f -- "$2")
     if [[ -d $result ]]; then
       compgen -f -- "$result/"
@@ -22,7 +22,7 @@ if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
 Usage: one $(basename "$0") [<LINKS_CONF>]
 Desc: Create symlink files based on LINKS_CONF file
 Args:
-  <LINKS_CONF>  The links config. If omit, use the output of function ONE_LINKS_CONF which defined in ONE_CONF.
+  <LINKS_CONF>  The filepath of one.links.yaml. If omit, use the value of ONE_LINKS_CONF defined in ONE_CONF.
 EOF
   exit 0
 fi
@@ -33,19 +33,23 @@ if [[ -z ${ONE_DIR:-} ]]; then
   export ONE_DIR=$SCRIPT_DIR/..
 fi
 
-# shellcheck source=./bash/xdg.bash
-. "$ONE_DIR/bash/xdg.bash"
+# shellcheck source=./base-scripts.bash
+. "$ONE_DIR/one-cmds/base-scripts.bash"
 
-# shellcheck source=./deps/lobash.bash
-. "$ONE_DIR/deps/lobash.bash"
-
-if (( $# > 0 )); then
-  DOTBOT_CONF=$1
+run() {
+  local DOTBOT_CONF=$1
 
   if [[ ! -f $DOTBOT_CONF ]]; then
-    echo "Not found file '$DOTBOT_CONF'" >&2
-    exit 4
+    print_err "Not found file '$DOTBOT_CONF'. Check the value of ONE_LINKS_CONF in your config."
+    return $ONE_EX_CONFIG
   fi
+
+  print_verb "Create symbol links based on ONE_LINKS_CONF: ${DOTBOT_CONF}"
+  "$ONE_DIR/deps/dotbot/bin/dotbot" -d "$(dirname "$DOTBOT_CONF")" -c "$DOTBOT_CONF"
+}
+
+if (($# > 0)); then
+  run "$1"
 else
   # shellcheck source=../bash/load-config.bash
   . "$ONE_DIR/bash/load-config.bash"
@@ -54,19 +58,15 @@ else
   # shellcheck disable=1090
   . "$ONE_CONF"
 
-  if l.has_not function ONE_LINKS_CONF; then
-    echo "Not found function ONE_LINKS_CONF in file '$DOTBOT_CONF." >&2
-    exit 6
-  fi
-
-  DOTBOT_CONF=$(ONE_LINKS_CONF "$(uname -s)" "$(uname -m)")
-
-  if [[ ! -f $DOTBOT_CONF ]]; then
-    echo "Not found file '$DOTBOT_CONF'. Check the ONE_LINKS_CONF function in your config." >&2
-    exit 5
+  if l.is_function ONE_LINKS_CONF; then
+    for path in $(ONE_LINKS_CONF "$(uname -s)" "$(uname -m)"); do
+      run "$path"
+    done
+  elif l.is_array ONE_LINKS_CONF; then
+    for path in "${ONE_LINKS_CONF[@]}"; do
+      run "$path"
+    done
+  else
+    run "$ONE_LINKS_CONF"
   fi
 fi
-
-echo "Create symbol links based on ONE_LINKS_CONF: ${DOTBOT_CONF}"
-
-"$ONE_DIR/deps/dotbot/bin/dotbot" -d "$(dirname "$DOTBOT_CONF")" -c "$DOTBOT_CONF"

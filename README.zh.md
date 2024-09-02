@@ -21,11 +21,10 @@
 
 - ✅ iTerm2
 - ✅ Terminal.app
-- ✅ MacOS Intel Arch
-- ✅ MacOS ARM Arch
-- ✅ Linux/Unix system
-- 🚫 Windows system
-- 🚫 Zsh. 本项目针对 Bash 用户开发. Zsh 用户请使用 [Oh My Zsh](https://github.com/robbyrussell/oh-my-zsh)。
+- ✅ MacOS 13 及以上版本 (Intel/ARM 架构)
+- ✅ Linux/Unix 系统
+- 🚫 Windows 系统
+- 🚫 Zsh。本项目针对 Bash 用户开发. Zsh 用户请使用 [Oh My Zsh](https://github.com/robbyrussell/oh-my-zsh)。
 
 ## CI 状态
 
@@ -75,6 +74,15 @@ echo '' >> ~/.bashrc
 one --bashrc >> ~/.bashrc
 ```
 
+## 更新
+
+```sh
+# 更新 one.bash 以及相关依赖到最新版本
+one upgrade
+# 检查依赖状态
+one dep status
+```
+
 ## 配置
 
 ### ONE_CONF
@@ -82,7 +90,7 @@ one --bashrc >> ~/.bashrc
 `ONE_CONF` 存放 one.bash 配置的文件路径。
 这个文件不是必须的，one.bash 有[默认配置](./one.config.default.bash)。
 
-```sh
+```bash
 ONE_CONF=${XDG_CONFIG_HOME:-$HOME/.config}/one.bash/one.config.bash
 mkdir -p "$(dirname "$ONE_CONF")"
 
@@ -110,40 +118,65 @@ EOF
 
 还可以用`one config <key>` 来查询选项。
 
+### ONE_DIR
+
+`ONE_DIR` 是 one.bash 所在目录。这个是常量，无需配置。
+
+### ONE_CONF_DIR
+
+`ONE_CONF_DIR` 是 ONE_CONF 文件所在目录。这个是常量，无需配置。
+
 ### ONE_LINKS_CONF
 
-`ONE_LINKS_CONF` 是一个 Bash 函数，它返回 [dotbot][] 配置的文件路径。默认为空。
+`ONE_LINKS_CONF` 可以是字符串，字符串数组，以及函数。默认值是 `$ONE_CONF_DIR/one.links.yaml`。
 
-该函数接收两个参数：OS (`uname -s`) 和 Arch (`uname -m`)。
-它可以用来管理不同系统下的不同 [dotbot][] 配置（比如 MacOS 和 Linux）。
+`one link` 以及 `one unlink` 命令读取 `ONE_LINKS_CONF` 指向的文件内容，来管理软链接。
+**注意: 不要用 sudo 调用 `one link` 和 `one unlink`。**
+
+`ONE_LINKS_CONF` 文件内容采用 [dotbot 配置](https://github.com/anishathalye/dotbot#configuration)。
+
+这有一份提供了 dotbot 配置模板 [one.links.example.yaml][]。你可以拷贝内容到 `one.links.yaml`。
+
+<!-- 你可以使用 [dotbot 插件](https://github.com/anishathalye/dotbot#plugins) 来获得更多指令。 -->
+<!-- 详见 https://github.com/anishathalye/dotbot/wiki/Plugins -->
+
+#### ONE_LINKS_CONF 数组
+
+它可以用来管理多个 ONE_LINKS_CONF 文件，以便拆分和复用。
 
 ```sh
-# User should print the path of ONE_LINKS_CONF file
+ONE_LINKS_CONF=("/a/one.links.yaml" "/b/one.lins.yaml")
+```
+
+#### ONE_LINKS_CONF 函数
+
+`ONE_LINKS_CONF` 也可以是 Bash 函数，其返回值表示 [dotbot][] 配置的文件路径。
+
+该函数接收两个参数：OS (`uname -s`) 和 Arch (`uname -m`)。必须用 `echo` 返回 ONE_LINKS_CONF 路径。
+
+它可以用来管理不同系统下的不同 [dotbot][] 配置（比如 MacOS 和 Linux）。
+
+```bash
+# User should print the filepath of ONE_LINKS_CONF
+# User can print multiple filepaths
 # @param os   $(uname -s)
 # @param arch $(uname -m)
 ONE_LINKS_CONF() {
   local os=$1
   local arch=$2
   case "$os_$arch" in
-    Darwin_arm64) echo "$DOTFILES_DIR"/links/macos_arm.yaml ;;
-    Darwin_amd64) echo "$DOTFILES_DIR"/links/macos_intel.yaml ;;
+    Darwin_arm64)
+      echo "$DOTFILES_DIR"/links/macos_common.yaml
+      echo "$DOTFILES_DIR"/links/macos_arm.yaml
+      ;;
+    Darwin_amd64)
+      echo "$DOTFILES_DIR"/links/macos_common.yaml
+      echo "$DOTFILES_DIR"/links/macos_intel.yaml
+      ;;
     Linux*) echo "$DOTFILES_DIR"/links/linux.yaml ;;
   esac
 }
 ```
-
-[dotbot][] 是一个通过软链接管理配置文件（或者任何文件）的工具。
-你可以用它来创建软链接，指向任何文件。
-
-[one.share][] 提供了 dotbot 配置模板 [one.links.example.yaml][]。你可以拷贝内容到 `one.links.yaml`。
-
-调用 `one link` 会根据 ONE_LINKS_CONF 创建软链接。
-**注意: 不要用 sudo 调用 `one link`。**
-
-调用 `one unlink` 会根据 ONE_LINKS_CONF 移除软链接文件。
-
-你可以使用 [dotbot 插件](https://github.com/anishathalye/dotbot#plugins) 来获得更多指令。
-详见 https://github.com/anishathalye/dotbot/wiki/Plugins
 
 ## 用法
 
@@ -151,7 +184,7 @@ ONE_LINKS_CONF() {
 
 `one` 命令用来管理 one.bash 模块、配置以及依赖。
 
-```
+```bash
 # 调用 `one` 会显示用法。
 $ one
 Usage:

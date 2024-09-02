@@ -1,5 +1,5 @@
 usage() {
-  cat <<EOF
+  cat << EOF
 Usage:  one repo [-h|--help] <ACTION>
         one repo [-h|--help]
 

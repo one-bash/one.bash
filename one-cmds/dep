@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 set -o errexit -o nounset -o pipefail -o errtrace
-(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+(shopt -p inherit_errexit &> /dev/null) && shopt -s inherit_errexit
 
 # one.bash:usage
-if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
-  cat <<EOF
+if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+  cat << EOF
 Usage: one $(basename "$0") [<ACTION>]
 
 Desc: Manage one.bash deps
@@ -26,12 +26,12 @@ fi
 
 # one.bash:completion
 if [[ "${1:-}" == --complete ]]; then
-  if (( COMP_CWORD < 3 )); then
+  if ((COMP_CWORD < 3)); then
     words=(install update status --help -h)
     printf '%s\n' "${words[@]}"
   else
     case $2 in
-      i|install|u|update|s|status)
+      i | install | u | update | s | status)
         words=(composure dotbot)
         printf '%s\n' "${words[@]}"
         ;;
@@ -54,17 +54,19 @@ git_clone() {
 }
 
 git_update() {
-  local dir=$1
+  local dir=$1 tag
   shift
 
   if [[ ! -d "$dir" ]]; then
-    echo "No such folder $dir" >&2
-    return 0;
+    print_err "No such folder: $dir"
+    return "$ONE_EX_OK"
   fi
 
-  echo "To update $dir"
+  print_verb "To update git repo: $dir"
 
-  git -C "$dir" pull --recurse-submodules="${SUBMOD:-no}" "$@"
+  git -C "$dir" fetch --recurse-submodules="${SUBMOD:-no}" "$@"
+  tag=$(git -C "$dir" tag -l 'v*' --sort '-version:refname' | head -n 1)
+  git -C "$dir" checkout --recurse-submodules="${SUBMOD:-no}" "$tag"
 }
 
 git_status() {
@@ -81,7 +83,7 @@ install() {
 }
 
 update() {
-  if (( $# == 0 )); then
+  if (($# == 0)); then
     SUBMOD=true git_update "$ONE_DIR/deps/dotbot"
     git_update "$ONE_DIR/deps/composure"
   else
@@ -94,7 +96,7 @@ update() {
 }
 
 list_status() {
-  if (( $# == 0 )); then
+  if (($# == 0)); then
     git_status "$ONE_DIR/deps/dotbot"
     git_status "$ONE_DIR/deps/composure"
   else
@@ -105,21 +107,21 @@ list_status() {
 action=$1
 shift
 
-# shellcheck source=../../bash/load-config.bash
+# shellcheck source=./base-scripts.bash
+. "$ONE_DIR/one-cmds/base-scripts.bash"
+
+# shellcheck source=../bash/load-config.bash
 . "$ONE_DIR/bash/load-config.bash"
 
-# shellcheck source=../deps/colors.bash
-. "$ONE_DIR/deps/colors.bash"
-
 case "$action" in
-  i|install) install ;;
+  i | install) install ;;
 
-  u|update) update "$@" ;;
+  u | update) update "$@" ;;
 
-  s|status) list_status "$@" ;;
+  s | status) list_status "$@" ;;
 
   *)
-    echo "Invalid action '$action'" >&2
-    exit 1
+    print_err "Invalid action '$action'"
+    exit $ONE_EX_USAGE
     ;;
 esac

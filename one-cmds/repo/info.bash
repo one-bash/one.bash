@@ -46,7 +46,7 @@ info_repo() {
   done < <(search_repos "$1")
 
   if [[ -z "${repo_path:-}" ]]; then
-    print_error "No matched repo '$repo_name'"
+    print_err "No matched repo '$repo_name'"
     return 2
   fi
 }

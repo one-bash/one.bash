@@ -1,5 +1,5 @@
 usage_info() {
-  cat <<EOF
+  cat << EOF
 Usage: one bin info <NAME>
 Desc:  Show the information of matched bin files
 Arguments:
@@ -45,7 +45,7 @@ info_bin() {
         print_info_item "URL" "${URL:-}"
       )
     else
-      print_info_item "About" "$(metafor about-plugin <"$path")"
+      print_info_item "About" "$(metafor about-plugin < "$path")"
     fi
   done
 }

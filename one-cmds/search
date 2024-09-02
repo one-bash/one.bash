@@ -47,7 +47,7 @@ search() {
     elif [[ $2 == '-a' ]]; then
       word=$1
     else
-      print_error 'Invalid arguments'
+      print_err 'Invalid arguments'
       return 5
     fi
   else

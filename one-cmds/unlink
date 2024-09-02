@@ -5,7 +5,7 @@ set -o errexit -o nounset -o pipefail -o errtrace
 
 # one.bash:completion
 if [[ "${1:-}" == --complete ]]; then
-  if (( COMP_CWORD < 3 )); then
+  if ((COMP_CWORD < 3)); then
     result=$(compgen -f -- "$2")
     if [[ -d $result ]]; then
       compgen -f -- "$result/"
@@ -21,10 +21,10 @@ if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
   cat <<EOF
 Usage: one $(basename "$0") [<LINKS_CONF>]
 
-Desc: remove all symbol links based on LINKS_CONF file
+Desc: Remove all symbol links based on LINKS_CONF file
 
 Arguments:
-  <LINKS_CONF>  The links config. If omit, use the output of function ONE_LINKS_CONF which defined in ONE_CONF.
+  <LINKS_CONF>  The filepath of one.links.yaml. If omit, use the value of ONE_LINKS_CONF defined in ONE_CONF.
 EOF
   exit 0
 fi
@@ -35,36 +35,46 @@ if [[ -z ${ONE_DIR:-} ]]; then
   ONE_DIR=$SCRIPT_DIR/..
 fi
 
-# shellcheck source=./bash/xdg.bash
-. "$ONE_DIR/bash/xdg.bash"
+# shellcheck source=./base-scripts.bash
+. "$ONE_DIR/one-cmds/base-scripts.bash"
 
-# shellcheck source=./deps/lobash.bash
-. "$ONE_DIR/deps/lobash.bash"
-
-if (( $# > 0 )); then
-  DOTBOT_CONF=$1
+run() {
+  local DOTBOT_CONF=$1
 
   if [[ ! -f $DOTBOT_CONF ]]; then
-    echo "Not found file '$DOTBOT_CONF'" >&2
-    exit 4
+    print_err "Not found file '$DOTBOT_CONF'. Check the value of ONE_LINKS_CONF in your config."
+    exit $ONE_EX_CONFIG
   fi
+
+  print_verb "Remove symbol links based on  ONE_LINKS_CONF: ${DOTBOT_CONF}"
+
+  python3 "$ONE_DIR"/one-cmds/unlink.py "$DOTBOT_CONF"
+}
+
+if (($# > 0)); then
+  run "$1"
 else
-  # shellcheck source=../../one_config.bash
+  # shellcheck source=../bash/load-config.bash
+  . "$ONE_DIR/bash/load-config.bash"
+  export ONE_DIR ONE_SUB ONE_CONF
+
+  # shellcheck source=../one.config.default.bash
   . "$ONE_CONF"
 
-  if l.has_not function ONE_LINKS_CONF; then
-    echo "Not found function ONE_LINKS_CONF in file '$DOTBOT_CONF." >&2
-    exit 6
-  fi
+  if l.is_function ONE_LINKS_CONF; then
+    array=()
+    for path in $(ONE_LINKS_CONF "$(uname -s)" "$(uname -m)"); do
+      array+=("$path")
+    done
 
-  DOTBOT_CONF=$(ONE_LINKS_CONF "$(uname -s)" "$(uname -m)")
-
-  if [[ ! -f $DOTBOT_CONF ]]; then
-    echo "Not found file '$DOTBOT_CONF. Check the ONE_LINKS_CONF function in your config." >&2
-    exit 5
+    for ((idx = ${#array[@]} - 1; idx >= 0; idx--)); do
+      run "${array[idx]}"
+    done
+  elif l.is_array ONE_LINKS_CONF; then
+    for ((idx = ${#ONE_LINKS_CONF[@]} - 1; idx >= 0; idx--)); do
+      run "${ONE_LINKS_CONF[idx]}"
+    done
+  else
+    run "$ONE_LINKS_CONF"
   fi
 fi
-
-echo "Use ONE_LINKS_CONF: ${DOTBOT_CONF}"
-
-python3 "$ONE_DIR"/one-cmds/unlink.py "$DOTBOT_CONF"

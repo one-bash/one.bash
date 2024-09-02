@@ -21,8 +21,7 @@ An elegant framework to manage commands, completions, dotfiles for bash players.
 
 - ✅ iTerm2
 - ✅ Terminal.app
-- ✅ MacOS Intel Arch
-- ✅ MacOS ARM Arch
+- ✅ MacOS 13 and above (Intel/ARM Arch)
 - ✅ Linux/Unix system
 - 🚫 Windows system
 - 🚫 Zsh. This project is just for Bash players. Zsh players should use [Oh My Zsh](https://github.com/robbyrussell/oh-my-zsh).
@@ -75,6 +74,15 @@ echo '' >> ~/.bashrc
 one --bashrc >> ~/.bashrc
 ```
 
+## Upgrade
+
+```sh
+# upgrade one.bash and its dependencies to latest version
+one upgrade
+# check the status of all dependencies
+one dep status
+```
+
 ## Configuration
 
 ### ONE_CONF
@@ -82,7 +90,7 @@ one --bashrc >> ~/.bashrc
 `ONE_CONF` is the filepath of one.bash configuration.
 The file is not required. one.bash has [default config](./one.config.default.bash).
 
-```sh
+```bash
 ONE_CONF=${XDG_CONFIG_HOME:-$HOME/.config}/one.bash/one.config.bash
 mkdir -p "$(dirname "$ONE_CONF")"
 
@@ -110,40 +118,65 @@ You can use `one config <key>=<val>` set config option. (function and array are 
 
 And `one config <key>` to query config option.
 
+### ONE_DIR
+
+`ONE_DIR` is the directory where the one.bash located. This is a constant and does not need user to set.
+
+### ONE_CONF_DIR
+
+`ONE_CONF_DIR` is the directory where the ONE_CONF file located. This is a constant and does not need user to set.
+
 ### ONE_LINKS_CONF
 
-`ONE_LINKS_CONF` is a bash function that returns a filepath of [dotbot][] config. Defaults to empty.
+`ONE_LINKS_CONF` can be a string, an array of strings, and a function. The default value is `$ONE_CONF_DIR/one.links.yaml`.
 
-This function receives two parameters: OS (`uname -s`), Arch (`uname -m`).
-It is used for managing different [dotbot][] configs for different environments (such as MacOS and Linux).
+The `one link` and `one unlink` commands read the contents of the `ONE_LINKS_CONF` file to manage symbolic links.
+**Notice: Do not invoke `one link` and `one unlink` with sudo.**
+
+The contents of the `ONE_LINKS_CONF` file uses the [dotbot configuration](https://github.com/anishathalye/dotbot#configuration).
+
+There is a dotbot config template [one.links.example.yaml][]. You can copy its content to `one.links.yaml`.
+
+<!-- You can use [dotbot plugins](https://github.com/anishathalye/dotbot#plugins) for more directives. -->
+<!-- See https://github.com/anishathalye/dotbot/wiki/Plugins -->
+
+#### ONE_LINKS_CONF Array
+
+It can be used to manage multiple ONE_LINKS_CONF files for splitting and reuse.
 
 ```sh
-# User should print the path of ONE_LINKS_CONF file
+ONE_LINKS_CONF=("/a/one.links.yaml" "/b/one.lins.yaml")
+```
+
+#### ONE_LINKS_CONF Function
+
+`ONE_LINKS_CONF` can be a Bash function that returns a filepath of [dotbot][] config. Defaults to empty.
+
+This function receives two parameters: OS (`uname -s`), Arch (`uname -m`).The ONE_LINKS_CONF path must be returned with `echo`.
+
+It is used for managing different [dotbot][] configs for different environments (such as MacOS and Linux).
+
+```bash
+# User should print the filepath of ONE_LINKS_CONF
+# User can print multiple filepaths
 # @param os   $(uname -s)
 # @param arch $(uname -m)
 ONE_LINKS_CONF() {
   local os=$1
   local arch=$2
   case "$os_$arch" in
-    Darwin_arm64) echo "$DOTFILES_DIR"/links/macos_arm.yaml ;;
-    Darwin_amd64) echo "$DOTFILES_DIR"/links/macos_intel.yaml ;;
+    Darwin_arm64)
+      echo "$DOTFILES_DIR"/links/macos_common.yaml
+      echo "$DOTFILES_DIR"/links/macos_arm.yaml
+      ;;
+    Darwin_amd64)
+      echo "$DOTFILES_DIR"/links/macos_common.yaml
+      echo "$DOTFILES_DIR"/links/macos_intel.yaml
+      ;;
     Linux*) echo "$DOTFILES_DIR"/links/linux.yaml ;;
   esac
 }
 ```
-
-The [dotbot][] is a tool to manage symbol links of dotfiles and any other files. It is a part of one.bash.
-You can use it to create symbol links to any files.
-
-[one.share][] provides a dotbot config template [one.links.example.yaml][]. You can copy its content to `one.links.yaml`.
-
-Invoke `one link` to create symbol links based on ONE_LINKS_CONF file.
-**Notice: Do not invoke `one link` with sudo.**
-
-Invoke `one unlink` to remove all symbol links based on ONE_LINKS_CONF file.
-
-You can use [dotbot plugins](https://github.com/anishathalye/dotbot#plugins) for more directives.
-See https://github.com/anishathalye/dotbot/wiki/Plugins
 
 ## Usage
 

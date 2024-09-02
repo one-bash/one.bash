@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 set -o errexit -o nounset -o pipefail -o errtrace
-(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+(shopt -p inherit_errexit &> /dev/null) && shopt -s inherit_errexit
 
 # one.bash:completion
 if [[ "${1:-}" == --complete ]]; then
-  if (( COMP_CWORD < 3 )); then
+  if ((COMP_CWORD < 3)); then
     words=(-o -h --help)
     printf '%s\n' "${words[@]}"
   elif [[ $2 == -o ]]; then
@@ -20,8 +20,9 @@ if [[ "${1:-}" == --complete ]]; then
 fi
 
 usage() {
-  local cmd; cmd=$(basename "$0");
-  cat <<EOF
+  local cmd
+  cmd=$(basename "$0")
+  cat << EOF
 Usage: one $cmd [OPTIONS]
 Desc:  Output backup scripts for current enabled modules
 Options:
@@ -41,20 +42,17 @@ if [[ -z ${ONE_DIR:-} ]]; then
   ONE_DIR=$SCRIPT_DIR/..
 fi
 
-# shellcheck source=../../bash/load-config.bash
+# shellcheck source=./base-scripts.bash
+. "$ONE_DIR/one-cmds/base-scripts.bash"
+
+# shellcheck source=../bash/load-config.bash
 . "$ONE_DIR/bash/load-config.bash"
 
-# shellcheck source=../../deps/colors.bash
-. "$ONE_DIR/deps/colors.bash"
-
-# shellcheck source=../../bash/log.bash
+# shellcheck source=../bash/log.bash
 . "$ONE_DIR/bash/log.bash"
 
-# shellcheck source=../../bash/mod.bash
-. "$ONE_DIR/bash/mod.bash"
-
-# shellcheck source=../../deps/lobash.bash
-. "$ONE_DIR/deps/lobash.bash"
+# shellcheck source=../one-cmds/mod.bash
+. "$ONE_DIR/one-cmds/mod.bash"
 
 declare -A opts=()
 declare -a args=()
@@ -66,13 +64,13 @@ list_enabled_for_backup() {
 }
 
 list_enabled_bins() {
-  find "$ENABLED_DIR/bin" -maxdepth 1 -type l -exec basename {} \; \
-    | sort | tr '\n' ' '
+  find "$ENABLED_DIR/bin" -maxdepth 1 -type l -exec basename {} \; |
+    sort | tr '\n' ' '
   printf '\n'
 }
 
 backup_content() {
-  cat <<EOF
+  cat << EOF
 #!/usr/bin/env bash
 
 set -euE -o pipefail
@@ -86,7 +84,7 @@ one bin disable --all
 EOF
 
   local path url
-  for path in "$ONE_DIR"/enabled/repos/* ; do
+  for path in "$ONE_DIR"/enabled/repos/*; do
     if [[ -d $path/.git ]]; then
       url=$(git -C "$path" config --get remote.origin.url)
     else

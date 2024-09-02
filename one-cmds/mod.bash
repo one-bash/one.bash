@@ -1,5 +1,5 @@
-# shellcheck source=../one-cmds/util.bash
-. "$ONE_DIR/one-cmds/util.bash"
+# shellcheck source=./mod-base.bash
+. "$ONE_DIR/one-cmds/mod-base.bash"
 
 # you can extend the mod map
 # shellcheck disable=2034
@@ -117,7 +117,7 @@ disable_mod() {
   done < <(match_enabled_modules "$name")
 
   if [[ $silent == false ]] && [[ $found == false ]]; then
-    print_error "No matched enabled $t '$name'."
+    print_err "No matched enabled $t '$name'."
   fi
 }
 
@@ -126,11 +126,11 @@ disable_it() {
 
   if [[ ${1:-} == --all ]]; then
     for name in $(list_enabled "$t"); do
-      disable_mod "$name" || print_error "Failed to disable '$name'."
+      disable_mod "$name" || print_err "Failed to disable '$name'."
     done
   else
     for name in "$@"; do
-      disable_mod "$name" || print_error "Failed to disable '$name'."
+      disable_mod "$name" || print_err "Failed to disable '$name'."
     done
   fi
 }
@@ -141,7 +141,7 @@ check_file() {
   local name=$1
   # shellcheck disable=2154
   if [[ ! -f "$t_dir/$name.bash" ]]; then
-    print_error "No matched $t '$name'"
+    print_err "No matched $t '$name'"
     exit 1
   fi
 }
@@ -417,14 +417,14 @@ enable_mod() {
         disable_mod "$name" true
       fi
 
-      enable_file "$name" "$filepath" || print_error "Failed to enable '$name'."
+      enable_file "$name" "$filepath" || print_err "Failed to enable '$name'."
       ;;
     0)
-      print_error "No matched $t '$name'"
+      print_err "No matched $t '$name'"
       return 10
       ;;
     *)
-      print_error "Matched multi $ts for '$name':"
+      print_err "Matched multi $ts for '$name':"
       printf '  %s\n' "${filepaths[@]}" >&2
       return 11
       ;;
@@ -434,7 +434,7 @@ enable_mod() {
 enable_it() {
   local name
   for name in "$@"; do
-    enable_mod "$name" || print_error "Failed to enable '$name'."
+    enable_mod "$name" || print_err "Failed to enable '$name'."
   done
 }
 
@@ -455,40 +455,43 @@ print_list_item() {
     typeSymbol=${type:0:1}
 
     local -a prints=()
-    local format='' mod_real_path repo_name
+    local format='' mod_real_path repo_name about=''
 
     # load-priority
-    if [[ ${opts['priority']:-} != false ]]; then
-      format="$format%b%s "
-      prints+=("$YELLOW" "${list[0]}")
-    fi
+    format="$format%b%-4s"
+    prints+=("$YELLOW" "${list[0]}")
 
     # mod type
-    if [[ ${opts['type']:-} != false ]]; then
-      format="$format%b%s "
-      prints+=("${MOD_TYPE_COLOR[${type}]}" "${typeSymbol^}")
-    fi
+    format="$format %b%-4s"
+    prints+=("${MOD_TYPE_COLOR[${type}]}" "${typeSymbol^}")
 
-    # mod name -> real path
-    format="$format%b%-20s%b %b%s\n"
+    # mod_name repo_name
+    format="$format %b%-18s%b %b%-18s"
 
     mod_real_path="$(readlink "$line")"
     if [[ $mod_real_path == $ONE_DIR/data/${t_map[$type]}/* ]]; then
       repo_name="$(. "$(dirname "$mod_real_path")/meta.bash" && echo "$repo_name")"
+      about="$(. "$(dirname "$mod_real_path")/meta.bash" && echo "$about")"
     elif [[ $mod_real_path =~ (.+)\/${t_map[$type]}\/ ]]; then
+      # if mod_real_path matches ../(aliases|plugins|completions)/..
       repo_path="${BASH_REMATCH[1]}"
       repo_name="$(. "$repo_path"/one.repo.bash && echo "$name")"
+      about=$(metafor about-plugin < "$mod_real_path")
     else
       repo_name="<noknown>"
     fi
 
     prints+=(
       "$CYAN" "${list[1]}" "$GREY"
-      "$RESET_ALL" "$repo_name"
+      "$BLUE" "$repo_name"
     )
 
+    # About
+    format="$format %b%s"
+    prints+=("$WHITE" "$about")
+
     # shellcheck disable=2059
-    printf "$format" "${prints[@]}"
+    printf "$format\n" "${prints[@]}"
   done
 }
 
@@ -546,6 +549,7 @@ list_mods() {
       list_enabled "$t" | tr '\n' ' '
       printf '\n'
     else
+      printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
       find "$ENABLED_DIR" -maxdepth 1 -name "*---*.$t.bash" | print_list_item | sort
     fi
   fi
@@ -592,11 +596,11 @@ info_mod() {
       fi
       ;;
     0)
-      print_error "No matched $t '$name'"
+      print_err "No matched $t '$name'"
       return 10
       ;;
     *)
-      print_error "Matched multi $ts for '$name':"
+      print_err "Matched multi $ts for '$name':"
       printf '  %s\n' "${filepaths[@]}" >&2
       return 11
       ;;
@@ -614,11 +618,11 @@ edit_mod() {
       ${EDITOR:-vi} "${filepaths[0]}"
       ;;
     0)
-      print_error "No matched $t '$name'"
+      print_err "No matched $t '$name'"
       return 10
       ;;
     *)
-      print_error "Matched multi $ts for '$name':"
+      print_err "Matched multi $ts for '$name':"
       printf '  %s\n' "${filepaths[@]}" >&2
       return 11
       ;;

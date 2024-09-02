@@ -29,7 +29,7 @@ disable_repo() {
       unlink "$filepath"
       print_success "Disabled repo: $name"
     else
-      print_error "No matched repo: $name"
+      print_err "No matched repo: $name"
     fi
   done
 }

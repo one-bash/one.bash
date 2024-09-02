@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 set -o errexit -o nounset -o pipefail -o errtrace
-(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+(shopt -p inherit_errexit &> /dev/null) && shopt -s inherit_errexit
 
 one plugin disable --all
 one alias disable --all
 one completion disable --all
+one bin disable --all

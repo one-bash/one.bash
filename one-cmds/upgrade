@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+set -o errexit -o nounset -o pipefail -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+# shellcheck source=../bash/exit-codes.bash
+. "$ONE_DIR/bash/exit-codes.bash"
+
+# one.bash:completion
+if [[ "${1:-}" == --complete ]]; then
+  if ((COMP_CWORD < 3)); then
+    result=$(compgen -f -- "$2")
+    if [[ -d $result ]]; then
+      compgen -f -- "$result/"
+    else
+      echo "${result[@]}"
+    fi
+  fi
+  exit $ONE_EX_OK
+fi
+
+# one.bash:usage
+if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
+  cat <<EOF
+Usage: one $(basename "$0")
+Desc: Upgrade one.bash and its dependencies to latest version
+EOF
+  exit $ONE_EX_OK
+fi
+
+if [[ -z ${ONE_DIR:-} ]]; then
+  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+  readonly SCRIPT_DIR
+  export ONE_DIR=$SCRIPT_DIR/..
+fi
+
+# shellcheck source=./bash/xdg.bash
+. "$ONE_DIR/bash/xdg.bash"
+
+# shellcheck source=../deps/colors.bash
+. "$ONE_DIR/deps/colors.bash"
+
+# shellcheck source=./util.bash
+. "$ONE_DIR/one-cmds/util.bash"
+
+git_update() {
+  local dir=$1 tag
+  shift
+
+  if [[ ! -d "$dir" ]]; then
+    print_err "No such folder: $dir"
+    return $ONE_EX_OK
+  fi
+
+  print_verb "To update git repo: $dir"
+
+  git -C "$dir" fetch --recurse-submodules="${SUBMOD:-no}" "$@"
+  tag=$(git -C "$dir" tag -l 'v*' --sort '-version:refname' | head -n 1)
+  git -C "$dir" checkout --recurse-submodules="${SUBMOD:-no}" "$tag"
+}
+
+main() {
+  print_verb '[Todo] Upgrade one.nvim'
+  git_update "$ONE_DIR"
+  print_verb '[Todo] Upgrade dependencies'
+  one dep update
+  print_success 'one.nvim upgraded'
+}
+
+main

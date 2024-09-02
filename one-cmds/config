@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -o errexit -o nounset -o pipefail -o errtrace
-(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+(shopt -p inherit_errexit &> /dev/null) && shopt -s inherit_errexit
 
 # one.bash:completion
 if [ "${1:-}" = "--complete" ]; then
@@ -16,9 +16,9 @@ if [ "${1:-}" = "--complete" ]; then
 fi
 
 # one.bash:usage
-if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
   cmd=$(basename "$0")
-  cat <<EOF
+  cat << EOF
 Usage:
   one $cmd [OPTIONS]
   one $cmd <key>           Get value
@@ -83,7 +83,7 @@ parse_pairs() {
   if [[ $# == 1 ]]; then
     l.split "$1" list '='
   else
-    list=( "$1" "$2" )
+    list=("$1" "$2")
   fi
 
   local key=ONE_${list[0]^^}
@@ -95,7 +95,7 @@ parse_pairs() {
       get_val "$key"
     fi
   else
-    if [[ -h $ONE_CONF ]]; then
+    if [[ -L $ONE_CONF ]]; then
       ONE_CONF=$(readlink "$ONE_CONF")
     fi
 
@@ -109,7 +109,7 @@ parse_pairs() {
 }
 
 case "$1" in
-  -l|--list)
+  -l | --list)
     list_options
     exit 0
     ;;

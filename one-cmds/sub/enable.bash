@@ -1,5 +1,5 @@
 usage_enable() {
-  cat <<EOF
+  cat << EOF
 Usage: one sub enable [-a|--all] <NAME>...
 Desc:  Enable sub command
 Arguments:
@@ -42,8 +42,8 @@ enable_sub() {
   shopt -s nullglob
   local name path
 
-  # shellcheck source=../../bash/mod.bash
-  . "$ONE_DIR/bash/mod.bash"
+  # shellcheck source=../../one-cmds/mod.bash
+  . "$ONE_DIR/one-cmds/mod.bash"
   # shellcheck source=../../deps/lobash.bash
   . "$ONE_DIR/deps/lobash.bash"
 
@@ -70,11 +70,11 @@ enable_sub() {
             ;;
 
           0)
-            print_error "No matched file '$name'"
+            print_err "No matched file '$name'"
             ;;
 
           *)
-            print_error "Matched multi files for '$name':"
+            print_err "Matched multi files for '$name':"
             printf '  %s\n' "${paths[@]}" >&2
             ;;
         esac

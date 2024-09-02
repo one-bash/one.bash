@@ -1,50 +1,19 @@
 #!/usr/bin/env bash
 
 set -o errexit -o nounset -o pipefail -o errtrace
-(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+(shopt -p inherit_errexit &> /dev/null) && shopt -s inherit_errexit
 
 # If ONE_DIR environment variable not defined, search the path of ONE_DIR and export it
 if [[ -z ${ONE_DIR:-} ]]; then
-  # Copy from https://github.com/ko1nksm/readlinkf
-  readlinkf() {
-    [ "${1:-}" ] || return 1
-    max_symlinks=40
-    CDPATH='' # to avoid changing to an unexpected directory
-
-    target=$1
-    [ -e "${target%/}" ] || target=${1%"${1##*[!/]}"} # trim trailing slashes
-    [ -d "${target:-/}" ] && target="$target/"
-
-    cd -P . 2>/dev/null || return 1
-    while [ "$max_symlinks" -ge 0 ] && max_symlinks=$((max_symlinks - 1)); do
-      if [ ! "$target" = "${target%/*}" ]; then
-        case $target in
-          /*) cd -P "${target%/*}/" 2>/dev/null || break ;;
-          *) cd -P "./${target%/*}" 2>/dev/null || break ;;
-        esac
-        target=${target##*/}
-      fi
-
-      if [ ! -L "$target" ]; then
-        target="${PWD%/}${target:+/}${target}"
-        printf '%s\n' "${target:-/}"
-        return 0
-      fi
-
-      target=$(readlink -- "$target" 2>/dev/null) || break
-    done
-    return 1
-  }
-
-  ONE_DIR=$(dirname "$(readlinkf "$0")")
-  ONE_DIR=$(dirname "$ONE_DIR")
+  # ONE_DIR=$(dirname "$(readlinkf "$0")")
+  ONE_DIR=$(dirname "$(dirname "$(realpath "$0")")")
   export ONE_DIR
 fi
 
 # one.bash:usage
-if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
   name=$(basename "$0")
-  cat <<EOF
+  cat << EOF
 Usage:
     $name help [<CMD>]            Show the usage of one command
     $name [<CMD>] [-h|--help]     Show the usage of one command
@@ -71,10 +40,12 @@ Usage:
     $name dep                     Manage one.bash deps
     $name link                    Create symlink files based on LINKS_CONF file
     $name unlink                  remove all symbol links based on LINKS_CONF file
+    $name upgrade                 Upgrade one.bash and its dependencies to latest version
     $name log                     Tail the logs of one.bash
     $name search                  Search alias/bin/completion/plugin of each enabled repo.
     $name sub [<SUB_CMD>]         Run ONE_SUB command
-    $name [--bashrc]              Print one.bash entry codes for bashrc
+    $name version                 Print current version of one.bash
+    $name --bashrc                Print one.bash entry codes for bashrc
 
 Desc:
     An elegant framework to manage commands, completions, dotfiles for terminal players.
@@ -88,7 +59,7 @@ EOF
 fi
 
 one_sub_cmd() {
-  if (( $# > 0 )); then
+  if (($# > 0)); then
     local sub_cmd=$1
     local cmd_path
     local repo
@@ -110,7 +81,7 @@ one_sub_cmd() {
       done
 
       if [[ -z "${cmd_path:-}" ]]; then
-        echo "Not found sub command '$sub_cmd'" >&2
+        print_err "Not found sub command '$sub_cmd'"
         return "$ONE_EX_USAGE"
       fi
     fi
@@ -123,23 +94,19 @@ one_sub_cmd() {
 }
 
 one_cmd() {
-  local cmd_path
+  local arg1=$1
+  shift
 
-  case $cmd in
-    r) cmd=repo;;
-    a) cmd='alias';;
-    b) cmd=bin;;
-    c) cmd=completion;;
-    p) cmd=plugin;;
-    s) cmd=sub;;
-  esac
+  local cmd_path cmd
+
+  cmd=$(get_command_name "$arg1")
 
   if [[ -x $ONE_DIR/one-cmds/$cmd/main ]]; then
     cmd_path="$ONE_DIR/one-cmds/$cmd/main"
   elif [[ -x "$ONE_DIR/one-cmds/$cmd" ]]; then
     cmd_path="$ONE_DIR/one-cmds/$cmd"
   else
-    echo "No such command '$cmd'" >&2
+    print_err "No such command '$cmd'"
     return "$ONE_EX_USAGE"
   fi
 
@@ -147,7 +114,7 @@ one_cmd() {
 }
 
 bashrc() {
-  cat <<-EOF
+  cat <<- EOF
 # Add below code to ~/.bashrc
 ONE_DIR=$ONE_DIR
 . "\$ONE_DIR/bash/entry.bash"
@@ -155,15 +122,18 @@ EOF
 }
 
 main() {
-  local cmd="${1:-}"
-  shift
-
-  # shellcheck source=bash/exit-codes.bash
+  # shellcheck source=../bash/exit-codes.bash
   . "$ONE_DIR/bash/exit-codes.bash"
 
-  case "$cmd" in
+  # shellcheck source=../deps/colors.bash
+  . "$ONE_DIR/deps/colors.bash"
+
+  # shellcheck source=../one-cmds/util.bash
+  . "$ONE_DIR/one-cmds/util.bash"
+
+  case "${1:-}" in
     "--bashrc") bashrc ;;
-    * ) one_cmd "$@" ;;
+    *) one_cmd "$@" ;;
   esac
 }
 

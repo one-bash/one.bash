@@ -37,7 +37,7 @@ set_exports() {
     if [[ -f "$ONE_DIR/data/bins/${name}/$file" ]]; then
       chmod +x "$ONE_DIR/data/bins/${name}/$file"
     else
-      print_error "Not found file \"$file\" to export"
+      print_err "Not found file \"$file\" to export"
     fi
   done
 }
@@ -87,8 +87,8 @@ enable_bin() {
   shopt -s nullglob
   local name path
 
-  # shellcheck source=../../bash/mod.bash
-  . "$ONE_DIR/bash/mod.bash"
+  # shellcheck source=../../one-cmds/mod.bash
+  . "$ONE_DIR/one-cmds/mod.bash"
   # shellcheck source=../../deps/lobash.bash
   . "$ONE_DIR/deps/lobash.bash"
 
@@ -104,7 +104,7 @@ enable_bin() {
       {
         paths=()
 
-        for path in "${ONE_DIR}/enabled/repos/"*"/bins/$name"{,.opt.bash}; do
+        for path in "${ONE_DIR}"/enabled/repos/*/bins/"$name"{,.opt.bash}; do
           paths+=("$path")
         done
 
@@ -114,11 +114,11 @@ enable_bin() {
             ;;
 
           0)
-            print_error "No matched file '$name'"
+            print_err "No matched file '$name'"
             ;;
 
           *)
-            print_error "Matched multi files for '$name':"
+            print_err "Matched multi files for '$name':"
             printf '  %s\n' "${paths[@]}" >&2
             ;;
         esac

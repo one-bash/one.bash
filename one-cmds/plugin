@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -o errexit -o nounset -o pipefail -o errtrace
-(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+(shopt -p inherit_errexit &> /dev/null) && shopt -s inherit_errexit
 
 if [[ -z ${ONE_DIR:-} ]]; then
   SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
@@ -14,8 +14,8 @@ fi
 # shellcheck source=../../bash/log.bash
 . "$ONE_DIR/bash/log.bash"
 
-# shellcheck source=../../bash/mod.bash
-. "$ONE_DIR/bash/mod.bash"
+# shellcheck source=../../one-cmds/mod.bash
+. "$ONE_DIR/one-cmds/mod.bash"
 
 t=$(basename "$0")
 ts=${t_map[$t]}
@@ -25,14 +25,14 @@ readonly t ts
 if [[ "${1:-}" == "--complete" ]]; then
   actions=(enable disable which list info)
 
-  if (( COMP_CWORD < 3 )); then
+  if ((COMP_CWORD < 3)); then
     words=("${actions[@]}" -h --help)
     printf '%s\n' "${words[@]}"
   elif [[ $2 == -h ]] || [[ $2 == --help ]]; then
     printf '%s\n' "${actions[@]}"
-  elif [[ $2 =~ ^(l|list)$ ]] && (( COMP_CWORD < 4 )); then
+  elif [[ $2 =~ ^(l|list)$ ]] && ((COMP_CWORD < 4)); then
     printf -- '--all\n-n\n--help\n'
-  elif [[ $2 =~ ^(w|which|i|info|edit)$ ]] && (( COMP_CWORD < 4 )); then
+  elif [[ $2 =~ ^(w|which|i|info|edit)$ ]] && ((COMP_CWORD < 4)); then
     list_mod
   elif [[ $2 =~ ^(e|enable)$ ]]; then
     compgen_enable_mod
@@ -43,7 +43,7 @@ if [[ "${1:-}" == "--complete" ]]; then
 fi
 
 usage() {
-  cat <<EOF
+  cat << EOF
 Usage:  one $t <ACTION>
         one $t [-h|--help]
         one $t <-h|--help> <ACTION>
@@ -62,7 +62,7 @@ EOF
 }
 
 usage_enable() {
-  cat <<EOF
+  cat << EOF
 Usage: one $t enable <NAME> [<NAME>...]
 Desc:  Enable matched $ts
 Arguments:
@@ -73,7 +73,7 @@ EOF
 usage_e() { usage_enable; }
 
 usage_disable() {
-  cat <<EOF
+  cat << EOF
 Usage:  one $t disable <NAME> [<NAME>...]
         one $t disable --all
 Desc:   Disable matched $ts
@@ -85,7 +85,7 @@ EOF
 usage_d() { usage_diable; }
 
 usage_list() {
-  cat <<EOF
+  cat << EOF
 Usage: one $t list [<OPTIONS>]
 Desc: List enabled $ts
 Options:
@@ -97,7 +97,7 @@ EOF
 usage_l() { usage_list; }
 
 usage_info() {
-  cat <<EOF
+  cat << EOF
 Usage: one $t info <NAME>
 Desc:  Show info of matched $ts
 Arguments:
@@ -108,7 +108,7 @@ EOF
 usage_i() { usage_info; }
 
 usage_which() {
-  cat <<EOF
+  cat << EOF
 Usage: one $t which <NAME>
 Desc:  Show realpath of $t
 Arguments:
@@ -119,12 +119,12 @@ EOF
 usage_w() { usage_which; }
 
 # one.bash:usage
-if (( $# == 0 )); then
-  usage;
+if (($# == 0)); then
+  usage
 elif [[ $1 == -h ]] || [[ $1 == --help ]]; then
-  if (( $# > 1 )); then usage_"$2"; else usage; fi
-elif [[ ${*: -1} == --help ]] ; then
-  if (( $# > 1 )); then usage_"$1"; else usage; fi
+  if (($# > 1)); then usage_"$2"; else usage; fi
+elif [[ ${*: -1} == --help ]]; then
+  if (($# > 1)); then usage_"$1"; else usage; fi
 fi
 
 action=$1
@@ -141,17 +141,17 @@ declare -a args=()
 l.parse_params opts args "$@"
 
 case "$action" in
-  l|list) list_mods ;;
+  l | list) list_mods ;;
 
-  e|enable) if (( $# == 0 )); then usage; else enable_it "$@"; fi ;;
+  e | enable) if (($# == 0)); then usage; else enable_it "$@"; fi ;;
 
-  d|disable) if (( $# == 0 )); then usage; else disable_it "$@"; fi ;;
+  d | disable) if (($# == 0)); then usage; else disable_it "$@"; fi ;;
 
-  i|info) if (( $# == 0 )); then usage; else info_mod "$1"; fi ;;
+  i | info) if (($# == 0)); then usage; else info_mod "$1"; fi ;;
 
-  w|which) if (( $# == 0 )); then usage; else search_it "$1"; fi ;;
+  w | which) if (($# == 0)); then usage; else search_it "$1"; fi ;;
 
-  edit) if (( $# == 0 )); then usage; else edit_mod "$1"; fi ;;
+  edit) if (($# == 0)); then usage; else edit_mod "$1"; fi ;;
 
   *)
     echo "Invalid action '$action'" >&2

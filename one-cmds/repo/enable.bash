@@ -26,7 +26,7 @@ enable_repo() {
 
   for name in "$@"; do
     if [[ ! -d "$ONE_DIR/data/repos/$name" ]]; then
-      print_error "No matched repo '$name'"
+      print_err "No matched repo '$name'"
       continue
     fi
 

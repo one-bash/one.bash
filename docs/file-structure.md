@@ -18,7 +18,6 @@
 │   ├── inputrc                     # Set shortcut Key Character Sequence (keyseq). Link to ~/.inputrc
 │   ├── one.bash
 │   ├── one-load.bash
-│   ├── mod.bash
 │   ├── profile                     # Link to ~/.profile
 │   ├── sub.bash                    # The entrypoint of SUB command
 │   └── xdg.bash                    # Set XDG_ variables

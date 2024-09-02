@@ -1,5 +1,5 @@
 usage_disable() {
-  cat <<EOF
+  cat << EOF
 Usage: one sub disable [-a|--all] <NAME>...
 Desc:  Disable sub command
 Arguments:
@@ -14,7 +14,7 @@ complete_disable() {
   local path
 
   for path in "$ONE_DIR/enabled/sub/${@: -1}"*; do
-    if [[ -h $path ]]; then
+    if [[ -L $path ]]; then
       basename "$path"
     fi
   done
@@ -23,11 +23,11 @@ complete_disable() {
 disable_it() {
   local name=$1
   local path="$ONE_DIR/enabled/sub/$name"
-  if [[ -h $path ]]; then
+  if [[ -L $path ]]; then
     unlink "$path"
     printf "Disabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"
   else
-    print_error "No matched file '$name'"
+    print_err "No matched file '$name'"
     return 4
   fi
 }
@@ -37,7 +37,7 @@ disable_sub() {
 
   if [[ ${1:-} == --all ]]; then
     for path in "${ONE_DIR}"/enabled/sub/*; do
-      if [[ -h $path ]]; then
+      if [[ -L $path ]]; then
         unlink "$path"
         name=$(basename "$path")
         printf "Disabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"

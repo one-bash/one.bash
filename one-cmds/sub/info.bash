@@ -58,8 +58,8 @@ info_sub() {
     return 0
   fi
 
-  # shellcheck source=../../bash/mod.bash
-  . "$ONE_DIR/bash/mod.bash"
+  # shellcheck source=../../one-cmds/mod.bash
+  . "$ONE_DIR/one-cmds/mod.bash"
 
   shopt -s nullglob
 

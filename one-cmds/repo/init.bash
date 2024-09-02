@@ -1,5 +1,5 @@
 usage_init() {
-  cat <<EOF
+  cat << EOF
 Usage: one repo init [<PATH>]
 
 Desc: Scaffolding a repo in <PATH> (Defaults to \$PWD)
@@ -10,7 +10,7 @@ EOF
 }
 
 complete_init() {
-  if (( $# > 1 )); then return; fi
+  if (($# > 1)); then return; fi
   compgen -f -- "${1:-}"
 }
 
@@ -39,13 +39,13 @@ init_repo() {
     mkdir aliases bin completions configs plugins sub
   fi
 
-  cat <<EOF > README.md
+  cat << EOF > README.md
 # ONE REPO
 
 A repo for [one.bash](https://github.com/one-bash/one.bash).
 EOF
 
-  cat <<EOF > one.links.example.yaml
+  cat << EOF > one.links.example.yaml
 # It is just an example. All belows are unnecessary.
 - defaults:
     link:
