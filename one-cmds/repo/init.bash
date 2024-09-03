@@ -1,12 +1,14 @@
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one repo init [<PATH>]
 
 Desc: Scaffolding a repo in <PATH> (Defaults to \$PWD)
 
 Arguments:
-  <PATH>  If <PATH> not passed, use current directory
+  <PATH>        Relative or absolute filepath. If not passed, use current directory
 EOF
+	# editorconfig-checker-enable
 }
 
 completion() {
@@ -22,41 +24,52 @@ main() {
 	local repo_dir=${1:-$PWD}
 	local repo_name answer
 
-	if ! is_empty_dir "$repo_dir"; then
-		echo "Directory '$repo_dir' is not empty" >&2
-		return 1
-	fi
-
 	mkdir -p "$repo_dir"
 	cd "$repo_dir" || return 20
 
 	repo_name=$(basename "$repo_dir")
-	echo "name=$repo_name" >one.repo.bash
 
-	answer=$(l.ask "To create folders (aliases bin completions configs plugins sub)?")
-
-	if [[ $answer == YES ]]; then
-		mkdir aliases bin completions configs plugins sub
+	if [[ -f one.repo.bash ]]; then
+		answer=$(l.ask "The file 'one.repo.bash' existed. Override it?")
+		if [[ $answer == YES ]]; then
+			echo "name=$repo_name" >one.repo.bash
+		fi
 	fi
 
-	cat <<EOF >README.md
+	mkdir -p aliases bins completions configs plugins sub
+
+	if [[ -f README.md ]]; then
+		answer=$(l.ask "The file 'README.md' existed. Override it?" N)
+		if [[ $answer == YES ]]; then
+			cat <<EOF >README.md
 # ONE REPO
 
 A repo for [one.bash](https://github.com/one-bash/one.bash).
 EOF
+		fi
+	fi
 
-	cat <<EOF >one.links.example.yaml
+	if [[ -f one.links.yaml ]]; then
+		answer=$(l.ask "The file 'one.links.yaml' existed. Override it?" N)
+		if [[ $answer == YES ]]; then
+			# editorconfig-checker-disable
+			cat <<EOF >one.links.yaml
 # It is just an example. All belows are unnecessary.
 - defaults:
     link:
-      # relink: true # If true, override the target file when it existed
+      relink: true   # If true, override the target file when it existed
       create: true
+      glob: true
+
 
 # NOTE: dotbot have no sudo permission
 - shell: []
 
 - link: []
 EOF
+			# editorconfig-checker-enable
+		fi
+	fi
 
 	cd - >/dev/null || return 21
 	print_success "Created repo: $repo_dir"

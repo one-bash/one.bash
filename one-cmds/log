@@ -22,9 +22,10 @@ fi
 
 # one.bash:usage
 if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
+	# editorconfig-checker-disable
 	cat <<EOF
-Usage: one $(basename "$0") [OPTIONS]
-Desc: Tail the logs of one.bash
+Usage: one log [OPTIONS]
+Desc: Print the logs of one.bash
 
 Options:
   -n [NUMBER=20]    tail -n \$NUMBER
@@ -35,8 +36,18 @@ Options:
 
 ONE_LOG_FILE: $ONE_LOG_FILE
 EOF
+	# editorconfig-checker-enable
 	exit 0
 fi
+
+# shellcheck source=../deps/lobash.bash
+. "$ONE_DIR/deps/lobash.bash"
+
+declare -A opts=()
+declare -a args=()
+l.parse_params opts args "$@"
+
+limit=${opts[n]:-20}
 
 case ${1:-} in
 	-e)
@@ -56,10 +67,10 @@ case ${1:-} in
 		;;
 
 	-f)
-		tail -f -n 20 "$ONE_LOG_FILE"
+		tail -f -n "$limit" "$ONE_LOG_FILE"
 		;;
 
 	*)
-		tail -n 20 "$ONE_LOG_FILE"
+		tail -n "$limit" "$ONE_LOG_FILE"
 		;;
 esac

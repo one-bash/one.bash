@@ -34,7 +34,7 @@ Usage:
     $name debug                   Toggle debug mode on one.bash
     $name dep                     Manage one.bash deps
     $name link                    Create symlink files based on LINKS_CONF file
-    $name log                     Tail the logs of one.bash
+    $name log                     Print the logs of one.bash
     $name search                  Search alias/bin/completion/plugin/sub of each enabled repo.
     $name status                  Print one.bash status
     $name unlink                  Remove all symbol links based on LINKS_CONF file

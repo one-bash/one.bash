@@ -1,13 +1,15 @@
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one repo add <URL>
 
-Desc: Add a repo and enable it
+Desc: Download and enable a repo
 
 Arguments:
   <URL>          Support http, git, local directory.
-                 Local directory must be absolute path. It will create a symlink to the directory.
+                 Local directory must be absolute path. one.bash will create a symlink to the directory.
 EOF
+	# editorconfig-checker-enable
 }
 
 get_repo_name() {

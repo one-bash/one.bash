@@ -1,4 +1,5 @@
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one repo disable <NAME>...
 
@@ -7,6 +8,7 @@ Desc: Disable repo
 Arguments:
   <NAME>      Repo name
 EOF
+	# editorconfig-checker-enable
 }
 
 completion() {

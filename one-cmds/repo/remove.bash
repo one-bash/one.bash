@@ -1,4 +1,5 @@
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one repo remove <NAME>...
 
@@ -7,6 +8,7 @@ Desc: Remove a repo
 Arguments:
   <NAME>      Repo name
 EOF
+	# editorconfig-checker-enable
 }
 
 completion() {
