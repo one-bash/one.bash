@@ -17,29 +17,30 @@ fi
 
 # one.bash:usage
 if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
-	cmd=$(basename "$0")
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage:
-  one $cmd [OPTIONS]
-  one $cmd <key>           Get value
-  one $cmd <key>=<value>   Set value
-  one $cmd <key> <value>   Set value
+  one config [OPTIONS]
+  one config <key>           Print value
+  one config <key>=<value>   Set value
+  one config <key> <value>   Set value
 
 Desc: Manage user's ONE_CONF (Current: $ONE_CONF)
 
 Arguments:
-  <key>      The name of property defined in ONE_CONF
-  <value>    The value of property
+  <key>                      The name of property defined in ONE_CONF
+  <value>                    The value of property
 
 Options:
-  -h|--help     Show help
-  -l|--list     List configs
-  --edit        Edit config file
+  -h|--help                  Show help
+  -l|--list                  List configs
+  --edit                     Edit config file
 
 Example:
-  one $cmd fig true        To set ONE_FIG=true
-  one $cmd fig             To query the value of ONE_FIG
+  one config fig true        To set ONE_FIG=true
+  one config fig             To query the value of ONE_FIG
 EOF
+	# editorconfig-checker-enable
 	exit 0
 fi
 

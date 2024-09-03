@@ -20,6 +20,24 @@ is_empty_dir() {
 	[[ -z $(ls -A "${1:-}") ]]
 }
 
+create_one_links_yaml() {
+	# editorconfig-checker-disable
+	cat <<EOF >one.links.yaml
+# It is just an example. All belows are unnecessary.
+- defaults:
+    link:
+      relink: true   # If true, override the target file when it existed
+      create: true
+      glob: true
+
+# NOTE: dotbot have no sudo permission
+- shell: []
+
+- link: []
+EOF
+	# editorconfig-checker-enable
+}
+
 main() {
 	local repo_dir=${1:-$PWD}
 	local repo_name answer
@@ -34,6 +52,8 @@ main() {
 		if [[ $answer == YES ]]; then
 			echo "name=$repo_name" >one.repo.bash
 		fi
+	else
+		echo "name=$repo_name" >one.repo.bash
 	fi
 
 	mkdir -p aliases bins completions configs plugins sub
@@ -47,28 +67,21 @@ main() {
 A repo for [one.bash](https://github.com/one-bash/one.bash).
 EOF
 		fi
+	else
+		cat <<EOF >README.md
+# ONE REPO
+
+A repo for [one.bash](https://github.com/one-bash/one.bash).
+EOF
 	fi
 
 	if [[ -f one.links.yaml ]]; then
 		answer=$(l.ask "The file 'one.links.yaml' existed. Override it?" N)
 		if [[ $answer == YES ]]; then
-			# editorconfig-checker-disable
-			cat <<EOF >one.links.yaml
-# It is just an example. All belows are unnecessary.
-- defaults:
-    link:
-      relink: true   # If true, override the target file when it existed
-      create: true
-      glob: true
-
-
-# NOTE: dotbot have no sudo permission
-- shell: []
-
-- link: []
-EOF
-			# editorconfig-checker-enable
+			create_one_links_yaml
 		fi
+	else
+		create_one_links_yaml
 	fi
 
 	cd - >/dev/null || return 21

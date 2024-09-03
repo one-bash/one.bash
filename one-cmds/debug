@@ -14,12 +14,14 @@ fi
 
 # one.bash:usage
 if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one $(basename "$0") <value>
 Desc: Toggle debug mode on one.bash
 Arguments:
   <value>    Available value: true, false
 EOF
+	# editorconfig-checker-enable
 	exit 0
 fi
 
