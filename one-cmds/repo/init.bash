@@ -1,4 +1,4 @@
-usage_init() {
+usage() {
   cat << EOF
 Usage: one repo init [<PATH>]
 
@@ -9,7 +9,7 @@ Arguments:
 EOF
 }
 
-complete_init() {
+completion() {
   if (($# > 1)); then return; fi
   compgen -f -- "${1:-}"
 }
@@ -18,7 +18,7 @@ is_empty_dir() {
   [[ -z $(ls -A "${1:-}") ]]
 }
 
-init_repo() {
+main() {
   local repo_dir=${1:-$PWD}
   local repo_name answer
 

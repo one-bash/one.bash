@@ -35,9 +35,7 @@ An elegant framework to manage commands, completions, dotfiles for bash players.
 See [tags][].
 The versions follows the rules of [SemVer 2.0.0](http://semver.org/).
 
-## Dependencies
-
-### Requires
+## Requires
 
 - GNU Bash 4.4 or 5.0+
 - [python3](https://www.python.org/)

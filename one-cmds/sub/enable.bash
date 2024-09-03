@@ -1,4 +1,4 @@
-usage_enable() {
+usage() {
   cat << EOF
 Usage: one sub enable [-a|--all] <NAME>...
 Desc:  Enable sub command
@@ -9,7 +9,7 @@ Options:
 EOF
 }
 
-complete_enable() {
+completion() {
   shopt -s nullglob
   local path
 
@@ -38,7 +38,7 @@ enable() {
   fi
 }
 
-enable_sub() {
+main() {
   shopt -s nullglob
   local name path
 

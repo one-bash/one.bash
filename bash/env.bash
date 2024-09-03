@@ -11,6 +11,5 @@ case $ONE_OS in
     # shellcheck source=./envs/linux.bash
     _one_load "bash/envs/linux.bash"
     ;;
-  *)
-    ;;
+  *) ;;
 esac

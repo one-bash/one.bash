@@ -1,5 +1,5 @@
-usage_disable() {
-  cat <<EOF
+usage() {
+  cat << EOF
 Usage: one repo disable <NAME>...
 
 Desc: Disable repo
@@ -9,7 +9,7 @@ Arguments:
 EOF
 }
 
-complete_disable() {
+completion() {
   shopt -s nullglob
   local path
   for path in "$ONE_DIR/enabled/repos/${@: -1}"*; do
@@ -19,13 +19,13 @@ complete_disable() {
   done
 }
 
-disable_repo() {
+main() {
   local name filepath
 
   for name in "$@"; do
     filepath="$ONE_DIR/enabled/repos/$name"
 
-    if [[ -h $filepath ]]; then
+    if [[ -L $filepath ]]; then
       unlink "$filepath"
       print_success "Disabled repo: $name"
     else

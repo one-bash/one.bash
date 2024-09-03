@@ -1,11 +1,11 @@
-usage_info() {
-  cat <<EOF
+usage() {
+  cat << EOF
 Usage: one sub info <cmd>
 Desc:  Print the usage of ONE_SUB command
 EOF
 }
 
-complete_info() {
+completion() {
   local path
   for path in "${ONE_DIR}"/data/repos/*/sub/"${@: -1}"*; do
     basename "$path" .opt.bash
@@ -16,7 +16,7 @@ print_help() {
   local cmd=$1 file=$2 label arg
 
   if [[ -z ${file:-} ]]; then
-    printf '%bNot found ONE_SUB command "%s".%b\n'  "$YELLOW" "$cmd" "$RESET_ALL" >&2
+    printf '%bNot found ONE_SUB command "%s".%b\n' "$YELLOW" "$cmd" "$RESET_ALL" >&2
     return "$ONE_EX_USAGE"
   fi
 
@@ -25,14 +25,14 @@ print_help() {
     return "$ONE_EX_USAGE"
   fi
 
-  label=$( grep -i '^# one.bash:usage' "$file" 2>/dev/null || true )
+  label=$(grep -i '^# one.bash:usage' "$file" 2> /dev/null || true)
 
   if [[ -z "$label" ]]; then
     printf '%bThe command "%s" has not usage document.%b\n' "$YELLOW" "$cmd" "$RESET_ALL" >&2
     return "$ONE_EX_UNAVAILABLE"
   fi
 
-  arg=$( sed -E 's/^# one.bash:usage(:?.*)/\1/i' <<<"$label" || true )
+  arg=$(sed -E 's/^# one.bash:usage(:?.*)/\1/i' <<< "$label" || true)
 
   if [[ -z ${arg#:} ]]; then
     arg='--help'
@@ -52,8 +52,8 @@ print_info() {
   done
 }
 
-info_sub() {
-  if (( $# == 0 )); then
+main() {
+  if (($# == 0)); then
     usage_info
     return 0
   fi

@@ -16,7 +16,7 @@ export ONE_DIR ONE_SUB ONE_CONF
 if [[ -z ${EPOCHREALTIME:-} ]]; then
   _one_now() { date +%s000; }
 else
-  _one_now() { echo $(( ${EPOCHREALTIME/./} / 1000 )); }
+  _one_now() { echo $((${EPOCHREALTIME/./} / 1000)); }
 fi
 
 ONE_LOAD_START_TIME=$(_one_now)
@@ -55,7 +55,10 @@ fi
 
 one_debug "To check shell"
 # shellcheck source=./check-environment.bash
-if ! check_shell; then one_failover; return 0; fi
+if ! check_shell; then
+  one_failover
+  return 0
+fi
 
 # ---------------------- Load Optional Functions Below ------------------------
 
@@ -93,5 +96,5 @@ if [[ $ONE_FIG == true ]]; then
 fi
 
 ONE_LOAD_END_TIME=$(_one_now)
-one_debug "${GREEN}%s${RESET_ALL}" "loaded success (Total $(( ONE_LOAD_END_TIME - ONE_LOAD_START_TIME ))ms)"
+one_debug "${GREEN}%s${RESET_ALL}" "loaded success (Total $((ONE_LOAD_END_TIME - ONE_LOAD_START_TIME))ms)"
 ONE_LOADED=loaded

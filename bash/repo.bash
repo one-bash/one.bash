@@ -7,7 +7,7 @@ _one_load_repos() {
     if [[ ! -f $CUR_REPO_DIR/one.repo.bash ]]; then continue; fi
 
     # shellcheck disable=1091
-    func_str=$( . "$CUR_REPO_DIR"/one.repo.bash && { declare -f repo_onload || true; } )
+    func_str=$(. "$CUR_REPO_DIR"/one.repo.bash && { declare -f repo_onload || true; })
     if [[ -n $func_str ]]; then
       eval "$func_str"
       repo_onload

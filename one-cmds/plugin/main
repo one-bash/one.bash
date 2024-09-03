@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -o errexit -o nounset -o pipefail -o errtrace
+(shopt -p inherit_errexit &> /dev/null) && shopt -s inherit_errexit
+
+if [[ -z ${ONE_DIR:-} ]]; then
+  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+  readonly SCRIPT_DIR
+  export ONE_DIR=$SCRIPT_DIR/..
+fi
+
+# shellcheck source=./base-scripts.bash
+. "$ONE_DIR/one-cmds/base-scripts.bash"
+
+# shellcheck source=../../deps/colors.bash
+. "$ONE_DIR/deps/colors.bash"
+
+actions=(list info enable disable which edit)
+
+declare -A action_alias=(
+  ['e']=enable
+  ['d']=disable
+  ['l']=list
+  ['i']=info
+  ['w']=which
+)
+
+t=$(basename "$(dirname "$0")")
+declare -A t_map=(
+  [bin]=bins
+  [plugin]=plugins
+  [completion]=completions
+  [alias]=aliases
+)
+ts=${t_map[$t]}
+readonly t ts
+
+# one.bash:completion
+# completion() {
+#   if [[ "${1:-}" == "--complete" ]]; then
+#     if ((COMP_CWORD < 3)); then
+#       words=("${actions[@]}" -h --help)
+#       printf '%s\n' "${words[@]}"
+#     elif [[ $2 == -h ]] || [[ $2 == --help ]]; then
+#       printf '%s\n' "${actions[@]}"
+#     fi
+#     exit 0
+#   fi
+# }
+
+# one.bash:usage
+parse_cmd plugin "$@"

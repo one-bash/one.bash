@@ -26,6 +26,5 @@ declare -A action_alias=(
 )
 
 # one.bash:completion
-parse_completion sub actions "$@"
 # one.bash:usage
 parse_cmd sub "$@"

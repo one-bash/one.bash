@@ -1,4 +1,4 @@
-usage_disable() {
+usage() {
   cat << EOF
 Usage: one sub disable [-a|--all] <NAME>...
 Desc:  Disable sub command
@@ -9,7 +9,7 @@ Options:
 EOF
 }
 
-complete_disable() {
+completion() {
   shopt -s nullglob
   local path
 
@@ -32,7 +32,7 @@ disable_it() {
   fi
 }
 
-disable_sub() {
+main() {
   local name path
 
   if [[ ${1:-} == --all ]]; then

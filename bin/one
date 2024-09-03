@@ -44,6 +44,7 @@ Usage:
     $name log                     Tail the logs of one.bash
     $name search                  Search alias/bin/completion/plugin of each enabled repo.
     $name sub [<SUB_CMD>]         Run ONE_SUB command
+    $name status                  Print one.bash status
     $name version                 Print current version of one.bash
     $name --bashrc                Print one.bash entry codes for bashrc
 

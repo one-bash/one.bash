@@ -1,4 +1,4 @@
-usage_list() {
+usage() {
   cat << EOF
 Usage: one bin list
 Desc:  List executable filenames in each REPO/bin
@@ -16,7 +16,7 @@ list() {
   done
 }
 
-list_bin() {
+main() {
   shopt -s nullglob
   local path repo name link repo_name
 

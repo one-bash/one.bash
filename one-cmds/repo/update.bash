@@ -1,5 +1,6 @@
-complete_update() {
+completion() {
   local path
+  shopt -s nullglob
   for path in "$ONE_DIR/data/repos/${@: -1}"*; do
     if [[ -d $path ]] && [[ -f $path/one.repo.bash ]]; then
       # shellcheck disable=1091
@@ -9,7 +10,7 @@ complete_update() {
   done
 }
 
-update_repo() {
+main() {
   local name=$1
   local repo_dir=$ONE_DIR/data/repos/$name
 
@@ -25,7 +26,7 @@ update_repo() {
     cd "$repo_dir" || return 20
     # shellcheck disable=1091
     . "$repo_dir/one.repo.bash"
-    if type -t repo_update >/dev/null; then repo_update; fi
+    if type -t repo_update > /dev/null; then repo_update; fi
   )
 
   print_success "Updated repo: $name"

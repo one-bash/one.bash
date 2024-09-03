@@ -60,7 +60,7 @@ one_prompt_append() {
 
   if [[ -n "${bash_preexec_imported:-}" ]]; then
     # We are using bash-preexec
-    if ! _one_precmd_functions_has_func "$1" ; then
+    if ! _one_precmd_functions_has_func "$1"; then
       precmd_functions+=("$1")
     fi
   else

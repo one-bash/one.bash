@@ -1,5 +1,5 @@
 _one_is_completable() {
-  grep -i '^# one.bash:completion' "$1" >/dev/null
+  grep -i '^# one.bash:completion' "$1" > /dev/null
 }
 
 # @param cmd_dir  command directory
@@ -20,12 +20,12 @@ _one_COMP_REPLY() {
 
   if [[ -z "$word" ]]; then
     while read -r str; do
-      COMPREPLY+=( "$str" )
+      COMPREPLY+=("$str")
     done
   else
     while read -r str; do
       if [[ $str =~ ^"$word" ]]; then
-        COMPREPLY+=( "$str" )
+        COMPREPLY+=("$str")
       fi
     done
   fi
@@ -34,11 +34,11 @@ _one_COMP_REPLY() {
 _comp_one_bash_sub() {
   local word="${COMP_WORDS[COMP_CWORD]}"
 
-  if (( COMP_CWORD == 1 )); then
+  if ((COMP_CWORD == 1)); then
     shopt -s nullglob
-    for path in "$ONE_DIR"/enabled/sub/* ; do
+    for path in "$ONE_DIR"/enabled/sub/*; do
       if [[ -x $path ]]; then
-        COMPREPLY+=( "$(basename "$path")" )
+        COMPREPLY+=("$(basename "$path")")
       fi
     done
 
@@ -65,21 +65,27 @@ _comp_one_bash() {
   local word="${COMP_WORDS[COMP_CWORD]}"
   COMPREPLY=()
 
-  if (( COMP_CWORD == 1 )); then
-    # Expend one commands
-    _one_COMP_REPLY < <("$ONE_DIR/one-cmds/commands")
+  if ((COMP_CWORD == 1)); then
+    # list commands of one.bash
+    local path
+    for path in "$ONE_DIR"/one-cmds/*; do
+      if [[ -x $path ]] || [[ -x $path/main ]]; then
+        echo "${path##"$ONE_DIR/one-cmds/"}"
+      fi
+    done | _one_COMP_REPLY
+
     local words=(-h --help --bashrc)
     _one_COMP_REPLY < <(printf '%s\n' "${words[@]}")
   else
     local cmd="${COMP_WORDS[1]}"
 
     case $cmd in
-      r) cmd=repo;;
-      a) cmd='alias';;
-      b) cmd=bin;;
-      c) cmd=completion;;
-      p) cmd=plugin;;
-      s) cmd=sub;;
+      r) cmd=repo ;;
+      a) cmd='alias' ;;
+      b) cmd=bin ;;
+      c) cmd=completion ;;
+      p) cmd=plugin ;;
+      s) cmd=sub ;;
     esac
 
     if [[ -d "$ONE_DIR/one-cmds/$cmd" ]]; then
@@ -96,6 +102,6 @@ complete -F _comp_one_bash one
 
 if [[ -n ${ONE_SUB:-} ]]; then
   # shellcheck disable=SC2139
-  alias "$ONE_SUB"='one sub run '  # NOTE: the last space is essential
+  alias "$ONE_SUB"='one sub run ' # NOTE: the last space is essential
   complete -F _comp_one_bash_sub "$ONE_SUB"
 fi

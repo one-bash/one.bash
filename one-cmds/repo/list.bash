@@ -1,11 +1,11 @@
-usage_list() {
+usage() {
   cat << EOF
 Usage: one repo list
 Desc:  List available repos
 EOF
 }
 
-list_repo() {
+main() {
   shopt -s nullglob
   local repo name repo_status repo_status_color
 

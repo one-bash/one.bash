@@ -1,4 +1,4 @@
-usage_add() {
+usage() {
   cat << EOF
 Usage: one repo add <URL>
 
@@ -29,7 +29,7 @@ get_repo_name() {
   echo "$name"
 }
 
-add_repo() {
+main() {
   local src=$1
   local name
 

@@ -1,4 +1,4 @@
-usage_info() {
+usage() {
   cat << EOF
 Usage: one bin info <NAME>
 Desc:  Show the information of matched bin files
@@ -7,7 +7,7 @@ Arguments:
 EOF
 }
 
-complete_info() {
+completion() {
   shopt -s nullglob
   local path
 
@@ -16,7 +16,7 @@ complete_info() {
   done
 }
 
-info_bin() {
+main() {
   local name=${1:-} path
 
   if [[ -z $name ]]; then

@@ -36,8 +36,8 @@ _load_enabled() {
   # shellcheck disable=SC1090
   source "$filepath" \
     1> >(awk "{print \"[one.bash ${mod_type}/${mod_name}]: \" \$0}") \
-    2> >(awk "{print \"${RED_ESC}[one.bash ${mod_type}/${mod_name}]: \" \$0 \"${RESET_ALL_ESC}\"}" >&2) \
-    || load_failed "$?"
+    2> >(awk "{print \"${RED_ESC}[one.bash ${mod_type}/${mod_name}]: \" \$0 \"${RESET_ALL_ESC}\"}" >&2) ||
+    load_failed "$?"
 }
 
 _load_enabled_with_debug() {
@@ -50,9 +50,9 @@ _load_enabled_with_debug() {
   _load_enabled "$filepath"
 
   now=$(_one_now)
-  local elapsed=$(( now - before ))
+  local elapsed=$((now - before))
 
-  if (( elapsed > ONE_DEBUG_SLOW_LOAD )); then
+  if ((elapsed > ONE_DEBUG_SLOW_LOAD)); then
     one_debug "%bLoaded in %sms%b" "$YELLOW" $elapsed "$RESET_ALL"
   else
     one_debug "%bLoaded in %sms%b" "$GREY" $elapsed "$RESET_ALL"
@@ -65,7 +65,7 @@ load_enabled() {
   local -a paths
 
   # Because "<" make it in pipeline, and tty is missing in pipeline. So separate it into two iterations.
-  while read -r filepath ; do
+  while read -r filepath; do
     paths+=("$filepath")
   done < <(sort <(compgen -G "$ONE_DIR/enabled/*.bash" || true))
 
@@ -78,7 +78,7 @@ load_enabled() {
     load=_load_enabled
   fi
 
-  for filepath in "${paths[@]}" ; do
+  for filepath in "${paths[@]}"; do
     $load "$filepath"
   done
 }

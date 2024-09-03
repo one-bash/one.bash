@@ -1,11 +1,11 @@
-usage_info() {
-  cat <<EOF
+usage() {
+  cat << EOF
 Usage: one repo info <NAME>
 Desc:  Show the informations of repo
 EOF
 }
 
-complete_info() {
+completion() {
   shopt -s nullglob
   local path
   for path in "$ONE_DIR/data/repos/${@: -1}"*; do
@@ -22,7 +22,7 @@ search_repos() {
   grep -l -E "name=['\"]?${repo_name}['\"]?" "$ONE_DIR"/data/repos/*/one.repo.bash
 }
 
-info_repo() {
+main() {
   local repo_name=${1:-}
   local repo_path path
 

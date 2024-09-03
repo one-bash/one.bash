@@ -1,17 +1,17 @@
-usage_which() {
-  cat <<EOF
+usage() {
+  cat << EOF
 Usage: one sub which <cmd>
 Desc:  Show filepath of <cmd>
 EOF
 }
 
-complete_which() {
+completion() {
   # shellcheck source=../../bash/load-config.bash
   . "$ONE_DIR/bash/load-config.bash"
   one sub list
 }
 
-which_sub() {
+main() {
   local name=$1
   local path
 

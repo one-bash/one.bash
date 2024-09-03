@@ -35,9 +35,7 @@
 详见 [tags][]。
 版本命名遵守 [SemVer 2.0.0](http://semver.org/)。
 
-## 依赖
-
-### 必要的依赖
+## 必要的依赖
 
 - GNU Bash 4.4 or 5.0+
 - [python3](https://www.python.org/)

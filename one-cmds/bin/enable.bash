@@ -1,4 +1,4 @@
-usage_enable() {
+usage() {
   cat << EOF
 Usage: one bin enable [-a|--all] <NAME>...
 Desc:  Enable matched bin files
@@ -9,7 +9,7 @@ Options:
 EOF
 }
 
-complete_enable() {
+completion() {
   shopt -s nullglob
   local path
 
@@ -83,7 +83,7 @@ enable() {
   fi
 }
 
-enable_bin() {
+main() {
   shopt -s nullglob
   local name path
 

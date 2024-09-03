@@ -10,6 +10,5 @@ ACTION:
   d, disable          Disable matched bin
   l, list             List executable filenames in each REPO/bin
   i, info             Show info of matched bin
-  w, which <NAME>     Show realpath of bin
 EOF
 }

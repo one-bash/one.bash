@@ -5,7 +5,7 @@ if [[ $ONE_DEBUG == true ]]; then
 
     ts=$(date +"%H:%M:%S")
 
-    if (( $# > 1 )); then
+    if (($# > 1)); then
       fmt="${GREY}[one.bash|%s]${RESET_ALL} $1\n"
       shift 1
     else
@@ -15,7 +15,7 @@ if [[ $ONE_DEBUG == true ]]; then
     tag="$ts|$(basename "${BASH_SOURCE[1]}")"
 
     # shellcheck disable=SC2059
-    printf "$fmt" "$tag" "$@" >/dev/tty
+    printf "$fmt" "$tag" "$@" > /dev/tty
 
     return 0
   }

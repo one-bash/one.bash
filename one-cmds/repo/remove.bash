@@ -1,5 +1,5 @@
-usage_remove() {
-  cat <<EOF
+usage() {
+  cat << EOF
 Usage: one repo remove <NAME>...
 
 Desc: Remove a repo
@@ -9,7 +9,7 @@ Arguments:
 EOF
 }
 
-complete_remove() {
+completion() {
   shopt -s nullglob
   local path
   for path in "$ONE_DIR/data/repos/${@: -1}"*; do
@@ -21,7 +21,7 @@ complete_remove() {
   done
 }
 
-remove_repo() {
+main() {
   local name=$1
   local path="$ONE_DIR/data/repos/$name"
   if [[ ! -d $path ]]; then return; fi
@@ -32,7 +32,7 @@ remove_repo() {
 
   if [[ -f $path/one.repo.bash ]]; then
     # shellcheck disable=1091
-    name=$( . "$path/one.repo.bash" && echo "${name:-}" )
+    name=$(. "$path/one.repo.bash" && echo "${name:-}")
     if [[ -n ${name} ]] && [[ -e $ONE_DIR/enabled/repos/$name ]]; then
       unlink "$ONE_DIR/enabled/repos/$name"
     fi

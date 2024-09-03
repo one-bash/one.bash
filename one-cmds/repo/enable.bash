@@ -1,5 +1,5 @@
-usage_enable() {
-  cat <<EOF
+usage() {
+  cat << EOF
 Usage: one repo enable <NAME>...
 
 Desc: Enable repo
@@ -9,7 +9,7 @@ Arguments:
 EOF
 }
 
-complete_enable() {
+completion() {
   shopt -s nullglob
   local path
   for path in "$ONE_DIR/data/repos/${@: -1}"*; do
@@ -21,7 +21,7 @@ complete_enable() {
   done
 }
 
-enable_repo() {
+main() {
   local name
 
   for name in "$@"; do

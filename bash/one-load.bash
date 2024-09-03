@@ -23,15 +23,15 @@ _one_load() {
   # shellcheck disable=SC1090
 
   # shellcheck disable=1090
-  if ! . "$path" ; then
+  if ! . "$path"; then
     # shellcheck disable=2034
     ONE_LOADED=failed
   fi
 
   now=$(_one_now)
-  local elapsed=$(( now - before ))
+  local elapsed=$((now - before))
 
-  if (( elapsed > ONE_DEBUG_SLOW_LOAD )); then
+  if ((elapsed > ONE_DEBUG_SLOW_LOAD)); then
     one_debug "%bLoaded %s in %sms%b" "$YELLOW" "$_path" $elapsed "$RESET_ALL"
   else
     one_debug "%bLoaded %s in %sms%b" "$GREY" "$_path" $elapsed "$RESET_ALL"
@@ -45,9 +45,9 @@ _one_run() {
   "$@"
 
   now=$(_one_now)
-  local elapsed=$(( now - before ))
+  local elapsed=$((now - before))
 
-  if (( elapsed > ONE_DEBUG_SLOW_LOAD )); then
+  if ((elapsed > ONE_DEBUG_SLOW_LOAD)); then
     one_debug '%bRun %s in %sms%b' "$YELLOW" "$cmd" $elapsed "$RESET_ALL"
   else
     one_debug '%bRun %s in %sms%b' "$GREY" "$cmd" $elapsed "$RESET_ALL"
@@ -62,9 +62,9 @@ _one_eval() {
   eval "$("$@")"
 
   now=$(_one_now)
-  local elapsed=$(( now - before ))
+  local elapsed=$((now - before))
 
-  if (( elapsed > ONE_DEBUG_SLOW_LOAD )); then
+  if ((elapsed > ONE_DEBUG_SLOW_LOAD)); then
     one_debug '%bRun %s in %sms%b' "$YELLOW" "$cmd" $elapsed "$RESET_ALL"
   else
     one_debug '%bRun %s in %sms%b' "$GREY" "$cmd" $elapsed "$RESET_ALL"

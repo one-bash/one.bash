@@ -1,4 +1,4 @@
-usage_run() {
+usage() {
   cat << EOF
 Usage: one sub run [-h] <cmd>
 Desc:  Run sub command
@@ -11,7 +11,7 @@ _one_is_completable() {
   grep -i '^# one.bash:completion' "$1" > /dev/null
 }
 
-complete_run() {
+completion() {
   local path
 
   if (($# < 2)) || [[ $1 == -h ]]; then
@@ -29,7 +29,7 @@ complete_run() {
   fi
 }
 
-run_sub() {
+main() {
   if (($# == 0)); then
     usage_run
     return "$ONE_EX_OK"
