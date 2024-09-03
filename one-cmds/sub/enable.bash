@@ -1,9 +1,9 @@
 usage() {
   cat << EOF
 Usage: one sub enable [-a|--all] <NAME>...
-Desc:  Enable sub command
+Desc:  Enable matched sub commands
 Arguments:
-  <name>      The filename of sub
+  <NAME>      Sub name
 Options:
   -a, --all   Enable all sub commands
 EOF

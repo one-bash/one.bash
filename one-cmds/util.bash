@@ -25,18 +25,17 @@ get_command_name() {
 }
 
 _show_usage() {
-  local path="$ONE_DIR/one-cmds/$cmd/usage.bash"
-  if [[ -f $path ]]; then
-    # shellcheck disable=1090
-    . "$ONE_DIR/one-cmds/$cmd/usage.bash"
+  if l.is_function usage; then
     usage
   else
-    print '<NO USAGE>'
+    printf '<NO USAGE. PLEASE REPORT BUG TO https://github.com/one-bash/one.bash/issues>'
   fi
 }
 
 _parse_help() {
   local action
+  local last_param=${*: -1}
+
   if (($# == 0)); then
     _show_usage
     exit 0
@@ -50,7 +49,7 @@ _parse_help() {
       _show_usage
     fi
     exit 0
-  elif [[ ${*: -1} == --help ]]; then
+  elif [[ $last_param == -h ]] || [[ $last_param == --help ]]; then
     if (($# > 1)); then
       action=$(_get_action "$1")
       # shellcheck disable=1090

@@ -34,7 +34,6 @@ Usage:
     $name disable-all             Disable all modules (alias/completion/plugin)
 
     $name backup                  Output backup scripts for current enabled modules
-    $name commands                List one commands
     $name config                  Manage user's ONE_CONF
     $name debug                   Toggle debug mode on one.bash
     $name dep                     Manage one.bash deps

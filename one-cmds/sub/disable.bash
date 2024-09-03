@@ -1,9 +1,9 @@
 usage() {
   cat << EOF
 Usage: one sub disable [-a|--all] <NAME>...
-Desc:  Disable sub command
+Desc:  Disable matched sub commands
 Arguments:
-  <name>  sub name
+  <NAME>      Sub name
 Options:
   -a, --all   Disable all sub commands
 EOF

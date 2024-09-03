@@ -13,13 +13,6 @@ PATH="$BATS_TEST_DIRNAME/../../bin:$PATH"
   assert_output -p 'Arguments:'
 }
 
-@test "one commands" {
-  run one commands
-
-  assert_success
-  assert [ ${#lines[@]} -gt 10 ]
-}
-
 # bats test_tags=ci
 @test "one sub list" {
   run one sub list

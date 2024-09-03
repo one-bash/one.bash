@@ -1,7 +1,7 @@
 usage() {
   cat << EOF
 Usage: one sub list
-Desc:  List executable files in each REPO/sub
+Desc:  List sub commands in each REPO/sub
 EOF
 }
 

@@ -1,12 +1,15 @@
 usage() {
   cat << EOF
-Usage: one sub info <cmd>
-Desc:  Print the usage of ONE_SUB command
+Usage: one sub info <NAME>
+Desc:  Show information of matched sub command
+Arguments:
+  <NAME>      Sub name
 EOF
 }
 
 completion() {
   local path
+  shopt -s nullglob
   for path in "${ONE_DIR}"/data/repos/*/sub/"${@: -1}"*; do
     basename "$path" .opt.bash
   done

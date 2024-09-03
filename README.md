@@ -182,7 +182,7 @@ ONE_LINKS_CONF() {
 
 The `one` command is used to manage one.bash modules, one.config, and dependencies.
 
-```
+```bash
 # Enter "one" to show the usage.
 $ one
 Usage:
@@ -205,16 +205,18 @@ Usage:
     one disable-all             Disable all modules (alias/completion/plugin)
 
     one backup                  Output backup scripts for current enabled modules
-    one commands                List one commands
     one config                  Manage user's ONE_CONF
     one debug                   Toggle debug mode on one.bash
     one dep                     Manage one.bash deps
     one link                    Create symlink files based on LINKS_CONF file
     one unlink                  remove all symbol links based on LINKS_CONF file
+    one upgrade                 Upgrade one.bash and its dependencies to latest version
     one log                     Tail the logs of one.bash
     one search                  Search alias/bin/completion/plugin of each enabled repo.
     one sub [<SUB_CMD>]         Run ONE_SUB command
-    one [--bashrc]              Print one.bash entry codes for bashrc
+    one status                  Print one.bash status
+    one version                 Print current version of one.bash
+    one --bashrc                Print one.bash entry codes for bashrc
 
 Desc:
     An elegant framework to manage commands, completions, dotfiles for terminal players.

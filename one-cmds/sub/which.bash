@@ -1,7 +1,9 @@
 usage() {
   cat << EOF
-Usage: one sub which <cmd>
-Desc:  Show filepath of <cmd>
+Usage: one sub which <NAME>
+Desc:  Show realpath of sub command
+Arguments:
+  <NAME>      Sub name
 EOF
 }
 
