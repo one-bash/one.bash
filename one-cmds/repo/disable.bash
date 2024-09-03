@@ -1,5 +1,5 @@
 usage() {
-  cat << EOF
+	cat <<EOF
 Usage: one repo disable <NAME>...
 
 Desc: Disable repo
@@ -10,26 +10,26 @@ EOF
 }
 
 completion() {
-  shopt -s nullglob
-  local path
-  for path in "$ONE_DIR/enabled/repos/${@: -1}"*; do
-    if [[ -d $path ]]; then
-      basename "$path"
-    fi
-  done
+	shopt -s nullglob
+	local path
+	for path in "$ONE_DIR/enabled/repos/${@: -1}"*; do
+		if [[ -d $path ]]; then
+			basename "$path"
+		fi
+	done
 }
 
 main() {
-  local name filepath
+	local name filepath
 
-  for name in "$@"; do
-    filepath="$ONE_DIR/enabled/repos/$name"
+	for name in "$@"; do
+		filepath="$ONE_DIR/enabled/repos/$name"
 
-    if [[ -L $filepath ]]; then
-      unlink "$filepath"
-      print_success "Disabled repo: $name"
-    else
-      print_err "No matched repo: $name"
-    fi
-  done
+		if [[ -L $filepath ]]; then
+			unlink "$filepath"
+			print_success "Disabled repo: $name"
+		else
+			print_err "No matched repo: $name"
+		fi
+	done
 }

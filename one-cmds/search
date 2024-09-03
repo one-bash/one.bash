@@ -3,8 +3,8 @@ set -o errexit -o nounset -o pipefail -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
 # one.bash:usage
-if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
-  cat <<EOF
+if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+	cat <<EOF
 Usage: one $(basename "$0") [-a] <WORD>
 
 Desc: Search alias/bin/completion/plugin of each enabled repo.
@@ -15,13 +15,13 @@ Arguments:
 Options:
   -a             Search with all added repos.
 EOF
-  exit 0
+	exit 0
 fi
 
 if [[ -z ${ONE_DIR:-} ]]; then
-  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-  readonly SCRIPT_DIR
-  export ONE_DIR=$SCRIPT_DIR/..
+	SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+	readonly SCRIPT_DIR
+	export ONE_DIR=$SCRIPT_DIR/..
 fi
 
 # shellcheck source=../deps/colors.bash
@@ -31,48 +31,48 @@ fi
 . "$ONE_DIR/one-cmds/util.bash"
 
 search() {
-  shopt -s nullglob
-  local word scope repo type mod
-  local -A type_map=(
-    [bins]=B
-    [aliases]=A
-    [completions]=C
-    [plugins]=P
-  )
+	shopt -s nullglob
+	local word scope repo type mod
+	local -A type_map=(
+		[bins]=B
+		[aliases]=A
+		[completions]=C
+		[plugins]=P
+	)
 
-  if (( $# > 1 )); then
-    scope=data
-    if [[ $1 == '-a' ]]; then
-      word=$2
-    elif [[ $2 == '-a' ]]; then
-      word=$1
-    else
-      print_err 'Invalid arguments'
-      return 5
-    fi
-  else
-    word=$1
-    scope=enabled
-  fi
+	if (($# > 1)); then
+		scope=data
+		if [[ $1 == '-a' ]]; then
+			word=$2
+		elif [[ $2 == '-a' ]]; then
+			word=$1
+		else
+			print_err 'Invalid arguments'
+			return 5
+		fi
+	else
+		word=$1
+		scope=enabled
+	fi
 
-  printf '%-5s %-20s %-20s\n' "Type" "Repo" "Mod"
+	printf '%-5s %-20s %-20s\n' "Type" "Repo" "Mod"
 
-  for path in "${ONE_DIR}"/${scope}/repos/*/{aliases,bins,completions,plugins}/*"${word}"*; do
-    if [[ $path =~ \/${scope}\/repos\/([^\/]+)\/([^\/]+)\/([^\/]+) ]]; then
-      repo="${BASH_REMATCH[1]}"
-      type="${BASH_REMATCH[2]}"
-      mod="${BASH_REMATCH[3]}"
+	for path in "${ONE_DIR}"/${scope}/repos/*/{aliases,bins,completions,plugins}/*"${word}"*; do
+		if [[ $path =~ \/${scope}\/repos\/([^\/]+)\/([^\/]+)\/([^\/]+) ]]; then
+			repo="${BASH_REMATCH[1]}"
+			type="${BASH_REMATCH[2]}"
+			mod="${BASH_REMATCH[3]}"
 
-      type=${type_map[$type]}
+			type=${type_map[$type]}
 
-      if [[ $mod == *.opt.bash ]]; then
-        mod=$(basename "$mod" .opt.bash)
-      else
-        mod=$(basename "$mod" .bash)
-      fi
+			if [[ $mod == *.opt.bash ]]; then
+				mod=$(basename "$mod" .opt.bash)
+			else
+				mod=$(basename "$mod" .bash)
+			fi
 
-      printf '%-5s %-20s %-20s\n' "$type" "$repo" "$mod"
-    fi
-  done
+			printf '%-5s %-20s %-20s\n' "$type" "$repo" "$mod"
+		fi
+	done
 }
 search "$@"

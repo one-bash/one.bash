@@ -5,22 +5,22 @@ set -o errexit -o nounset -o pipefail -o errtrace
 
 # one.bash:usage:-h
 if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
-  cat <<EOF
+	cat <<EOF
 Usage: one version
 Desc:  Print current version of one.bash
 EOF
-  exit 0
+	exit 0
 fi
 
 if [[ -z ${ONE_DIR:-} ]]; then
-  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-  readonly SCRIPT_DIR
-  ONE_DIR=$SCRIPT_DIR/..
+	SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+	readonly SCRIPT_DIR
+	ONE_DIR=$SCRIPT_DIR/..
 fi
 
 main() {
-  git -C "$ONE_DIR" describe --tags --abbrev=8 |
-    sed -E 's/-([0-9]+)-g(.*)/ (commit \2, \1 commits ahead)/'
+	git -C "$ONE_DIR" describe --tags --abbrev=8 |
+		sed -E 's/-([0-9]+)-g(.*)/ (commit \2, \1 commits ahead)/'
 }
 
 main "$@"

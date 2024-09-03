@@ -1,5 +1,5 @@
 usage() {
-  cat << EOF
+	cat <<EOF
 Usage: one sub disable [-a|--all] <NAME>...
 Desc:  Disable matched sub commands
 Arguments:
@@ -10,42 +10,42 @@ EOF
 }
 
 completion() {
-  shopt -s nullglob
-  local path
+	shopt -s nullglob
+	local path
 
-  for path in "$ONE_DIR/enabled/sub/${@: -1}"*; do
-    if [[ -L $path ]]; then
-      basename "$path"
-    fi
-  done
+	for path in "$ONE_DIR/enabled/sub/${@: -1}"*; do
+		if [[ -L $path ]]; then
+			basename "$path"
+		fi
+	done
 }
 
 disable_it() {
-  local name=$1
-  local path="$ONE_DIR/enabled/sub/$name"
-  if [[ -L $path ]]; then
-    unlink "$path"
-    printf "Disabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"
-  else
-    print_err "No matched file '$name'"
-    return 4
-  fi
+	local name=$1
+	local path="$ONE_DIR/enabled/sub/$name"
+	if [[ -L $path ]]; then
+		unlink "$path"
+		printf "Disabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"
+	else
+		print_err "No matched file '$name'"
+		return 4
+	fi
 }
 
 main() {
-  local name path
+	local name path
 
-  if [[ ${1:-} == --all ]]; then
-    for path in "${ONE_DIR}"/enabled/sub/*; do
-      if [[ -L $path ]]; then
-        unlink "$path"
-        name=$(basename "$path")
-        printf "Disabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"
-      fi
-    done
-  else
-    for name in "$@"; do
-      disable_it "$name" || true
-    done
-  fi
+	if [[ ${1:-} == --all ]]; then
+		for path in "${ONE_DIR}"/enabled/sub/*; do
+			if [[ -L $path ]]; then
+				unlink "$path"
+				name=$(basename "$path")
+				printf "Disabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"
+			fi
+		done
+	else
+		for name in "$@"; do
+			disable_it "$name" || true
+		done
+	fi
 }

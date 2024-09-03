@@ -22,24 +22,24 @@ ONE_LOG_FILE=${ONE_LOG_FILE:-$ONE_DIR/tmp/one.log}
 # Reset environment variable PATH.
 # Most users don't need to modify ONE_PATHS.
 one_l.is_array ONE_PATHS || ONE_PATHS=(
-  # MacOS users notice: /usr/libexec/path_helper will set the PATH.
-  # Refer to https://scriptingosx.com/2017/05/where-paths-come-from/
-  # Further, Homebrew install Bash at $HOMEBREW_PREFIX/bin/bash, and MacOS default bash is at /bin/bash,
+	# MacOS users notice: /usr/libexec/path_helper will set the PATH.
+	# Refer to https://scriptingosx.com/2017/05/where-paths-come-from/
+	# Further, Homebrew install Bash at $HOMEBREW_PREFIX/bin/bash, and MacOS default bash is at /bin/bash,
 
-  # /usr/local/bin must before /bin in PATH
-  /usr/local/bin
-  /usr/local/sbin
+	# /usr/local/bin must before /bin in PATH
+	/usr/local/bin
+	/usr/local/sbin
 
-  # /opt/homebrew for MacOS ARM arch
-  /opt/homebrew/bin
-  /opt/homebrew/sbin
+	# /opt/homebrew for MacOS ARM arch
+	/opt/homebrew/bin
+	/opt/homebrew/sbin
 
-  /usr/bin
-  /bin
-  /usr/sbin
-  /sbin
+	/usr/bin
+	/bin
+	/usr/sbin
+	/sbin
 
-  "$ONE_DIR/enabled/bin"
+	"$ONE_DIR/enabled/bin"
 )
 
 # Skip one.bash components

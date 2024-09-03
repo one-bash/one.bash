@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail -o errtrace
-(shopt -p inherit_errexit &> /dev/null) && shopt -s inherit_errexit
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
 if [[ -z ${ONE_DIR:-} ]]; then
-  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-  readonly SCRIPT_DIR
-  export ONE_DIR=$SCRIPT_DIR/..
+	SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+	readonly SCRIPT_DIR
+	export ONE_DIR=$SCRIPT_DIR/..
 fi
 
 # shellcheck source=../base-scripts.bash
@@ -17,19 +17,19 @@ fi
 actions=(list info enable disable which run help)
 
 declare -A action_alias=(
-  ['e']=enable
-  ['d']=disable
-  ['l']=list
-  ['i']=info
-  ['w']=which
-  ['r']=run
-  ['h']=help
+	['e']=enable
+	['d']=disable
+	['l']=list
+	['i']=info
+	['w']=which
+	['r']=run
+	['h']=help
 )
 
 # one.bash:completion
 # one.bash:usage
 usage() {
-  cat << EOF
+	cat <<EOF
 Usage: one sub [-h|--help] <ACTION>
 
 Desc:  Manage ONE_SUB commands

@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 
 set -o errexit -o nounset -o pipefail -o errtrace
-(shopt -p inherit_errexit &> /dev/null) && shopt -s inherit_errexit
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
 # one.bash:completion
-if [[ "${1:-}" == --complete ]]; then
-  words=(-h --help --type --priority)
-  printf '%s\n' "${words[@]}"
-  exit 0
+if [[ ${1:-} == --complete ]]; then
+	words=(-h --help --type --priority)
+	printf '%s\n' "${words[@]}"
+	exit 0
 fi
 
 usage() {
-  local cmd
-  cmd=$(basename "$0")
-  cat << EOF
+	local cmd
+	cmd=$(basename "$0")
+	cat <<EOF
 Usage: one $cmd [OPTIONS]
 Desc:  List enabled modules
 Options:
@@ -25,13 +25,13 @@ EOF
 
 # one.bash:usage
 if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
-  usage
-  exit 0
+	usage
+	exit 0
 fi
 
 if [[ -z ${ONE_DIR:-} ]]; then
-  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-  ONE_DIR="$SCRIPT_DIR/.."
+	SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+	ONE_DIR="$SCRIPT_DIR/.."
 fi
 
 # shellcheck source=./base-scripts.bash
@@ -54,46 +54,46 @@ printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
 find "$ONE_DIR/enabled" -maxdepth 1 -name "*---*.bash" | print_list_item | sort
 
 trim_str() {
-  local str=$1 len=$2 n
-  n=$((len - 2))
+	local str=$1 len=$2 n
+	n=$((len - 2))
 
-  if ((${#str} > len)); then
-    printf '%s..' "${str:0:$n}"
-  else
-    printf '%s' "${str}"
-  fi
+	if ((${#str} > len)); then
+		printf '%s..' "${str:0:n}"
+	else
+		printf '%s' "${str}"
+	fi
 }
 
 list() {
-  local type=$1 folder=$2 type_color=$3
+	local type=$1 folder=$2 type_color=$3
 
-  shopt -s nullglob
-  local path repo name link repo_name
+	shopt -s nullglob
+	local path repo name link repo_name
 
-  for path in "$ONE_DIR/enabled/$type"/*; do
-    name=$(basename "$path")
-    link=$(readlink "$path")
-    repo="$(dirname "$(dirname "$link")")"
-    if [[ ! -f $repo/one.repo.bash ]]; then
-      repo="$(dirname "$(dirname "$repo")")"
-    fi
-    repo_name=$(basename "$repo")
-    printf '     %b%-4s %b%-18s %b%-18s' "$type_color" "${type^}" "$CYAN" "$(trim_str "$name" 18)" "$BLUE" "$(trim_str "$repo_name" 18)"
+	for path in "$ONE_DIR/enabled/$type"/*; do
+		name=$(basename "$path")
+		link=$(readlink "$path")
+		repo="$(dirname "$(dirname "$link")")"
+		if [[ ! -f $repo/one.repo.bash ]]; then
+			repo="$(dirname "$(dirname "$repo")")"
+		fi
+		repo_name=$(basename "$repo")
+		printf '     %b%-4s %b%-18s %b%-18s' "$type_color" "${type^}" "$CYAN" "$(trim_str "$name" 18)" "$BLUE" "$(trim_str "$repo_name" 18)"
 
-    if [[ -f $repo/$folder/$name.opt.bash ]]; then
-      (
-        # shellcheck disable=1090
-        source "$repo/$folder/$name.opt.bash"
-        printf '%b%s' "$WHITE" "${ABOUT:-}"
-      )
-    elif [[ -f $repo/$folder/$name ]]; then
-      printf '%b%s' "$WHITE" "$(metafor about-plugin < "$repo/$folder/$name")"
-    else
-      printf '%b%s' "$WHITE" '<ERROR>'
-    fi
+		if [[ -f $repo/$folder/$name.opt.bash ]]; then
+			(
+				# shellcheck disable=1090
+				source "$repo/$folder/$name.opt.bash"
+				printf '%b%s' "$WHITE" "${ABOUT:-}"
+			)
+		elif [[ -f $repo/$folder/$name ]]; then
+			printf '%b%s' "$WHITE" "$(metafor about-plugin <"$repo/$folder/$name")"
+		else
+			printf '%b%s' "$WHITE" '<ERROR>'
+		fi
 
-    printf '\n'
-  done
+		printf '\n'
+	done
 }
 
 list bin bins "$WHITE"

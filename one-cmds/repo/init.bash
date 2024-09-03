@@ -1,5 +1,5 @@
 usage() {
-  cat << EOF
+	cat <<EOF
 Usage: one repo init [<PATH>]
 
 Desc: Scaffolding a repo in <PATH> (Defaults to \$PWD)
@@ -10,42 +10,42 @@ EOF
 }
 
 completion() {
-  if (($# > 1)); then return; fi
-  compgen -f -- "${1:-}"
+	if (($# > 1)); then return; fi
+	compgen -f -- "${1:-}"
 }
 
 is_empty_dir() {
-  [[ -z $(ls -A "${1:-}") ]]
+	[[ -z $(ls -A "${1:-}") ]]
 }
 
 main() {
-  local repo_dir=${1:-$PWD}
-  local repo_name answer
+	local repo_dir=${1:-$PWD}
+	local repo_name answer
 
-  if ! is_empty_dir "$repo_dir"; then
-    echo "Directory '$repo_dir' is not empty" >&2
-    return 1
-  fi
+	if ! is_empty_dir "$repo_dir"; then
+		echo "Directory '$repo_dir' is not empty" >&2
+		return 1
+	fi
 
-  mkdir -p "$repo_dir"
-  cd "$repo_dir" || return 20
+	mkdir -p "$repo_dir"
+	cd "$repo_dir" || return 20
 
-  repo_name=$(basename "$repo_dir")
-  echo "name=$repo_name" > one.repo.bash
+	repo_name=$(basename "$repo_dir")
+	echo "name=$repo_name" >one.repo.bash
 
-  answer=$(l.ask "To create folders (aliases bin completions configs plugins sub)?")
+	answer=$(l.ask "To create folders (aliases bin completions configs plugins sub)?")
 
-  if [[ $answer == YES ]]; then
-    mkdir aliases bin completions configs plugins sub
-  fi
+	if [[ $answer == YES ]]; then
+		mkdir aliases bin completions configs plugins sub
+	fi
 
-  cat << EOF > README.md
+	cat <<EOF >README.md
 # ONE REPO
 
 A repo for [one.bash](https://github.com/one-bash/one.bash).
 EOF
 
-  cat << EOF > one.links.example.yaml
+	cat <<EOF >one.links.example.yaml
 # It is just an example. All belows are unnecessary.
 - defaults:
     link:
@@ -58,6 +58,6 @@ EOF
 - link: []
 EOF
 
-  cd - > /dev/null || return 21
-  print_success "Created repo: $repo_dir"
+	cd - >/dev/null || return 21
+	print_success "Created repo: $repo_dir"
 }

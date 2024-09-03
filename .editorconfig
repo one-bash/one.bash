@@ -8,10 +8,10 @@ end_of_line = lf
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[./test/fixture/{assert,bats,bats-file,support}]
+[test/fixture/{assert,bats,bats-file,support}/**]
 ignore = true
 
-[{bin/*,one-cmds/**,tools/**,**/*.{bats,bash,sh}}]
+[{**/*.{bats,bash,sh},bin/*,one-cmds/**,tools/**}]
 indent_style = tab
 
 ################################################################################

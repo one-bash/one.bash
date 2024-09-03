@@ -1,28 +1,28 @@
 #!/usr/bin/env bash
 
 set -o errexit -o nounset -o pipefail -o errtrace
-(shopt -p inherit_errexit &> /dev/null) && shopt -s inherit_errexit
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
 # one.bash:completion
-if [[ "${1:-}" == --complete ]]; then
-  if ((COMP_CWORD < 3)); then
-    words=(-o -h --help)
-    printf '%s\n' "${words[@]}"
-  elif [[ $2 == -o ]]; then
-    result=$(compgen -f -- "$3")
-    if [[ -d $result ]]; then
-      compgen -f -- "$result/"
-    else
-      echo "${result[@]}"
-    fi
-  fi
-  exit 0
+if [[ ${1:-} == --complete ]]; then
+	if ((COMP_CWORD < 3)); then
+		words=(-o -h --help)
+		printf '%s\n' "${words[@]}"
+	elif [[ $2 == -o ]]; then
+		result=$(compgen -f -- "$3")
+		if [[ -d $result ]]; then
+			compgen -f -- "$result/"
+		else
+			echo "${result[@]}"
+		fi
+	fi
+	exit 0
 fi
 
 usage() {
-  local cmd
-  cmd=$(basename "$0")
-  cat << EOF
+	local cmd
+	cmd=$(basename "$0")
+	cat <<EOF
 Usage: one $cmd [OPTIONS]
 Desc:  Output backup scripts for current enabled modules
 Options:
@@ -33,13 +33,13 @@ EOF
 
 # one.bash:usage
 if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
-  usage
-  exit 0
+	usage
+	exit 0
 fi
 
 if [[ -z ${ONE_DIR:-} ]]; then
-  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-  ONE_DIR=$SCRIPT_DIR/..
+	SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+	ONE_DIR=$SCRIPT_DIR/..
 fi
 
 # shellcheck source=./base-scripts.bash
@@ -59,18 +59,18 @@ declare -a args=()
 l.parse_params opts args "$@"
 
 list_enabled_for_backup() {
-  list_enabled "$1" | sort | tr '\n' ' '
-  printf '\n'
+	list_enabled "$1" | sort | tr '\n' ' '
+	printf '\n'
 }
 
 list_enabled_bins() {
-  find "$ENABLED_DIR/bin" -maxdepth 1 -type l -exec basename {} \; |
-    sort | tr '\n' ' '
-  printf '\n'
+	find "$ENABLED_DIR/bin" -maxdepth 1 -type l -exec basename {} \; |
+		sort | tr '\n' ' '
+	printf '\n'
 }
 
 backup_content() {
-  cat << EOF
+	cat <<EOF
 #!/usr/bin/env bash
 
 set -euE -o pipefail
@@ -83,33 +83,33 @@ one bin disable --all
 
 EOF
 
-  local path url
-  for path in "$ONE_DIR"/enabled/repos/*; do
-    if [[ -d $path/.git ]]; then
-      url=$(git -C "$path" config --get remote.origin.url)
-    else
-      url=$(readlink "$path")
-    fi
-    echo "one repo add $url"
-  done
+	local path url
+	for path in "$ONE_DIR"/enabled/repos/*; do
+		if [[ -d $path/.git ]]; then
+			url=$(git -C "$path" config --get remote.origin.url)
+		else
+			url=$(readlink "$path")
+		fi
+		echo "one repo add $url"
+	done
 
-  printf '\n'
-  printf "%s %s\n\n" "one plugin enable" "$(list_enabled_for_backup plugin)"
-  printf "%s %s\n\n" "one alias enable" "$(list_enabled_for_backup alias)"
-  printf "%s %s\n\n" "one completion enable" "$(list_enabled_for_backup completion)"
-  printf "%s %s\n\n" "one bin enable" "$(list_enabled_bins)"
-  printf '\necho "[All Done]"\n'
+	printf '\n'
+	printf "%s %s\n\n" "one plugin enable" "$(list_enabled_for_backup plugin)"
+	printf "%s %s\n\n" "one alias enable" "$(list_enabled_for_backup alias)"
+	printf "%s %s\n\n" "one completion enable" "$(list_enabled_for_backup completion)"
+	printf "%s %s\n\n" "one bin enable" "$(list_enabled_bins)"
+	printf '\necho "[All Done]"\n'
 }
 
 backup() {
-  dist="${opts[o]:-${opts[output]:-/dev/stdout}}"
+	dist="${opts[o]:-${opts[output]:-/dev/stdout}}"
 
-  if [[ $dist == /dev/stdout ]]; then
-    backup_content
-  else
-    backup_content | tee "$dist"
-    printf '%b%s%b\n' "${GREEN}" "Created backup file: $dist" "${RESET_ALL}"
-    chmod +x "$dist"
-  fi
+	if [[ $dist == /dev/stdout ]]; then
+		backup_content
+	else
+		backup_content | tee "$dist"
+		printf '%b%s%b\n' "${GREEN}" "Created backup file: $dist" "${RESET_ALL}"
+		chmod +x "$dist"
+	fi
 }
 backup

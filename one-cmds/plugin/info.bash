@@ -1,5 +1,5 @@
 usage() {
-  cat << EOF
+	cat <<EOF
 Usage: one $t info <NAME>
 Desc:  Show info of matched $ts
 Arguments:
@@ -8,13 +8,13 @@ EOF
 }
 
 completion() {
-  ((COMP_CWORD > 3)) && return
-  # shellcheck source=../mod.bash
-  . "$ONE_DIR/one-cmds/mod.bash"
-  list_mod
+	((COMP_CWORD > 3)) && return
+	# shellcheck source=../mod.bash
+	. "$ONE_DIR/one-cmds/mod.bash"
+	list_mod
 }
 
 main() {
-  . "$ONE_DIR/one-cmds/mod.bash"
-  if (($# == 0)); then usage; else info_mod "$1"; fi
+	. "$ONE_DIR/one-cmds/mod.bash"
+	if (($# == 0)); then usage; else info_mod "$1"; fi
 }

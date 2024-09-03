@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 
 set -o errexit -o nounset -o pipefail -o errtrace
-(shopt -p inherit_errexit &> /dev/null) && shopt -s inherit_errexit
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
 # If ONE_DIR environment variable not defined, search the path of ONE_DIR and export it
 if [[ -z ${ONE_DIR:-} ]]; then
-  # ONE_DIR=$(dirname "$(readlinkf "$0")")
-  ONE_DIR=$(dirname "$(dirname "$(realpath "$0")")")
-  export ONE_DIR
+	# ONE_DIR=$(dirname "$(readlinkf "$0")")
+	ONE_DIR=$(dirname "$(dirname "$(realpath "$0")")")
+	export ONE_DIR
 fi
 
 # one.bash:usage
 if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
-  name=$(basename "$0")
-  cat << EOF
+	name=$(basename "$0")
+	cat <<EOF
 Usage:
     $name help [<CMD>]            Show the usage of one command
     $name [<CMD>] [-h|--help]     Show the usage of one command
@@ -55,86 +55,86 @@ Arguments:
     <CMD>                       The one command
     <SUB_CMD>                   The ONE_SUB command
 EOF
-  exit 0
+	exit 0
 fi
 
 one_sub_cmd() {
-  if (($# > 0)); then
-    local sub_cmd=$1
-    local cmd_path
-    local repo
+	if (($# > 0)); then
+		local sub_cmd=$1
+		local cmd_path
+		local repo
 
-    # shellcheck source=./bash/load-config.bash
-    . "$ONE_DIR/bash/load-config.bash"
+		# shellcheck source=./bash/load-config.bash
+		. "$ONE_DIR/bash/load-config.bash"
 
-    if [[ $sub_cmd == help ]]; then
-      cmd_path="$ONE_DIR/one-cmds/help-sub"
-    else
-      # shellcheck disable=2153
-      for repo in "${ONE_DIR}"/enabled/repos/*; do
-        if [[ ! -d $repo/sub ]]; then continue; fi
+		if [[ $sub_cmd == help ]]; then
+			cmd_path="$ONE_DIR/one-cmds/help-sub"
+		else
+			# shellcheck disable=2153
+			for repo in "${ONE_DIR}"/enabled/repos/*; do
+				if [[ ! -d $repo/sub ]]; then continue; fi
 
-        if [[ -x "$repo/sub/$sub_cmd" ]]; then
-          cmd_path="$repo/sub/$sub_cmd"
-          break
-        fi
-      done
+				if [[ -x "$repo/sub/$sub_cmd" ]]; then
+					cmd_path="$repo/sub/$sub_cmd"
+					break
+				fi
+			done
 
-      if [[ -z "${cmd_path:-}" ]]; then
-        print_err "Not found sub command '$sub_cmd'"
-        return "$ONE_EX_USAGE"
-      fi
-    fi
+			if [[ -z ${cmd_path:-} ]]; then
+				print_err "Not found sub command '$sub_cmd'"
+				return "$ONE_EX_USAGE"
+			fi
+		fi
 
-    shift
-    exec "$cmd_path" "$@"
-  else
-    exec one sub list
-  fi
+		shift
+		exec "$cmd_path" "$@"
+	else
+		exec one sub list
+	fi
 }
 
 one_cmd() {
-  local arg1=$1
-  shift
+	local arg1=$1
+	shift
 
-  local cmd_path cmd
+	local cmd_path cmd
 
-  cmd=$(get_command_name "$arg1")
+	cmd=$(get_command_name "$arg1")
 
-  if [[ -x $ONE_DIR/one-cmds/$cmd/main ]]; then
-    cmd_path="$ONE_DIR/one-cmds/$cmd/main"
-  elif [[ -x "$ONE_DIR/one-cmds/$cmd" ]]; then
-    cmd_path="$ONE_DIR/one-cmds/$cmd"
-  else
-    print_err "No such command '$cmd'"
-    return "$ONE_EX_USAGE"
-  fi
+	if [[ -x $ONE_DIR/one-cmds/$cmd/main ]]; then
+		cmd_path="$ONE_DIR/one-cmds/$cmd/main"
+	elif [[ -x "$ONE_DIR/one-cmds/$cmd" ]]; then
+		cmd_path="$ONE_DIR/one-cmds/$cmd"
+	else
+		print_err "No such command '$cmd'"
+		return "$ONE_EX_USAGE"
+	fi
 
-  exec "$cmd_path" "$@"
+	exec "$cmd_path" "$@"
 }
 
 bashrc() {
-  cat <<- EOF
-# Add below code to ~/.bashrc
-ONE_DIR=$ONE_DIR
-. "\$ONE_DIR/bash/entry.bash"
-EOF
+	cat <<-EOF
+		# Add below code to ~/.bashrc
+		ONE_DIR=$ONE_DIR
+		. "\$ONE_DIR/bash/entry.bash"
+	EOF
 }
 
 main() {
-  # shellcheck source=../bash/exit-codes.bash
-  . "$ONE_DIR/bash/exit-codes.bash"
+	# shellcheck source=../bash/exit-codes.bash
+	. "$ONE_DIR/bash/exit-codes.bash"
 
-  # shellcheck source=../deps/colors.bash
-  . "$ONE_DIR/deps/colors.bash"
+	# shellcheck source=../deps/colors.bash
+	. "$ONE_DIR/deps/colors.bash"
 
-  # shellcheck source=../one-cmds/util.bash
-  . "$ONE_DIR/one-cmds/util.bash"
+	# shellcheck source=../one-cmds/util.bash
+	. "$ONE_DIR/one-cmds/util.bash"
 
-  case "${1:-}" in
-    "--bashrc") bashrc ;;
-    *) one_cmd "$@" ;;
-  esac
+	case "${1:-}" in
+		"--bashrc") bashrc ;;
+		*) one_cmd "$@" ;;
+	esac
 }
 
 main "$@"
