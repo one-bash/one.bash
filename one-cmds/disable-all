@@ -7,3 +7,4 @@ one plugin disable --all
 one alias disable --all
 one completion disable --all
 one bin disable --all
+one sub disable --all

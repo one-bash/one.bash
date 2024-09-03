@@ -36,11 +36,11 @@ _comp_one_bash_sub() {
 
 	if ((COMP_CWORD == 1)); then
 		shopt -s nullglob
-		for path in "$ONE_DIR"/enabled/sub/*; do
+		_one_COMP_REPLY < <(for path in "$ONE_DIR"/enabled/sub/*; do
 			if [[ -x $path ]]; then
-				COMPREPLY+=("$(basename "$path")")
+				basename "$path"
 			fi
-		done
+		done)
 
 		_one_COMP_REPLY <<<'help'
 	else
@@ -68,11 +68,11 @@ _comp_one_bash() {
 	if ((COMP_CWORD == 1)); then
 		# list commands of one.bash
 		local path
-		for path in "$ONE_DIR"/one-cmds/*; do
-			if [[ -x $path ]] || [[ -x $path/main ]]; then
+		_one_COMP_REPLY < <(for path in "$ONE_DIR"/one-cmds/*; do
+			if [[ -x $path/main ]] || [[ -x $path ]]; then
 				echo "${path##"$ONE_DIR/one-cmds/"}"
 			fi
-		done | _one_COMP_REPLY
+		done)
 
 		local words=(-h --help --bashrc)
 		_one_COMP_REPLY < <(printf '%s\n' "${words[@]}")

@@ -1,10 +1,12 @@
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one $t which <NAME>
 Desc:  Show realpath of $t
 Arguments:
   <NAME>    the $t name
 EOF
+	# editorconfig-checker-enable
 }
 
 completion() {

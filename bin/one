@@ -13,22 +13,18 @@ fi
 # one.bash:usage
 if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
 	name=$(basename "$0")
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage:
     $name help [<CMD>]            Show the usage of one command
     $name [<CMD>] [-h|--help]     Show the usage of one command
-    $name help-sub [<SUB_CMD>]    Show the usage of ONE_SUB command
 
-    $name r
-    $name repo                    Manage one.bash repos
-    $name a
-    $name alias                   Manage aliases in ONE_REPO/aliases/
-    $name b
-    $name bin                     Manage executable files in ONE_REPO/bins/
-    $name c
-    $name completion              Manage completions in ONE_REPO/completions/
-    $name p
-    $name plugin                  Manage plugins in ONE_REPO/plugins/
+    $name (r|repo)                Manage one.bash repos
+    $name (a|alias)								Manage aliases in ONE_REPO/aliases/
+    $name (b|bin)                 Manage executable files in ONE_REPO/bins/
+    $name (c|completion)          Manage completions in ONE_REPO/completions/
+    $name (p|plugin)              Manage plugins in ONE_REPO/plugins/
+    $name (s|sub)                 Manage ONE_SUB command
 
     $name enabled                 Manage enabled modules (alias/completion/plugin)
     $name disable-all             Disable all modules (alias/completion/plugin)
@@ -38,23 +34,23 @@ Usage:
     $name debug                   Toggle debug mode on one.bash
     $name dep                     Manage one.bash deps
     $name link                    Create symlink files based on LINKS_CONF file
-    $name unlink                  remove all symbol links based on LINKS_CONF file
-    $name upgrade                 Upgrade one.bash and its dependencies to latest version
     $name log                     Tail the logs of one.bash
-    $name search                  Search alias/bin/completion/plugin of each enabled repo.
-    $name sub [<SUB_CMD>]         Run ONE_SUB command
+    $name search                  Search alias/bin/completion/plugin/sub of each enabled repo.
     $name status                  Print one.bash status
+    $name unlink                  Remove all symbol links based on LINKS_CONF file
+    $name upgrade                 Upgrade one.bash and its dependencies to latest version
     $name version                 Print current version of one.bash
     $name --bashrc                Print one.bash entry codes for bashrc
 
-Desc:
-    An elegant framework to manage commands, completions, dotfiles for terminal players.
-    Source code: https://github.com/one-bash/one.bash
+Desc: A framework to manage commands, completions, dotfiles for terminal users.
+
+Source Code: https://github.com/one-bash/one.bash
 
 Arguments:
     <CMD>                       The one command
     <SUB_CMD>                   The ONE_SUB command
 EOF
+	# editorconfig-checker-enable
 	exit 0
 fi
 

@@ -31,7 +31,11 @@ fi
 # one.bash:completion
 if [[ $1 == '--complete' ]]; then
 	if (($# == 2)); then
-		"$ONE_DIR"/one-cmds/commands
+		for path in "$ONE_DIR"/one-cmds/*; do
+			if [[ -x $path/main ]] || [[ -x $path ]]; then
+				echo "${path##"$ONE_DIR/one-cmds/"}"
+			fi
+		done
 	fi
 	exit 0
 fi

@@ -32,6 +32,7 @@ declare -A action_alias=(
 # one.bash:completion
 # one.bash:usage
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage:  one repo [-h|--help] <ACTION>
         one repo [-h|--help]
@@ -48,6 +49,7 @@ ACTION:
   i, info          Show the information of repo
   init [<PATH>]    Scaffolding a repo in <PATH> (Defaults to \$PWD)
 EOF
+	# editorconfig-checker-enable
 }
 
 parse_cmd repo "$@"
