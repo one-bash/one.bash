@@ -1,4 +1,5 @@
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one sub run [-h] <NAME> [<ARGS>...]
 Desc:  Run sub command
@@ -7,6 +8,7 @@ Options:
 Arguments:
   <NAME>      Sub name
 EOF
+	# editorconfig-checker-enable
 }
 
 _one_is_completable() {

@@ -1,14 +1,16 @@
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one $t edit <NAME>
 Desc:  Edit matched $ts
 Arguments:
   <NAME>    the $t name
 EOF
+	# editorconfig-checker-enable
 }
 
 completion() {
-	((COMP_CWORD > 3)) && return
+	((COMP_CWORD > 1)) && return
 	# shellcheck source=../mod.bash
 	. "$ONE_DIR/one-cmds/mod.bash"
 	list_mod

@@ -22,6 +22,7 @@ fi
 usage() {
 	local cmd
 	cmd=$(basename "$0")
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one $cmd [OPTIONS]
 Desc:  Output backup scripts for current enabled modules
@@ -29,6 +30,7 @@ Options:
   -h, --help           Show usage
   -o, --output <PATH>  Output the content to file.
 EOF
+	# editorconfig-checker-enable
 }
 
 # one.bash:usage
@@ -56,7 +58,11 @@ fi
 
 declare -A opts=()
 declare -a args=()
-l.parse_params opts args "$@"
+declare -A opts_def=(
+	[opts]=opts
+	[args]=args
+)
+l.parse_args opts_def "$@"
 
 list_enabled_for_backup() {
 	list_enabled "$1" | sort | tr '\n' ' '

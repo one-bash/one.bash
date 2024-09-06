@@ -34,21 +34,9 @@ declare -A t_map=(
 ts=${t_map[$t]}
 readonly t ts
 
-# one.bash:completion
-# completion() {
-#   if [[ "${1:-}" == "--complete" ]]; then
-#     if ((COMP_CWORD < 3)); then
-#       words=("${actions[@]}" -h --help)
-#       printf '%s\n' "${words[@]}"
-#     elif [[ $2 == -h ]] || [[ $2 == --help ]]; then
-#       printf '%s\n' "${actions[@]}"
-#     fi
-#     exit 0
-#   fi
-# }
-
 # one.bash:usage
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage:  one $t <ACTION>
         one $t [-h|--help]
@@ -64,6 +52,20 @@ Action:
   w, which <NAME>                Show realpath of $t
   edit <NAME>                    Edit matched $ts
 EOF
+	# editorconfig-checker-enable
 }
+
+# one.bash:completion
+# completion() {
+# 	if [[ "${1:-}" == "--complete" ]]; then
+# 		if ((COMP_CWORD < 3)); then
+# 			words=("${actions[@]}" -h --help)
+# 			printf '%s\n' "${words[@]}"
+# 		elif [[ $2 == -h ]] || [[ $2 == --help ]]; then
+# 			printf '%s\n' "${actions[@]}"
+# 		fi
+# 		exit 0
+# 	fi
+# }
 
 parse_cmd plugin "$@"

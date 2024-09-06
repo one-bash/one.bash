@@ -18,8 +18,6 @@ Usage: one $cmd [OPTIONS]
 Desc:  List enabled modules
 Options:
   -h, --help                          Show usage
-  --type=true|false
-  --priority=true|false
 EOF
 }
 
@@ -48,7 +46,11 @@ fi
 
 declare -A opts=()
 declare -a args=()
-l.parse_params opts args "$@"
+declare -A opts_def=(
+	[opts]=opts
+	[args]=args
+)
+l.parse_args opts_def "$@"
 
 printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
 find "$ONE_DIR/enabled" -maxdepth 1 -name "*---*.bash" | print_list_item | sort

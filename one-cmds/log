@@ -45,9 +45,16 @@ fi
 
 declare -A opts=()
 declare -a args=()
-l.parse_params opts args "$@"
+declare -A opts_def=(
+	[opts]=opts
+	[args]=args
+	[-f]=bool
+	[-a]=bool
+	[-n]='default:20'
+)
+l.parse_args opts_def "$@"
 
-limit=${opts[n]:-20}
+limit=${opts[n]}
 
 case ${1:-} in
 	-e)

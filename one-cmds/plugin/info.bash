@@ -8,7 +8,7 @@ EOF
 }
 
 completion() {
-	((COMP_CWORD > 3)) && return
+	((COMP_CWORD > 1)) && return
 	# shellcheck source=../mod.bash
 	. "$ONE_DIR/one-cmds/mod.bash"
 	list_mod

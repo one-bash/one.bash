@@ -73,8 +73,15 @@ _parse_completion() {
 	shift 2
 
 	if ((COMP_CWORD < 3)); then
-		words=("${_actions[@]}" -h --help)
-		printf '%s\n' "${words[@]}"
+		# completion for cmd/main file
+
+		if type -t "completion" &>/dev/null; then
+			"completion" "$@"
+		else
+			local words=("${_actions[@]}" -h --help)
+			printf '%s\n' "${words[@]}"
+		fi
+
 	elif [[ $2 == -h ]] || [[ $2 == --help ]]; then
 		printf '%s\n' "${_actions[@]}"
 	else
@@ -86,6 +93,8 @@ _parse_completion() {
 			. "$ONE_DIR/one-cmds/$cmd/$action.bash"
 
 			shift 2
+			COMP_CWORD=$((COMP_CWORD - 2))
+
 			if type -t "completion" &>/dev/null; then
 				"completion" "$@"
 			fi
@@ -116,7 +125,16 @@ parse_cmd() {
 
 	declare -A opts=()
 	declare -a args=()
-	l.parse_params opts args "$@"
+	if l.is_associative_array opts_def; then
+		opts_def[opts]=opts
+		opts_def[args]=args
+	else
+		declare -A opts_def=(
+			[opts]=opts
+			[args]=args
+		)
+	fi
+	l.parse_args opts_def "$@"
 
 	main "$@"
 }

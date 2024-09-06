@@ -1,16 +1,18 @@
 usage() {
 	# editorconfig-checker-disable
 	cat <<EOF
-Usage: one $t which <NAME>
+Usage: one $t which [OPTIONS] <NAME>
 Desc:  Show realpath of $t
 Arguments:
   <NAME>    the $t name
+Options:
+  -r, --repo <repo>       repo name
 EOF
 	# editorconfig-checker-enable
 }
 
 completion() {
-	((COMP_CWORD > 3)) && return
+	((COMP_CWORD > 1)) && return
 	# shellcheck source=../mod.bash
 	. "$ONE_DIR/one-cmds/mod.bash"
 	list_mod
