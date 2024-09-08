@@ -18,14 +18,16 @@ fi
 
 # one.bash:usage
 if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
+	# editorconfig-checker-disable
 	cat <<EOF
-Usage: one $(basename "$0") [<LINKS_CONF>]
+Usage: one unlink [<LINKS_CONF>]
 
 Desc: Remove all symbol links based on LINKS_CONF file
 
 Arguments:
   <LINKS_CONF>  The filepath of one.links.yaml. If omit, use the value of ONE_LINKS_CONF defined in ONE_CONF.
 EOF
+	# editorconfig-checker-enable
 	exit 0
 fi
 

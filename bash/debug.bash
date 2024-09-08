@@ -12,7 +12,8 @@ if [[ $ONE_DEBUG == true ]]; then
 			fmt="${GREY}[one.bash|%s]${RESET_ALL} %s\n"
 		fi
 
-		tag="$ts|$(basename "${BASH_SOURCE[1]}")"
+		local filename="${BASH_SOURCE[1]}"
+		tag="$ts|${filename##*/}"
 
 		# shellcheck disable=SC2059
 		printf "$fmt" "$tag" "$@" >/dev/tty

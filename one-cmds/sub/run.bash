@@ -20,7 +20,7 @@ completion() {
 
 	if (($# < 2)) || [[ $1 == -h ]]; then
 		for path in "$ONE_DIR"/enabled/sub/*; do
-			if [[ -x $path ]]; then basename "$path"; fi
+			if [[ -x $path ]]; then echo "${path##*/}"; fi
 		done
 	else
 		path="$ONE_DIR"/enabled/sub/$1

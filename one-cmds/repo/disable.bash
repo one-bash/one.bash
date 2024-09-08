@@ -16,7 +16,7 @@ completion() {
 	local path
 	for path in "$ONE_DIR/enabled/repos/${@: -1}"*; do
 		if [[ -d $path ]]; then
-			basename "$path"
+			echo "${path##*/}"
 		fi
 	done
 }

@@ -12,31 +12,23 @@ _load_enabled() {
 	local filepath=$1
 	set -- # prevent the sourced script receiving the arguments of function _load_enabled
 
-	local filename mod_name mod_type
-	filename=$(basename "$filepath")
-	case $filename in
-		*.plugin.bash)
-			mod_name=${filename:6:-12}
-			mod_type=plugin
-			;;
-		*.completion.bash)
-			mod_name=${filename:6:-16}
-			mod_type=completion
-			;;
-		*.alias.bash)
-			mod_name=${filename:6:-11}
-			mod_type='alias'
-			;;
-		*)
-			echo "[_load_enabled] Invalid filename=$filename" >&2
-			return 4
-			;;
-	esac
+	local filename="${filepath##*/}"
+	local mod_name mod_type repo_name
 
-	# shellcheck disable=SC1090
+	if [[ $filename =~ ^[[:digit:]]{3}---([^@]+)@([^@]+)@([^@]+).bash$ ]]; then
+		mod_name=${BASH_REMATCH[1]}
+		repo_name=${BASH_REMATCH[2]}
+		mod_type=${BASH_REMATCH[3]}
+	else
+		printf '%b%s%b\n' "$RED" "[one.bash] To load enabled module, but get invalid filename: $filename" "$RESET_ALL" >&2
+		return "$ONE_EX_SOFTWARE"
+	fi
+	# echo "mod_name=$mod_name , mod_type=$mod_type"
+
+	# shellcheck disable=1090
 	source "$filepath" \
-		1> >(awk "{print \"[one.bash ${mod_type}/${mod_name}]: \" \$0}") \
-		2> >(awk "{print \"${RED_ESC}[one.bash ${mod_type}/${mod_name}]: \" \$0 \"${RESET_ALL_ESC}\"}" >&2) ||
+		1> >(awk "{print \"[one.bash][${repo_name}/${mod_type}/${mod_name}]: \" \$0}") \
+		2> >(awk "{print \"${RED_ESC}[one.bash][${repo_name}/${mod_type}/${mod_name}]: \" \$0 \"${RESET_ALL_ESC}\"}" >&2) ||
 		load_failed "$?"
 }
 
@@ -53,9 +45,9 @@ _load_enabled_with_debug() {
 	local elapsed=$((now - before))
 
 	if ((elapsed > ONE_DEBUG_SLOW_LOAD)); then
-		one_debug "%bLoaded in %sms%b" "$YELLOW" $elapsed "$RESET_ALL"
+		one_debug "%bLoaded in %sms%b" "$YELLOW" "$elapsed" "$RESET_ALL"
 	else
-		one_debug "%bLoaded in %sms%b" "$GREY" $elapsed "$RESET_ALL"
+		one_debug "%bLoaded in %sms%b" "$GREY" "$elapsed" "$RESET_ALL"
 	fi
 }
 

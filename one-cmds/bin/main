@@ -23,9 +23,14 @@ declare -A action_alias=(
 	['i']=info
 )
 
+t=bin
+ts=bins
+readonly t ts
+
 # one.bash:completion
 # one.bash:usage
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage:  one bin [-h|--help] <ACTION>
         one bin [-h|--help]
@@ -33,11 +38,12 @@ Usage:  one bin [-h|--help] <ACTION>
 Desc:   Manage executable files in ONE_REPO/bins/
 
 ACTION:
-  e, enable           Enable matched bin
-  d, disable          Disable matched bin
-  l, list             List executable filenames in each REPO/bin
-  i, info             Show info of matched bin
+  e, enable           Enable matched bin files
+  d, disable          Disable matched bin files
+  l, list             List available bin files
+  i, info             Show the information of matched bin files
 EOF
+	# editorconfig-checker-enable
 }
 
 parse_cmd bin "$@"

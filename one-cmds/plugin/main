@@ -8,7 +8,7 @@ if [[ -z ${ONE_DIR:-} ]]; then
 	export ONE_DIR=$SCRIPT_DIR/..
 fi
 
-# shellcheck source=./base-scripts.bash
+# shellcheck source=../base-scripts.bash
 . "$ONE_DIR/one-cmds/base-scripts.bash"
 
 # shellcheck source=../../deps/colors.bash

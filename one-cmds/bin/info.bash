@@ -3,7 +3,7 @@ usage() {
 Usage: one bin info <NAME>
 Desc:  Show the information of matched bin files
 Arguments:
-  <name>  bin name
+  <NAME>            bin name
 EOF
 }
 
@@ -11,7 +11,7 @@ completion() {
 	shopt -s nullglob
 	local path
 
-	for path in "${ONE_DIR}"/data/repos/*/bins/"${@: -1}"*; do
+	for path in "${ONE_DIR}"/enabled/repos/*/bins/"${@: -1}"*; do
 		basename "$path" .opt.bash
 	done
 }
@@ -28,7 +28,7 @@ main() {
 	PRINT_INFO_KEY_WIDTH=-6
 
 	shopt -s nullglob
-	for path in "$ONE_DIR"/data/repos/*/bins/"$name"{,.opt.bash}; do
+	for path in "$ONE_DIR"/enabled/repos/*/bins/"$name"{,.opt.bash}; do
 		print_info_item Name "$name"
 
 		if [[ $path =~ \/data\/repos\/([^\/]+)\/ ]]; then

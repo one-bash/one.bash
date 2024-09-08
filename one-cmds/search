@@ -4,8 +4,9 @@ set -o errexit -o nounset -o pipefail -o errtrace
 
 # one.bash:usage
 if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+	# editorconfig-checker-disable
 	cat <<EOF
-Usage: one $(basename "$0") [-a] <WORD>
+Usage: one search [-a] <WORD>
 
 Desc: Search alias/bin/completion/plugin of each enabled repo.
 
@@ -15,6 +16,7 @@ Arguments:
 Options:
   -a             Search with all added repos.
 EOF
+	# editorconfig-checker-enable
 	exit 0
 fi
 
@@ -24,54 +26,102 @@ if [[ -z ${ONE_DIR:-} ]]; then
 	export ONE_DIR=$SCRIPT_DIR/..
 fi
 
-# shellcheck source=../deps/colors.bash
-. "$ONE_DIR/deps/colors.bash"
+# shellcheck source=./base-scripts.bash
+. "$ONE_DIR/one-cmds/base-scripts.bash"
 
-# shellcheck source=../one-cmds/util.bash
+# shellcheck source=./mod-base.bash
+. "$ONE_DIR/one-cmds/mod-base.bash"
+
+# shellcheck source=./mod.bash
+. "$ONE_DIR/one-cmds/mod.bash"
+
+# shellcheck source=./util.bash
 . "$ONE_DIR/one-cmds/util.bash"
 
-search() {
-	shopt -s nullglob
-	local word scope repo type mod
-	local -A type_map=(
-		[bins]=B
-		[aliases]=A
-		[completions]=C
-		[plugins]=P
-	)
+declare -A opts=()
+declare -a args=()
+declare -A opts_def=(
+	[opts]=opts
+	[args]=args
+	['-a --all']=bool
+)
+l.parse_args opts_def "$@"
 
-	if (($# > 1)); then
+search() {
+	local word=${args[0]} scope repo_name mod_type mod_name
+
+	if [[ ${opts[a]} == true ]]; then
 		scope=data
-		if [[ $1 == '-a' ]]; then
-			word=$2
-		elif [[ $2 == '-a' ]]; then
-			word=$1
-		else
-			print_err 'Invalid arguments'
-			return 5
-		fi
 	else
-		word=$1
 		scope=enabled
 	fi
 
-	printf '%-5s %-20s %-20s\n' "Type" "Repo" "Mod"
+	declare -A MOD_TYPE_COLOR=(
+		[completion]=$GREEN
+		[plugin]=$BLUE
+		[alias]=$PURPLE
+		[bin]=$WHITE
+		[sub]=$YELLOW
+	)
 
-	for path in "${ONE_DIR}"/${scope}/repos/*/{aliases,bins,completions,plugins}/*"${word}"*; do
-		if [[ $path =~ \/${scope}\/repos\/([^\/]+)\/([^\/]+)\/([^\/]+) ]]; then
-			repo="${BASH_REMATCH[1]}"
-			type="${BASH_REMATCH[2]}"
-			mod="${BASH_REMATCH[3]}"
+	printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
 
-			type=${type_map[$type]}
+	shopt -s nullglob
 
-			if [[ $mod == *.opt.bash ]]; then
-				mod=$(basename "$mod" .opt.bash)
+	local filepath t
+
+	readonly -A t_map_rev=(
+		[bins]=bin
+		[plugins]=plugin
+		[completions]=completion
+		[aliases]=alias
+		[sub]=sub
+	)
+
+	for filepath in "${ONE_DIR}/$scope"/repos/*/{aliases,bins,completions,plugins}/*"${word}"*; do
+		local -a prints=()
+		local format='' about=''
+
+		if [[ $filepath =~ \/${scope}\/repos\/([^\/]+)\/([^\/]+)\/([^\/]+) ]]; then
+			repo_name="${BASH_REMATCH[1]}"
+			t=${t_map_rev["${BASH_REMATCH[2]}"]}
+			mod_name="${BASH_REMATCH[3]}"
+			mod_name=${mod_name##*/}
+
+			if [[ $mod_name == *.opt.bash ]]; then
+				mod_name=${mod_name%.opt.bash}
+				# shellcheck disable=1090,2153
+				about="$(. "$filepath" && echo "$ABOUT")"
+				priority=$(get_priority_from_mod "$filepath")
 			else
-				mod=$(basename "$mod" .bash)
+				mod_name=${mod_name%.bash}
+				about=$(metafor about-plugin <"$filepath")
+				priority=$(get_priority "$filepath")
 			fi
 
-			printf '%-5s %-20s %-20s\n' "$type" "$repo" "$mod"
+			# load-priority
+			format="$format%b%-4s"
+			prints+=("$YELLOW" "$priority")
+
+			# mod type
+			format="$format %b%-4s"
+			mod_type=${t^}
+			prints+=("${MOD_TYPE_COLOR[${t}]}" "${mod_type:0:4}")
+
+			# mod_name repo_name
+			format="$format %b%-18s %b%-18s"
+
+			prints+=(
+				"$CYAN" "${mod_name:0:18}"
+				"$BLUE" "${repo_name:0:18}"
+			)
+
+			# About
+			format="$format %b%s"
+			prints+=("$WHITE" "$about")
+
+			# shellcheck disable=2059
+			printf "$format\n" "${prints[@]}"
 		fi
 	done
 }

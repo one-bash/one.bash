@@ -6,12 +6,13 @@ EOF
 }
 
 list() {
-	local path repo
+	local path repo name
 
 	# shellcheck disable=2153
 	for path in "${ONE_DIR}"/enabled/sub/*; do
+		name=${path##*/}
 		printf '%b%20s%b -> %b%s\n' \
-			"$GREEN" "$(basename "$path")" "$GREY" \
+			"$GREEN" "$name" "$GREY" \
 			"$WHITE" "$(readlink "$path")"
 	done
 }
@@ -21,11 +22,12 @@ main() {
 	local path repo name link repo_name
 
 	for repo in "${ONE_DIR}"/enabled/repos/*; do
-		repo_name=$(basename "$repo")
+		repo_name="${repo##*/}"
 		printf '%b[%s]%b' "$BLUE" "$repo_name" "$RESET_ALL"
 
 		for path in "$repo"/sub/*; do
-			name=$(basename "$path" '.bash')
+			name="${path##*/}"
+			name="${name%.bash}"
 			name="${name%.sh}"
 			link=${ONE_DIR}/enabled/sub/$name
 

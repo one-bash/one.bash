@@ -38,7 +38,7 @@ _comp_one_bash_sub() {
 		shopt -s nullglob
 		_one_COMP_REPLY < <(for path in "$ONE_DIR"/enabled/sub/*; do
 			if [[ -x $path ]]; then
-				basename "$path"
+				echo "${path##*/}"
 			fi
 		done)
 

@@ -4,21 +4,23 @@ usage() {
 Usage: one $t which [OPTIONS] <NAME>
 Desc:  Show realpath of $t
 Arguments:
-  <NAME>    the $t name
+  <NAME>									$t name
 Options:
-  -r, --repo <repo>       repo name
+  -r <repo>               Show the matched $t in the repo
 EOF
 	# editorconfig-checker-enable
 }
 
-completion() {
-	((COMP_CWORD > 1)) && return
-	# shellcheck source=../mod.bash
-	. "$ONE_DIR/one-cmds/mod.bash"
-	list_mod
+. "$ONE_DIR/one-cmds/plugin/action-completion.bash"
+
+search() {
+	local -a filepaths=()
+	local repo="${opts[r]:-}"
+	search_mod "$1" "$repo" filepaths
+	printf '%s\n' "${filepaths[@]}"
 }
 
 main() {
 	. "$ONE_DIR/one-cmds/mod.bash"
-	if (($# == 0)); then usage; else search_it "$1"; fi
+	if (($# == 0)); then usage; else search "${args[0]}"; fi
 }

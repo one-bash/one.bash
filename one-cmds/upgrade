@@ -22,7 +22,7 @@ fi
 # one.bash:usage
 if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
 	cat <<EOF
-Usage: one $(basename "$0")
+Usage: one upgrade
 Desc: Upgrade one.bash and its dependencies to latest version
 EOF
 	exit $ONE_EX_OK

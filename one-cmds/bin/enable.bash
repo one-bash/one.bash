@@ -1,28 +1,36 @@
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
-Usage: one bin enable [-a|--all] <NAME>...
+Usage: one bin enable [OPTIONS] <NAME>...
 Desc:  Enable matched bin files
 Arguments:
-  <name>       bin name
+  <NAME>              bin name
 Options:
-  -a, --all    Enable all bin files
+  -a, --all           Enable all bin files
+	-r <repo>           Enable bin files in the repo
 EOF
+	# editorconfig-checker-enable
 }
 
-completion() {
-	shopt -s nullglob
-	local path
+# TODO FIX [[ -x $path ]]
+# completion() {
+# 	shopt -s nullglob
+# 	local path filename
 
-	for path in "${ONE_DIR}"/data/repos/*/bins/"${@: -1}"*; do
-		basename "$path" .opt.bash
-	done
-}
+# 	for path in "${ONE_DIR}"/enabled/repos/*/bins/"${@: -1}"*; do
+# 		if [[ -x $path ]]; then
+# 			filename=${path##*/}
+# 			basename "${filename%.opt.bash}"
+# 		fi
+# 	done
+# }
+. "$ONE_DIR/one-cmds/plugin/action-completion.bash"
 
 create_symlink() {
 	local name=$1
-	local path=$2
-	ln -fs "$path" "$ONE_DIR/enabled/bin/$name"
-	printf "Enabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"
+	local target=$2
+	ln -fs "$target" "$ONE_DIR/enabled/bin/$name"
+	printf "Enabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$target"
 }
 
 set_exports() {
@@ -49,10 +57,9 @@ enable() {
 	if [[ -x $path ]]; then
 		create_symlink "$name" "$path"
 	elif [[ $path == *.opt.bash ]]; then
-		local t=bin ts=bins
 		check_opt_mod_dep_cmds "$path"
 		# Disable first, prevent duplicated module enabled with different priority
-		disable_mod "$name" true
+		disable_mod "$name"
 		download_mod_data "$name" "$path"
 
 		local url bin_name
@@ -83,30 +90,47 @@ enable() {
 	fi
 }
 
+# shellcheck disable=2034
+declare -A opts_def=(
+	['-a --all']='bool'
+)
+
 main() {
-	shopt -s nullglob
-	local name path
+	local name path paths
 
 	# shellcheck source=../../one-cmds/mod.bash
 	. "$ONE_DIR/one-cmds/mod.bash"
-	# shellcheck source=../../deps/lobash.bash
-	. "$ONE_DIR/deps/lobash.bash"
 
-	if [[ ${1:-} == -a ]] || [[ ${1:-} == --all ]]; then
-		for path in "${ONE_DIR}"/enabled/repos/*/bins/*; do
-			name=$(basename "$path" .opt.bash)
-			enable "$path" "$name" || true
-		done
+	local repo=${opts[r]:-}
+
+	shopt -s nullglob
+
+	if [[ ${opts[a]} == true ]]; then
+		if [[ -z $repo ]]; then
+			for path in "${ONE_DIR}"/enabled/repos/*/bins/*; do
+				name=$(basename "$path" .opt.bash)
+				enable "$path" "$name" || true
+			done
+		else
+			for path in "${ONE_DIR}/enabled/repos/$repo/bins/"*; do
+				name=$(basename "$path" .opt.bash)
+				enable "$path" "$name" || true
+			done
+		fi
 	else
-		local repo_name paths
-
-		for name in "$@"; do
+		for name in "${args[@]}"; do
 			{
 				paths=()
 
-				for path in "${ONE_DIR}"/enabled/repos/*/bins/"$name"{,.opt.bash}; do
-					paths+=("$path")
-				done
+				if [[ -z $repo ]]; then
+					for path in "${ONE_DIR}"/enabled/repos/*/bins/"$name"{,.opt.bash}; do
+						paths+=("$path")
+					done
+				else
+					for path in "${ONE_DIR}/enabled/repos/$repo/bins/$name"{,.opt.bash}; do
+						paths+=("$path")
+					done
+				fi
 
 				case ${#paths[@]} in
 					1)

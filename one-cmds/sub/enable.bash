@@ -1,19 +1,21 @@
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one sub enable [-a|--all] <NAME>...
 Desc:  Enable matched sub commands
 Arguments:
-  <NAME>      Sub name
+  <NAME>             Sub name
 Options:
-  -a, --all   Enable all sub commands
+  -a, --all          Enable all sub commands
 EOF
+	# editorconfig-checker-enable
 }
 
 completion() {
 	shopt -s nullglob
 	local path
 
-	for path in "${ONE_DIR}"/data/repos/*/sub/"${@: -1}"*; do
+	for path in "${ONE_DIR}"/enabled/repos/*/sub/"${@: -1}"*; do
 		basename "$path" .opt.bash
 	done
 }
@@ -38,6 +40,10 @@ enable() {
 	fi
 }
 
+declare -A opts_def=(
+	['-a --all']='bool'
+)
+
 main() {
 	shopt -s nullglob
 	local name path
@@ -47,9 +53,11 @@ main() {
 	# shellcheck source=../../deps/lobash.bash
 	. "$ONE_DIR/deps/lobash.bash"
 
-	if [[ ${1:-} == --all ]] || [[ ${1:-} == -a ]]; then
+	# shellcheck disable=2154
+	if [[ ${opts[a]} == true ]]; then
 		for path in "${ONE_DIR}"/enabled/repos/*/sub/*; do
-			name=$(basename "$path" .bash)
+			name=${path##*/}
+			name=${name%.bash}
 			name="${name%.sh}"
 			enable "$path" "$name" || true
 		done

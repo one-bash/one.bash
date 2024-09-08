@@ -16,7 +16,7 @@ fi
 if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
 	# editorconfig-checker-disable
 	cat <<EOF
-Usage: one $(basename "$0") <value>
+Usage: one debug <value>
 Desc: Toggle debug mode on one.bash
 Arguments:
   <value>    Available value: true, false

@@ -1,12 +1,14 @@
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one bin disable [-a|--all] <NAME>...
 Desc:  Disable matched bin files
 Arguments:
-  <name>       bin name
+  <NAME>							 bin name
 Options:
-  -a, --all    Disable all bin files
+  -a, --all						 Disable all bin files
 EOF
+	# editorconfig-checker-enable
 }
 
 completion() {
@@ -15,7 +17,7 @@ completion() {
 
 	for path in "$ONE_DIR/enabled/bin/${@: -1}"*; do
 		if [[ -L $path ]]; then
-			basename "$path"
+			echo "${path##*/}"
 		fi
 	done
 }
@@ -41,7 +43,7 @@ main() {
 	if [[ ${1:-} == -a ]] || [[ ${1:-} == --all ]]; then
 		shopt -s nullglob
 		for path in "${ONE_DIR}"/enabled/bin/*; do
-			name=$(basename "$path")
+			name="${path##*/}"
 			disable_it "$name" "$path" || true
 		done
 	else

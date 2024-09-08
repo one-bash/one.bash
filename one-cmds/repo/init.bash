@@ -45,7 +45,7 @@ main() {
 	mkdir -p "$repo_dir"
 	cd "$repo_dir" || return 20
 
-	repo_name=$(basename "$repo_dir")
+	repo_name="${repo_dir##*/}"
 
 	if [[ -f one.repo.bash ]]; then
 		answer=$(l.ask "The file 'one.repo.bash' existed. Override it?")
