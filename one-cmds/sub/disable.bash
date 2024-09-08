@@ -15,7 +15,7 @@ completion() {
 
 	for path in "$ONE_DIR/enabled/sub/${@: -1}"*; do
 		if [[ -L $path ]]; then
-			basename "$path"
+			echo "${path##*/}"
 		fi
 	done
 }
@@ -39,7 +39,7 @@ main() {
 		for path in "${ONE_DIR}"/enabled/sub/*; do
 			if [[ -L $path ]]; then
 				unlink "$path"
-				name=$(basename "$path")
+				name="${path##*/}"
 				printf "Disabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"
 			fi
 		done

@@ -1,18 +1,21 @@
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one bin info <NAME>
 Desc:  Show the information of matched bin files
 Arguments:
   <NAME>            bin name
 EOF
+	# editorconfig-checker-enable
 }
 
 completion() {
 	shopt -s nullglob
-	local path
+	local path name
 
 	for path in "${ONE_DIR}"/enabled/repos/*/bins/"${@: -1}"*; do
-		basename "$path" .opt.bash
+		name=${path##*/}
+		echo "${name%.opt.bash}"
 	done
 }
 

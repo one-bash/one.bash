@@ -25,6 +25,7 @@ declare -A action_alias=(
 )
 
 t=$(basename "$(dirname "$0")")
+
 declare -A t_map=(
 	[bin]=bins
 	[plugin]=plugins

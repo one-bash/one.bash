@@ -6,10 +6,11 @@ EOF
 }
 
 completion() {
-	local path
+	local path name
 	shopt -s nullglob
 	for path in "${ONE_DIR}"/data/repos/*/sub/"${@: -1}"*; do
-		basename "$path" .opt.bash
+		name=${path##*/}
+		echo "${name%.opt.bash}"
 	done
 }
 

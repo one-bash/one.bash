@@ -1,10 +1,12 @@
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one dep status [<DEP>]
 Desc:  Show status of each dep. If <DEP> is omit, show all deps' status.
 Arguments:
   <DEP>    dependency name
 EOF
+	# editorconfig-checker-enable
 }
 
 completion() {
@@ -23,7 +25,7 @@ git_status() {
 		status="$(git rev-parse --short=8 HEAD)"
 	fi
 
-	printf '%b%-12s%b %s\n' "$GREEN" "[$(basename "$dir")]" \
+	printf '%b%-12s%b %s\n' "$GREEN" "[${dir##*/}]" \
 		"$RESET_ALL" "$status"
 }
 

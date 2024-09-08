@@ -13,10 +13,11 @@ EOF
 
 completion() {
 	shopt -s nullglob
-	local path
+	local path name
 
 	for path in "${ONE_DIR}"/enabled/repos/*/sub/"${@: -1}"*; do
-		basename "$path" .opt.bash
+		name=${path##*/}
+		echo "${name%.opt.bash}"
 	done
 }
 

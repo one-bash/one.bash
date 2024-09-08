@@ -20,11 +20,9 @@ if [[ ${1:-} == --complete ]]; then
 fi
 
 usage() {
-	local cmd
-	cmd=$(basename "$0")
 	# editorconfig-checker-disable
 	cat <<EOF
-Usage: one $cmd [OPTIONS]
+Usage: one backup [OPTIONS]
 Desc:  Output backup scripts for current enabled modules
 Options:
   -h, --help           Show usage

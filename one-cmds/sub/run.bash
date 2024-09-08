@@ -23,7 +23,7 @@ completion() {
 			if [[ -x $path ]]; then echo "${path##*/}"; fi
 		done
 	else
-		path="$ONE_DIR"/enabled/sub/$1
+		path="$ONE_DIR/enabled/sub/$1"
 
 		if [[ -f $path ]] && _one_is_completable "$path"; then
 			shift 1

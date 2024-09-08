@@ -108,12 +108,14 @@ main() {
 	if [[ ${opts[a]} == true ]]; then
 		if [[ -z $repo ]]; then
 			for path in "${ONE_DIR}"/enabled/repos/*/bins/*; do
-				name=$(basename "$path" .opt.bash)
+				name=${path##*/}
+				name=${name%.opt.bash}
 				enable "$path" "$name" || true
 			done
 		else
 			for path in "${ONE_DIR}/enabled/repos/$repo/bins/"*; do
-				name=$(basename "$path" .opt.bash)
+				name=${path##*/}
+				name=${name%.opt.bash}
 				enable "$path" "$name" || true
 			done
 		fi
