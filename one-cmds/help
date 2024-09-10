@@ -5,6 +5,7 @@ set -o errexit -o nounset -o pipefail -o errtrace
 
 # one.bash:usage:-h
 if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one help [<CMD>]
        one help -a
@@ -20,6 +21,7 @@ Options:
   -a, --all     If set, print all command usages.
 EOF
 	exit 0
+	# editorconfig-checker-enable
 fi
 
 if [[ -z ${ONE_DIR:-} ]]; then
@@ -45,17 +47,19 @@ print_help() {
 	local file="$ONE_DIR/one-cmds/$cmd"
 	local label arg
 
-	if [[ -x $ONE_DIR/one-cmds/$cmd/main ]]; then
+	if [[ -f $ONE_DIR/one-cmds/$cmd/main ]]; then
 		file="$ONE_DIR/one-cmds/$cmd/main"
-	elif [[ ! -x ${file} ]]; then
-		printf '%bNot found command "%s".%b\n' "$YELLOW" "$cmd" "$RESET_ALL" >&2
+	fi
+
+	if [[ ! -x $file ]]; then
+		print_warn "Not found command '$cmd'"
 		return "$ONE_EX_USAGE"
 	fi
 
 	label=$(grep -i '^# one.bash:usage' "$file" 2>/dev/null || true)
 
 	if [[ -z $label ]]; then
-		printf '%bThe command "%s" has not usage document.%b\n' "$YELLOW" "$cmd" "$RESET_ALL" >&2
+		print_warn "The command '$cmd' has not usage document."
 		return "$ONE_EX_UNAVAILABLE"
 	fi
 

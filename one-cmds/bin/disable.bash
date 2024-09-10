@@ -37,17 +37,24 @@ disable_it() {
 	fi
 }
 
+declare -A opts=()
+declare -a args=()
+# shellcheck disable=2034
+declare -A opts_def=(
+	['-a --all']='bool'
+)
+
 main() {
 	local name path
 
-	if [[ ${1:-} == -a ]] || [[ ${1:-} == --all ]]; then
+	if [[ ${opts[a]} == true ]]; then
 		shopt -s nullglob
 		for path in "${ONE_DIR}"/enabled/bin/*; do
 			name="${path##*/}"
 			disable_it "$name" "$path" || true
 		done
 	else
-		for name in "$@"; do
+		for name in "${args[@]}"; do
 			disable_it "$name" || true
 		done
 	fi

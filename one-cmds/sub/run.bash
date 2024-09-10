@@ -18,7 +18,7 @@ _one_is_completable() {
 completion() {
 	local path
 
-	if (($# < 2)) || [[ $1 == -h ]]; then
+	if (($# < 2)) || [[ ${*: -1:1} == -h ]]; then
 		for path in "$ONE_DIR"/enabled/sub/*; do
 			if [[ -x $path ]]; then echo "${path##*/}"; fi
 		done

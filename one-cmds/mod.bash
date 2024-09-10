@@ -135,7 +135,7 @@ download_github_release_files() {
 			url="https://github.com/$GITHUB_REPO/releases/download/$version/$file"
 		fi
 
-		printf 'To download file "%s" from %s\n' "$file" "$url" >&2
+		print_verb 'To download file "%s" from %s\n' "$file" "$url"
 		curl -Lo "$MOD_DATA_DIR/$file" "$url"
 	done
 }
@@ -154,13 +154,13 @@ download_mod_data() {
 		if l.end_with "$url" '.git'; then
 			local target="$MOD_DATA_DIR/git"
 			if _ask_update_mod_data "$target"; then
-				printf 'To git clone "%s" "%s"\n' "$url" "$target" >&2
+				print_verb 'To git clone "%s" "%s"\n' "$url" "$target"
 				git clone --depth 1 --single-branch --recurse-submodules --shallow-submodules "$url" "$target"
 			fi
 		else
 			local target="$MOD_DATA_DIR/script.bash"
 			if _ask_update_mod_data "$target"; then
-				printf 'To curl -Lo "%s" "%s"\n' "$target" "$url" >&2
+				print_verb 'To curl -Lo "%s" "%s"\n' "$target" "$url"
 				curl -Lo "$target" "$url"
 			fi
 		fi

@@ -1,8 +1,12 @@
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
-Usage: one sub list
-Desc:  List sub commands in each REPO/sub
+Usage: one sub list [<OPTIONS>]
+Desc:  List available sub commands in each repo
+Options:
+  -r <repo>           list sub commands in the repo
 EOF
+	# editorconfig-checker-enable
 }
 
 list() {

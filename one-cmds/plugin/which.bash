@@ -20,6 +20,9 @@ search() {
 	printf '%s\n' "${filepaths[@]}"
 }
 
+declare -A opts=()
+declare -a args=()
+
 main() {
 	. "$ONE_DIR/one-cmds/mod.bash"
 	if (($# == 0)); then usage; else search "${args[0]}"; fi

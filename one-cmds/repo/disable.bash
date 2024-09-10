@@ -21,10 +21,13 @@ completion() {
 	done
 }
 
+declare -A opts=()
+declare -a args=()
+
 main() {
 	local name filepath
 
-	for name in "$@"; do
+	for name in "${args[@]}"; do
 		filepath="$ONE_DIR/enabled/repo/$name"
 
 		if [[ -L $filepath ]]; then

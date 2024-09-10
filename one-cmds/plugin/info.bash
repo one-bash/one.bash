@@ -63,15 +63,19 @@ info_mod() {
 			;;
 
 		*)
-			print_err "Matched multi $t for '$name'. You should use -r option for specified repo:"
+			print_err "Matched multi $t for '$name'. You should use '-r' option for specified repo:"
+			local repo
 			for filepath in "${filepaths[@]}"; do
-				local repo=$(get_enabled_repo_name "$filepath")
+				repo=$(get_enabled_repo_name "$filepath")
 				echo "   one $t info $name -r $repo" >&2
 			done
 			return "$ONE_EX_USAGE"
 			;;
 	esac
 }
+
+declare -A opts=()
+declare -a args=()
 
 main() {
 	. "$ONE_DIR/one-cmds/mod.bash"

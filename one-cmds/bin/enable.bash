@@ -85,18 +85,20 @@ enable() {
 			)
 		fi
 	else
-		echo "The file is not executable: $path" >&2
+		print_err "The file is not executable: $path"
 		return "$ONE_EX_DATAERR"
 	fi
 }
 
+declare -A opts=()
+declare -a args=()
 # shellcheck disable=2034
 declare -A opts_def=(
 	['-a --all']='bool'
 )
 
 main() {
-	local name path paths
+	local name path filepaths
 
 	# shellcheck source=../../one-cmds/mod.bash
 	. "$ONE_DIR/one-cmds/mod.bash"
@@ -122,30 +124,37 @@ main() {
 	else
 		for name in "${args[@]}"; do
 			{
-				paths=()
+				filepaths=()
 
 				if [[ -z $repo ]]; then
 					for path in "${ONE_DIR}"/enabled/repo/*/bin/"$name"{,.opt.bash}; do
-						paths+=("$path")
+						filepaths+=("$path")
 					done
 				else
 					for path in "${ONE_DIR}/enabled/repo/$repo/bin/$name"{,.opt.bash}; do
-						paths+=("$path")
+						filepaths+=("$path")
 					done
 				fi
 
-				case ${#paths[@]} in
+				case ${#filepaths[@]} in
 					1)
-						enable "${paths[0]}" "$name"
+						enable "${filepaths[0]}" "$name"
 						;;
 
 					0)
-						print_err "No matched file '$name'"
+						print_err "No matched $t '$name'"
+						return "$ONE_EX_DATAERR"
 						;;
 
 					*)
-						print_err "Matched multi files for '$name':"
-						printf '  %s\n' "${paths[@]}" >&2
+						print_err "Matched multi $t for '$name'. You should use '-r' option for specified repo:"
+						local repo
+						for filepath in "${filepaths[@]}"; do
+							repo=$(get_enabled_repo_name "$filepath")
+							echo "   one $t enable $name -r $repo" >&2
+						done
+						return "$ONE_EX_USAGE"
+
 						;;
 				esac
 			} || true

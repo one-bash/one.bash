@@ -127,17 +127,41 @@ parse_cmd() {
 }
 
 print_err() {
-	printf "%b[Error] %s%b\n" "$RED" "$1" "$RESET_ALL" >&2
+	if (($# > 1)); then
+		local format=$1
+		shift 1
+		printf "%b[Error] $format %b" "$RED" "$@" "$RESET_ALL" >&2
+	else
+		printf "%b[Error] %s%b\n" "$RED" "$1" "$RESET_ALL" >&2
+	fi
 }
 
 print_warn() {
-	printf "%b[WARN] %s%b\n" "$YELLOW" "$1" "$RESET_ALL" >&2
+	if (($# > 1)); then
+		local format=$1
+		shift 1
+		printf "%b[WARN] $format %b" "$YELLOW" "$@" "$RESET_ALL" >&2
+	else
+		printf "%b[WARN] %s%b\n" "$YELLOW" "$1" "$RESET_ALL" >&2
+	fi
 }
 
 print_success() {
-	printf "%b[Success] %s%b\n" "$GREEN" "$1" "$RESET_ALL"
+	if (($# > 1)); then
+		local format=$1
+		shift 1
+		printf "%b[Success] $format %b" "$GREEN" "$@" "$RESET_ALL"
+	else
+		printf "%b[Success] %s%b\n" "$GREEN" "$1" "$RESET_ALL"
+	fi
 }
 
 print_verb() {
-	printf "%b[Verbose] %s%b\n" "$GREY" "$1" "$RESET_ALL"
+	if (($# > 1)); then
+		local format=$1
+		shift 1
+		printf "%b[Verbose] $format %b" "$GREY" "$@" "$RESET_ALL" >&2
+	else
+		printf "%b[Verbose] %s%b\n" "$GREY" "$1" "$RESET_ALL" >&2
+	fi
 }

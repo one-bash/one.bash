@@ -23,30 +23,41 @@ edit_mod() {
 		1)
 			${EDITOR:-vi} "${filepaths[0]}"
 			;;
+
 		0)
 			print_err "No matched $t '$name'"
-			return 10
+			return "$ONE_EX_DATAERR"
 			;;
+
 		*)
-			print_err "Matched multi $t for '$name':"
-			printf '  %s\n' "${filepaths[@]}" >&2
-			return 11
+			print_err "Matched multi $t for '$name'. You should use '-r' option for specified repo:"
+			local repo
+			for filepath in "${filepaths[@]}"; do
+				repo=$(get_enabled_repo_name "$filepath")
+				echo "   one $t edit $name -r $repo" >&2
+			done
+			return "$ONE_EX_USAGE"
 			;;
 	esac
 }
 
+declare -A opts=()
+declare -a args=()
+
 main() {
 	. "$ONE_DIR/one-cmds/mod.bash"
 
-	if (($# == 0)); then
-		usage
-		return
-	fi
+	case ${#args[*]} in
+		0)
+			usage
+			;;
+		1)
+			edit_mod "${args[0]}"
+			;;
 
-	if ((${#args[*]} > 1)); then
-		print_err "Only accept one $t name. But received ${#args[*]}."
-		return "$ONE_EX_USAGE"
-	fi
-
-	edit_mod "${args[0]}"
+		*)
+			print_err "Only accept one $t name. But received ${#args[*]}."
+			return "$ONE_EX_USAGE"
+			;;
+	esac
 }

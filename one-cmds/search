@@ -47,7 +47,7 @@ declare -A opts_def=(
 )
 l.parse_args opts_def "$@"
 
-search() {
+main() {
 	local word=${args[0]} scope repo_name mod_type mod_name
 
 	if [[ ${opts[a]} == true ]]; then
@@ -117,4 +117,4 @@ search() {
 		fi
 	done
 }
-search "$@"
+main "$@"

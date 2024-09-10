@@ -36,11 +36,13 @@ enable() {
 		ln -fs "$path" "$target"
 		printf "Enabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"
 	else
-		echo "Not found executable sub file '$name'." >&2
-		return 3
+		print_err "Not found executable sub file '$name'"
+		return "$ONE_EX_DATAERR"
 	fi
 }
 
+declare -A opts=()
+declare -a args=()
 declare -A opts_def=(
 	['-a --all']='bool'
 )
@@ -54,7 +56,6 @@ main() {
 	# shellcheck source=../../deps/lobash.bash
 	. "$ONE_DIR/deps/lobash.bash"
 
-	# shellcheck disable=2154
 	if [[ ${opts[a]} == true ]]; then
 		for path in "${ONE_DIR}"/enabled/repo/*/sub/*; do
 			name=${path##*/}
@@ -63,28 +64,34 @@ main() {
 			enable "$path" "$name" || true
 		done
 	else
-		local repo_name paths
+		local repo_name filepaths
 
 		for name in "${args[@]}"; do
 			{
-				paths=()
+				filepaths=()
 
 				for path in "${ONE_DIR}"/enabled/repo/*/sub/"$name"{,.bash,.sh}; do
-					paths+=("$path")
+					filepaths+=("$path")
 				done
 
-				case ${#paths[@]} in
+				case ${#filepaths[@]} in
 					1)
-						enable "${paths[0]}" "$name"
+						enable "${filepaths[0]}" "$name"
 						;;
 
 					0)
-						print_err "No matched file '$name'"
+						print_err "No matched $t '$name'"
+						return "$ONE_EX_DATAERR"
 						;;
 
 					*)
-						print_err "Matched multi files for '$name':"
-						printf '  %s\n' "${paths[@]}" >&2
+						print_err "Matched multi $t for '$name'. You should use '-r' option for specified repo:"
+						local repo filepath
+						for filepath in "${filepaths[@]}"; do
+							repo=$(get_enabled_repo_name "$filepath")
+							echo "   one $t enable $name -r $repo" >&2
+						done
+						return "$ONE_EX_USAGE"
 						;;
 				esac
 			} || true

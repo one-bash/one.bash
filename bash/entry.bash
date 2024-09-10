@@ -6,7 +6,7 @@
 ONE_LOADED=loading
 
 if [[ -z ${ONE_DIR:-} ]]; then
-	echo "ONE_DIR cannot be empty." >&2
+	echo "[one.bash][Error] ONE_DIR cannot be empty." >&2
 	ONE_LOADED=failed
 	return 78
 fi

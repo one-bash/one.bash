@@ -2,7 +2,7 @@ usage() {
 	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one bin list [<OPTIONS>]
-Desc:  List available bin files
+Desc:  List available bin files in each repo
 Options:
   -r <repo>           list bin files in the repo
 EOF

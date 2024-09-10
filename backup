@@ -3,10 +3,11 @@
 set -euE -o pipefail
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
-one plugin disable --all
-one alias disable --all
-one completion disable --all
-one bin disable --all
+one a disable --all
+one b disable --all
+one c disable --all
+one d disable --all
+one p disable --all
 
 one repo add /Users/adoyle/dotfiles/others/one.bash/data/repo/_mac
 one repo add git@github.com:adoyle-h/dotfiles.git
