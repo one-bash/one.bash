@@ -11,7 +11,7 @@ main() {
 	printf '%-8s %-20s\t%b%s\n' "Status" "Name" "$RESET_ALL" "Path"
 
 	shopt -s nullglob
-	for repo in "$ONE_DIR"/data/repos/*; do
+	for repo in "$ONE_DIR"/data/repo/*; do
 		if [[ ! -d $repo ]]; then continue; fi
 		name="${repo##*/}"
 		name_str=$(printf '%b%s' "$BLUE" "$name")

@@ -8,7 +8,7 @@ EOF
 completion() {
 	shopt -s nullglob
 	local path
-	for path in "$ONE_DIR/data/repos/${@: -1}"*; do
+	for path in "$ONE_DIR/data/repo/${@: -1}"*; do
 		if [[ -d $path ]] && [[ -f $path/one.repo.bash ]]; then
 			# shellcheck disable=1091
 			. "$path/one.repo.bash"
@@ -19,7 +19,7 @@ completion() {
 
 search_repos() {
 	local repo_name=$1
-	grep -l -E "name=['\"]?${repo_name}['\"]?" "$ONE_DIR"/data/repos/*/one.repo.bash
+	grep -l -E "name=['\"]?${repo_name}['\"]?" "$ONE_DIR"/data/repo/*/one.repo.bash
 }
 
 main() {

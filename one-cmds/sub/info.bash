@@ -12,7 +12,7 @@ EOF
 completion() {
 	local path name
 	shopt -s nullglob
-	for path in "${ONE_DIR}"/data/repos/*/sub/"${@: -1}"*; do
+	for path in "${ONE_DIR}"/data/repo/*/sub/"${@: -1}"*; do
 		name=${path##*/}
 		echo "${name%.opt.bash}"
 	done

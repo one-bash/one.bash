@@ -14,7 +14,7 @@ EOF
 completion() {
 	shopt -s nullglob
 	local path
-	for path in "$ONE_DIR/data/repos/${@: -1}"*; do
+	for path in "$ONE_DIR/data/repo/${@: -1}"*; do
 		if [[ -d $path ]] && [[ -f $path/one.repo.bash ]]; then
 			# shellcheck disable=1091
 			. "$path/one.repo.bash"
@@ -25,7 +25,7 @@ completion() {
 
 main() {
 	local name=$1
-	local path="$ONE_DIR/data/repos/$name"
+	local path="$ONE_DIR/data/repo/$name"
 	if [[ ! -d $path ]]; then return; fi
 
 	local answer

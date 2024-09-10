@@ -14,7 +14,7 @@ EOF
 completion() {
 	shopt -s nullglob
 	local path
-	for path in "$ONE_DIR/data/repos/${@: -1}"*; do
+	for path in "$ONE_DIR/data/repo/${@: -1}"*; do
 		if [[ -d $path ]]; then
 			echo "${path##*/}"
 		fi
@@ -25,12 +25,12 @@ main() {
 	local name
 
 	for name in "$@"; do
-		if [[ ! -d "$ONE_DIR/data/repos/$name" ]]; then
+		if [[ ! -d "$ONE_DIR/data/repo/$name" ]]; then
 			print_err "No matched repo '$name'"
 			continue
 		fi
 
-		ln -f -s "../../data/repos/$name" "$ONE_DIR/enabled/repo/$name"
+		ln -f -s "../../data/repo/$name" "$ONE_DIR/enabled/repo/$name"
 		print_success "Enabled repo: $name"
 	done
 }
