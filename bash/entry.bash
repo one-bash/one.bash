@@ -80,6 +80,9 @@ if [[ $ONE_FIG == true ]]; then
 	fi
 fi
 
+# shellcheck source=./get-command-name.bash
+_one_load "bash/get-command-name.bash"
+
 # shellcheck source=./one-complete.bash
 _one_load "bash/one-complete.bash"
 

@@ -1,4 +1,5 @@
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one sub disable [-a|--all] <NAME>...
 Desc:  Disable matched sub commands
@@ -7,6 +8,7 @@ Arguments:
 Options:
   -a, --all   Disable all sub commands
 EOF
+	# editorconfig-checker-enable
 }
 
 completion() {
@@ -44,7 +46,7 @@ main() {
 			fi
 		done
 	else
-		for name in "$@"; do
+		for name in "${args[@]}"; do
 			disable_it "$name" || true
 		done
 	fi

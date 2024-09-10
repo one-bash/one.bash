@@ -17,7 +17,7 @@ EOF
 # 	shopt -s nullglob
 # 	local path filename
 
-# 	for path in "${ONE_DIR}"/enabled/repo/*/bins/"${@: -1}"*; do
+# 	for path in "${ONE_DIR}"/enabled/repo/*/bin/"${@: -1}"*; do
 # 		if [[ -x $path ]]; then
 # 			filename=${path##*/}
 # 			basename "${filename%.opt.bash}"
@@ -42,8 +42,8 @@ set_exports() {
 
 	local file
 	for file in "${EXPORTS[@]}"; do
-		if [[ -f "$ONE_DIR/data/bins/${name}/$file" ]]; then
-			chmod +x "$ONE_DIR/data/bins/${name}/$file"
+		if [[ -f "$ONE_DIR/data/bin/${name}/$file" ]]; then
+			chmod +x "$ONE_DIR/data/bin/${name}/$file"
 		else
 			print_err "Not found file \"$file\" to export"
 		fi
@@ -67,11 +67,11 @@ enable() {
 		# shellcheck disable=1090
 		url=$(. "$path" && echo "${URL:-}")
 		if [[ -n $url ]]; then
-			chmod +x "$ONE_DIR/data/bins/$name/script.bash"
+			chmod +x "$ONE_DIR/data/bin/$name/script.bash"
 
 			# shellcheck disable=1090
 			while read -r bin_name; do
-				create_symlink "$bin_name" "$ONE_DIR/data/bins/$name/script.bash"
+				create_symlink "$bin_name" "$ONE_DIR/data/bin/$name/script.bash"
 			done < <(. "$path" && echo "${EXPORTS[@]}")
 		else
 			(
@@ -80,7 +80,7 @@ enable() {
 				set_exports "$name"
 				# shellcheck disable=1090
 				while read -r bin_name; do
-					create_symlink "$bin_name" "$ONE_DIR/data/bins/$name/$bin_name"
+					create_symlink "$bin_name" "$ONE_DIR/data/bin/$name/$bin_name"
 				done < <(. "$path" && echo "${EXPORTS[@]}")
 			)
 		fi
@@ -107,13 +107,13 @@ main() {
 
 	if [[ ${opts[a]} == true ]]; then
 		if [[ -z $repo ]]; then
-			for path in "${ONE_DIR}"/enabled/repo/*/bins/*; do
+			for path in "${ONE_DIR}"/enabled/repo/*/bin/*; do
 				name=${path##*/}
 				name=${name%.opt.bash}
 				enable "$path" "$name" || true
 			done
 		else
-			for path in "${ONE_DIR}/enabled/repo/$repo/bins/"*; do
+			for path in "${ONE_DIR}/enabled/repo/$repo/bin/"*; do
 				name=${path##*/}
 				name=${name%.opt.bash}
 				enable "$path" "$name" || true
@@ -125,11 +125,11 @@ main() {
 				paths=()
 
 				if [[ -z $repo ]]; then
-					for path in "${ONE_DIR}"/enabled/repo/*/bins/"$name"{,.opt.bash}; do
+					for path in "${ONE_DIR}"/enabled/repo/*/bin/"$name"{,.opt.bash}; do
 						paths+=("$path")
 					done
 				else
-					for path in "${ONE_DIR}/enabled/repo/$repo/bins/$name"{,.opt.bash}; do
+					for path in "${ONE_DIR}/enabled/repo/$repo/bin/$name"{,.opt.bash}; do
 						paths+=("$path")
 					done
 				fi

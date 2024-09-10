@@ -17,7 +17,7 @@ fi
 
 actions=(install update status)
 
-declare -A action_alias=(
+declare -A action_aliases=(
 	['i']=install
 	['u']=update
 	['s']=status

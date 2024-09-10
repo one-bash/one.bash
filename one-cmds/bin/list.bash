@@ -4,7 +4,7 @@ usage() {
 Usage: one bin list [<OPTIONS>]
 Desc:  List available bin files
 Options:
-  -r <repo>           list $ts in the repo
+  -r <repo>           list bin files in the repo
 EOF
 	# editorconfig-checker-enable
 }
@@ -28,7 +28,7 @@ main() {
 		repo_name="${repo##*/}"
 		printf '%b[%s]%b ' "$BLUE" "$repo_name" "$RESET_ALL"
 
-		for path in "$repo/bins"/*; do
+		for path in "$repo/bin"/*; do
 			name=${path##*/}
 			name=${name%.opt.bash}
 			name=${name%.bash}

@@ -16,7 +16,7 @@ fi
 
 actions=(list info enable disable which edit)
 
-declare -A action_alias=(
+declare -A action_aliases=(
 	['e']=enable
 	['d']=disable
 	['l']=list
@@ -25,15 +25,7 @@ declare -A action_alias=(
 )
 
 t=$(basename "$(dirname "$0")")
-
-declare -A t_map=(
-	[bin]=bins
-	[plugin]=plugins
-	[completion]=completions
-	[alias]=aliases
-)
-ts=${t_map[$t]}
-readonly t ts
+readonly t
 
 # one.bash:usage
 usage() {
@@ -43,15 +35,15 @@ Usage:  one $t <ACTION>
         one $t [-h|--help]
         one $t <-h|--help> <ACTION>
 
-Desc:   Manage $ts in ONE_REPO/$ts/
+Desc:   Manage $t in ONE_REPO/$t/
 
 Action:
-  e, enable <NAME>...            Enable matched $ts
-  d, disable <NAME>...           Disable matched $ts
-  l, list                        List enabled $ts
-  i, info <NAME>                 Show info of matched $ts
+  e, enable <NAME>...            Enable matched $t
+  d, disable <NAME>...           Disable matched $t
+  l, list                        List enabled $t
+  i, info <NAME>                 Show info of matched $t
   w, which <NAME>                Show realpath of $t
-  edit <NAME>                    Edit matched $ts
+  edit <NAME>                    Edit matched $t
 EOF
 	# editorconfig-checker-enable
 }

@@ -77,16 +77,8 @@ _comp_one_bash() {
 		local words=(-h --help --bashrc)
 		_one_COMP_REPLY < <(printf '%s\n' "${words[@]}")
 	else
-		local cmd="${COMP_WORDS[1]}"
-
-		case $cmd in
-			r) cmd=repo ;;
-			a) cmd='alias' ;;
-			b) cmd=bin ;;
-			c) cmd=completion ;;
-			p) cmd=plugin ;;
-			s) cmd=sub ;;
-		esac
+		local cmd
+		cmd=$(_one_get_command_name "${COMP_WORDS[1]}")
 
 		if [[ -d "$ONE_DIR/one-cmds/$cmd" ]]; then
 			# Expend options of one command

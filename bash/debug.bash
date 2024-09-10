@@ -1,9 +1,9 @@
 # You can invoke "a debug true" to set ONE_DEBUG=true. And "a debug false" to unset.
 if [[ $ONE_DEBUG == true ]]; then
 	one_debug() {
-		local ts fmt tag
+		local time fmt tag
 
-		ts=$(date +"%H:%M:%S")
+		time=$(date +"%H:%M:%S")
 
 		if (($# > 1)); then
 			fmt="${GREY}[one.bash|%s]${RESET_ALL} $1\n"
@@ -13,7 +13,7 @@ if [[ $ONE_DEBUG == true ]]; then
 		fi
 
 		local filename="${BASH_SOURCE[1]}"
-		tag="$ts|${filename##*/}"
+		tag="$time|${filename##*/}"
 
 		# shellcheck disable=SC2059
 		printf "$fmt" "$tag" "$@" >/dev/tty

@@ -16,7 +16,7 @@ fi
 
 actions=(list info enable disable which run help)
 
-declare -A action_alias=(
+declare -A action_aliases=(
 	['e']=enable
 	['d']=disable
 	['l']=list

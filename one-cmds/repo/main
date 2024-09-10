@@ -19,7 +19,7 @@ fi
 
 actions=(init list add remove update info enable disable)
 
-declare -A action_alias=(
+declare -A action_aliases=(
 	['l']=list
 	['a']=add
 	['r']=remove

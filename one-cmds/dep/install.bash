@@ -5,11 +5,6 @@ Desc:  Install all deps.
 EOF
 }
 
-completion() {
-	words=(composure dotbot)
-	printf '%s\n' "${words[@]}"
-}
-
 git_clone() {
 	local repo=$1
 	local dir=$2

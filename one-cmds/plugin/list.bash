@@ -2,11 +2,11 @@ usage() {
 	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one $t list [<OPTIONS>]
-Desc: List enabled $ts
+Desc: List enabled $t
 Options:
-  -a, --all           List all available $ts in each repo
+  -a, --all           List all available $t in each repo
   --only-name         Only list module names
-  -r <repo>           List $ts in the repo
+  -r <repo>           List $t in the repo
 EOF
 	# editorconfig-checker-enable
 }
@@ -41,7 +41,7 @@ list_mods() {
 
 	printf '%b%s%b ' "$BLUE" "[$repo_name]" "$RESET_ALL"
 
-	for path in "$repo/$ts"/*; do
+	for path in "$repo/$t"/*; do
 		name="${path##*/}"
 
 		if [[ $name == *.opt.bash ]]; then
@@ -78,13 +78,13 @@ main() {
 			# shellcheck disable=2153
 			for repo in "${ONE_DIR}"/enabled/repo/*; do
 				# shellcheck disable=2154
-				if [[ ! -d "$repo/$ts" ]]; then continue; fi
+				if [[ ! -d "$repo/$t" ]]; then continue; fi
 				repo_name="${repo##*/}"
 				list_mods
 			done
 		else
 			repo="${ONE_DIR}/enabled/repo/$repo_name"
-			if [[ ! -d "$repo/$ts" ]]; then return; fi
+			if [[ ! -d "$repo/$t" ]]; then return; fi
 			list_mods
 		fi
 	else

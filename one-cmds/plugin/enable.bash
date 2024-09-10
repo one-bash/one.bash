@@ -2,11 +2,11 @@ usage() {
 	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one $t enable [OPTIONS] <NAME> [<NAME>...]
-Desc:  Enable matched $ts
+Desc:  Enable matched $t
 Arguments:
   <NAME>									$t name
 Options:
-  -r <repo>								Enable matched $ts in the repo
+  -r <repo>								Enable matched $t in the repo
 EOF
 	# editorconfig-checker-enable
 }
@@ -14,7 +14,7 @@ EOF
 # Create completion mod file
 create_mod() {
 	local name=$1 opt_path=$2
-	local MOD_DATA_ROOT="$ONE_DIR/data/$ts"
+	local MOD_DATA_ROOT="$ONE_DIR/data/$t"
 	local MOD_DATA_DIR="$MOD_DATA_ROOT/${name}"
 	local MOD_FILE="$MOD_DATA_DIR/mod.bash"
 	local MOD_META="$MOD_DATA_DIR/meta.bash"
@@ -100,7 +100,9 @@ enable_file() {
 
 	ln -sf "$filepath" "$ENABLED_DIR/$priority---$name@$repo@$t.bash"
 
-	echo "Enabled $repo/$ts/$name with priority=$priority. Please restart shell to take effect."
+	printf 'Enabled %b%s%b with priority=%b%s%b. Please restart shell to take effect.\n' \
+		"$BLUE" "$repo/$t/$name" "$RESET_ALL" \
+		"$YELLOW" "$priority" "$RESET_ALL"
 }
 
 enable_mod() {
@@ -129,14 +131,19 @@ enable_mod() {
 
 			enable_file "$name" "$repo_name" "$filepath" || print_err "Failed to enable '$name'."
 			;;
+
 		0)
 			print_err "No matched $t '$name'"
-			return 10
+			return "$ONE_EX_DATAERR"
 			;;
+
 		*)
-			print_err "Matched multi $ts for '$name':"
-			printf '  %s\n' "${filepaths[@]}" >&2
-			return 11
+			print_err "Matched multi $t for '$name'. You should use -r option for specified repo:"
+			for filepath in "${filepaths[@]}"; do
+				local repo=$(get_enabled_repo_name "$filepath")
+				echo "   one $t enable $name -r $repo" >&2
+			done
+			return "$ONE_EX_USAGE"
 			;;
 	esac
 }
@@ -160,5 +167,5 @@ main() {
 	# shellcheck source=../../bash/log.bash
 	. "$ONE_DIR/bash/log.bash"
 
-	if (($# == 0)); then usage; else enable_it "$@"; fi
+	if (($# == 0)); then usage; else enable_it "${args[@]}"; fi
 }

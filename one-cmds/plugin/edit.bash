@@ -2,7 +2,7 @@ usage() {
 	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one $t edit [OPTIONS] <NAME>
-Desc:  Edit matched $ts
+Desc:  Edit matched $t
 Arguments:
   <NAME>									$t name
 Options:
@@ -28,7 +28,7 @@ edit_mod() {
 			return 10
 			;;
 		*)
-			print_err "Matched multi $ts for '$name':"
+			print_err "Matched multi $t for '$name':"
 			printf '  %s\n' "${filepaths[@]}" >&2
 			return 11
 			;;

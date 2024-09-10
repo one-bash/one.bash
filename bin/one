@@ -19,11 +19,12 @@ Usage:
     $name help [<CMD>]            Show the usage of one command
     $name [<CMD>] [-h|--help]     Show the usage of one command
 
+    $name (a|alias)               Manage aliases in ONE_REPO/alias/
+    $name (b|bin)                 Manage executable files in ONE_REPO/bin/
+    $name (c|completion)          Manage completions in ONE_REPO/completion/
+    $name (d|dep)                 Manage one.bash deps
+    $name (p|plugin)              Manage plugins in ONE_REPO/plugin/
     $name (r|repo)                Manage one.bash repos
-    $name (a|alias)								Manage aliases in ONE_REPO/aliases/
-    $name (b|bin)                 Manage executable files in ONE_REPO/bins/
-    $name (c|completion)          Manage completions in ONE_REPO/completions/
-    $name (p|plugin)              Manage plugins in ONE_REPO/plugins/
     $name (s|sub)                 Manage ONE_SUB command
 
     $name enabled                 Manage enabled modules (alias/completion/plugin)
@@ -32,7 +33,6 @@ Usage:
     $name backup                  Output backup scripts for current enabled modules
     $name config                  Manage user's ONE_CONF
     $name debug                   Toggle debug mode on one.bash
-    $name dep                     Manage one.bash deps
     $name link                    Create symlink files based on LINKS_CONF file
     $name log                     Print the logs of one.bash
     $name search                  Search alias/bin/completion/plugin/sub of each enabled repo.
@@ -95,7 +95,7 @@ one_cmd() {
 
 	local cmd_path cmd
 
-	cmd=$(get_command_name "$arg1")
+	cmd=$(_one_get_command_name "$arg1")
 
 	if [[ -x $ONE_DIR/one-cmds/$cmd/main ]]; then
 		cmd_path="$ONE_DIR/one-cmds/$cmd/main"
@@ -126,6 +126,9 @@ main() {
 
 	# shellcheck source=../one-cmds/util.bash
 	. "$ONE_DIR/one-cmds/util.bash"
+
+	# shellcheck source=../bash/get-command-name.bash
+	. "$ONE_DIR/bash/get-command-name.bash"
 
 	case "${1:-}" in
 		"--bashrc") bashrc ;;

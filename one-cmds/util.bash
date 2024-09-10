@@ -1,27 +1,14 @@
 _get_action() {
 	local action=$1
 
-	if [[ -n ${action_alias[$action]:-} ]]; then
-		echo "${action_alias[$action]}"
+	if [[ -n ${action_aliases[$action]:-} ]]; then
+		echo "${action_aliases[$action]}"
 	elif [[ ! -f "$ONE_DIR/one-cmds/$cmd/$action.bash" ]]; then
 		print_err "Invalid action '$action' for command '$cmd'"
 		return "$ONE_EX_USAGE"
 	else
 		echo "$action"
 	fi
-}
-
-get_command_name() {
-	local cmd=$1
-	case $cmd in
-		r) cmd=repo ;;
-		a) cmd='alias' ;;
-		b) cmd=bin ;;
-		c) cmd=completion ;;
-		p) cmd=plugin ;;
-		s) cmd=sub ;;
-	esac
-	echo "$cmd"
 }
 
 _show_usage() {

@@ -16,16 +16,15 @@ fi
 
 actions=(list info enable disable)
 
-declare -A action_alias=(
+declare -A action_aliases=(
 	['e']=enable
 	['d']=disable
 	['l']=list
 	['i']=info
 )
 
-t=bin
-ts=bins
-readonly t ts
+# shellcheck disable=2034
+readonly t=bin
 
 # one.bash:completion
 # one.bash:usage
@@ -35,7 +34,7 @@ usage() {
 Usage:  one bin [-h|--help] <ACTION>
         one bin [-h|--help]
 
-Desc:   Manage executable files in ONE_REPO/bins/
+Desc:   Manage executable files in ONE_REPO/bin/
 
 ACTION:
   e, enable           Enable matched bin files

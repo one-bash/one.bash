@@ -6,9 +6,9 @@ User can use `one` commands to manage modules. Enable/Disable modules on your de
 
 The modules have three types: `alias`, `completion`, `plugin`.
 
-- All plugins are put in `plugins/` of each repo.
-- All completions are put in `completions/` of each repo.
-- All aliases are put in `aliases/` of each repo.
+- All plugins are put in `plugin/` of each repo.
+- All completions are put in `completion/` of each repo.
+- All aliases are put in `alias/` of each repo.
 - All enabled modules are symbol linked in `$ONE_DIR/enabled/` directory.
   - `one enabled` to view enabled modules.
   - `one backup` to backup enabled modules to a file.
@@ -23,7 +23,7 @@ It's suggested to move your shell codes to modules.
 
 ## Write a module
 
-All modules must be put in one of aliases/completions/plugins folders. And its filename must be suffixed with `.bash` or `.opt.bash`.
+All modules must be put in one of alias/completion/plugin folders. And its filename must be suffixed with `.bash` or `.opt.bash`.
 
 ### Template of module.bash
 

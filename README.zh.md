@@ -193,13 +193,13 @@ Usage:
     one r
     one repo                    Manage one.bash repos
     one a
-    one alias                   Manage aliases in ONE_REPO/aliases/
+    one alias                   Manage aliases in ONE_REPO/alias/
     one b
-    one bin                     Manage executable files in ONE_REPO/bins/
+    one bin                     Manage executable files in ONE_REPO/bin/
     one c
-    one completion              Manage completions in ONE_REPO/completions/
+    one completion              Manage completions in ONE_REPO/completion/
     one p
-    one plugin                  Manage plugins in ONE_REPO/plugins/
+    one plugin                  Manage plugins in ONE_REPO/plugin/
 
     one enabled                 Manage enabled modules (alias/completion/plugin)
     one disable-all             Disable all modules (alias/completion/plugin)
@@ -235,9 +235,9 @@ one.bash 使用模块来管理脚本。
 
 模块有三种类型：`alias`, `completion`, `plugin`。
 
-- 所有 plugins 放在每个 repo 的 `plugins/` 目录。
-- 所有 completions 放在每个 repo 的 `completions/` 目录。
-- 所有 aliases 放在每个 repo 的 `aliases/` 目录。
+- 所有 plugins 放在每个 repo 的 `plugin/` 目录。
+- 所有 completions 放在每个 repo 的 `completion/` 目录。
+- 所有 aliases 放在每个 repo 的 `alias/` 目录。
 - 所有启用的模块会在 `$ONE_DIR/enabled/` 目录下创建软链接。
   - 使用 `one enabled` 可以查询启用的模块。
   - 使用 `one backup` 备份启动的模块。

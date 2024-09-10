@@ -193,13 +193,13 @@ Usage:
     one r
     one repo                    Manage one.bash repos
     one a
-    one alias                   Manage aliases in ONE_REPO/aliases/
+    one alias                   Manage aliases in ONE_REPO/alias/
     one b
-    one bin                     Manage executable files in ONE_REPO/bins/
+    one bin                     Manage executable files in ONE_REPO/bin/
     one c
-    one completion              Manage completions in ONE_REPO/completions/
+    one completion              Manage completions in ONE_REPO/completion/
     one p
-    one plugin                  Manage plugins in ONE_REPO/plugins/
+    one plugin                  Manage plugins in ONE_REPO/plugin/
 
     one enabled                 Manage enabled modules (alias/completion/plugin)
     one disable-all             Disable all modules (alias/completion/plugin)
@@ -235,9 +235,9 @@ User can use `one` commands to manage modules. Enable/Disable modules on your de
 
 The modules have three types: `alias`, `completion`, `plugin`.
 
-- All plugins are put in `plugins/` of each repo.
-- All completions are put in `completions/` of each repo.
-- All aliases are put in `aliases/` of each repo.
+- All plugins are put in `plugin/` of each repo.
+- All completions are put in `completion/` of each repo.
+- All aliases are put in `alias/` of each repo.
 - All enabled modules are symbol linked in `$ONE_DIR/enabled/` directory.
   - `one enabled` to view enabled modules.
   - `one backup` to backup enabled modules to a file.

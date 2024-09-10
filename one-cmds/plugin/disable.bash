@@ -2,11 +2,11 @@ usage() {
 	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one $t disable [OPTIONS] <NAME>...
-Desc:  Disable matched $ts
+Desc:  Disable matched $t
 Arguments:
   <name>                  $t name
 Options:
-  -a, --all               Disable all $ts
+  -a, --all               Disable all $t
 EOF
 	# editorconfig-checker-enable
 }

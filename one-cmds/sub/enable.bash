@@ -65,7 +65,7 @@ main() {
 	else
 		local repo_name paths
 
-		for name in "$@"; do
+		for name in "${args[@]}"; do
 			{
 				paths=()
 
