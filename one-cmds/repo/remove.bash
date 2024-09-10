@@ -35,8 +35,8 @@ main() {
 	if [[ -f $path/one.repo.bash ]]; then
 		# shellcheck disable=1091
 		name=$(. "$path/one.repo.bash" && echo "${name:-}")
-		if [[ -n ${name} ]] && [[ -e $ONE_DIR/enabled/repos/$name ]]; then
-			unlink "$ONE_DIR/enabled/repos/$name"
+		if [[ -n ${name} ]] && [[ -e $ONE_DIR/enabled/repo/$name ]]; then
+			unlink "$ONE_DIR/enabled/repo/$name"
 		fi
 	fi
 

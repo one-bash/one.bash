@@ -30,7 +30,7 @@ main() {
 			continue
 		fi
 
-		ln -f -s "../../data/repos/$name" "$ONE_DIR/enabled/repos/$name"
+		ln -f -s "../../data/repos/$name" "$ONE_DIR/enabled/repo/$name"
 		print_success "Enabled repo: $name"
 	done
 }

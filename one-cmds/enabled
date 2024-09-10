@@ -11,7 +11,7 @@ if [[ ${1:-} == --complete ]]; then
 	fi
 
 	if [[ ${*: -2:1} == -r ]]; then
-		for repo in "${ONE_DIR}/enabled/repos"/*; do
+		for repo in "${ONE_DIR}/enabled/repo"/*; do
 			echo "${repo##*/}"
 		done
 

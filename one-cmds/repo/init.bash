@@ -56,7 +56,7 @@ main() {
 		echo "name=$repo_name" >one.repo.bash
 	fi
 
-	mkdir -p aliases bins completions configs plugins sub
+	mkdir -p alias bin config completion plugin sub
 
 	if [[ -f README.md ]]; then
 		answer=$(l.ask "The file 'README.md' existed. Override it?" N)

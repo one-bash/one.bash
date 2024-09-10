@@ -7,7 +7,7 @@ set -o errexit -o nounset -o pipefail -o errtrace
 SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 readonly SCRIPT_DIR
 
-export ROOT_DIR=$SCRIPT_DIR/..
+export ROOT_DIR=$(realpath "$SCRIPT_DIR"/..)
 export TEST_DIR=$ROOT_DIR/test
 
 setup_fixture() {
@@ -17,7 +17,7 @@ setup_fixture() {
 export -f setup_fixture
 
 if [[ -z ${1:-} ]]; then
-	test_dirs=("$TEST_DIR"/{,bin})
+	test_dirs=("$TEST_DIR"/bin/**)
 else
 	test_dirs=("$1")
 fi

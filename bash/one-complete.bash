@@ -53,7 +53,7 @@ _comp_one_bash_sub() {
 			return 0
 		fi
 
-		for repo in "${ONE_DIR}"/enabled/repos/*; do
+		for repo in "${ONE_DIR}"/enabled/repo/*; do
 			if [[ ! -d "$repo/sub" ]]; then continue; fi
 
 			_one_COMP_REPLY < <(_one_sub_cmd_completion "$repo/sub/$cmd" "${COMP_WORDS[@]:2}")

@@ -88,7 +88,7 @@ one bin disable --all
 EOF
 
 	local path url
-	for path in "$ONE_DIR"/enabled/repos/*; do
+	for path in "$ONE_DIR"/enabled/repo/*; do
 		if [[ -d $path/.git ]]; then
 			url=$(git -C "$path" config --get remote.origin.url)
 		else

@@ -3,7 +3,7 @@ _one_load_repos() {
 	local CUR_REPO_DIR func_str
 
 	shopt -s nullglob
-	for CUR_REPO_DIR in "$ONE_DIR"/enabled/repos/*; do
+	for CUR_REPO_DIR in "$ONE_DIR"/enabled/repo/*; do
 		if [[ ! -f $CUR_REPO_DIR/one.repo.bash ]]; then continue; fi
 
 		# shellcheck disable=1091

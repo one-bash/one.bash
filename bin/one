@@ -67,7 +67,7 @@ one_sub_cmd() {
 			cmd_path="$ONE_DIR/one-cmds/help-sub"
 		else
 			# shellcheck disable=2153
-			for repo in "${ONE_DIR}"/enabled/repos/*; do
+			for repo in "${ONE_DIR}"/enabled/repo/*; do
 				if [[ ! -d $repo/sub ]]; then continue; fi
 
 				if [[ -x "$repo/sub/$sub_cmd" ]]; then

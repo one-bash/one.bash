@@ -15,7 +15,7 @@ completion() {
 	shopt -s nullglob
 	local path name
 
-	for path in "${ONE_DIR}"/enabled/repos/*/sub/"${@: -1}"*; do
+	for path in "${ONE_DIR}"/enabled/repo/*/sub/"${@: -1}"*; do
 		name=${path##*/}
 		echo "${name%.opt.bash}"
 	done
@@ -56,7 +56,7 @@ main() {
 
 	# shellcheck disable=2154
 	if [[ ${opts[a]} == true ]]; then
-		for path in "${ONE_DIR}"/enabled/repos/*/sub/*; do
+		for path in "${ONE_DIR}"/enabled/repo/*/sub/*; do
 			name=${path##*/}
 			name=${name%.bash}
 			name="${name%.sh}"
@@ -69,7 +69,7 @@ main() {
 			{
 				paths=()
 
-				for path in "${ONE_DIR}"/enabled/repos/*/sub/"$name"{,.bash,.sh}; do
+				for path in "${ONE_DIR}"/enabled/repo/*/sub/"$name"{,.bash,.sh}; do
 					paths+=("$path")
 				done
 

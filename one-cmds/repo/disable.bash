@@ -14,7 +14,7 @@ EOF
 completion() {
 	shopt -s nullglob
 	local path
-	for path in "$ONE_DIR/enabled/repos/${@: -1}"*; do
+	for path in "$ONE_DIR/enabled/repo/${@: -1}"*; do
 		if [[ -d $path ]]; then
 			echo "${path##*/}"
 		fi
@@ -25,7 +25,7 @@ main() {
 	local name filepath
 
 	for name in "$@"; do
-		filepath="$ONE_DIR/enabled/repos/$name"
+		filepath="$ONE_DIR/enabled/repo/$name"
 
 		if [[ -L $filepath ]]; then
 			unlink "$filepath"

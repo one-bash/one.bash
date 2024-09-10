@@ -78,11 +78,11 @@ search() {
 		[sub]=sub
 	)
 
-	for filepath in "${ONE_DIR}/$scope"/repos/*/{aliases,bins,completions,plugins}/*"${word}"*; do
+	for filepath in "${ONE_DIR}/$scope"/repo/*/{aliases,bins,completions,plugins}/*"${word}"*; do
 		local -a prints=()
 		local format='' about=''
 
-		if [[ $filepath =~ \/${scope}\/repos\/([^\/]+)\/([^\/]+)\/([^\/]+) ]]; then
+		if [[ $filepath =~ \/${scope}\/repo\/([^\/]+)\/([^\/]+)\/([^\/]+) ]]; then
 			repo_name="${BASH_REMATCH[1]}"
 			t=${t_map_rev["${BASH_REMATCH[2]}"]}
 			mod_name="${BASH_REMATCH[3]}"

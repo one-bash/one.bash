@@ -13,7 +13,7 @@ completion() {
 	shopt -s nullglob
 	local path name
 
-	for path in "${ONE_DIR}"/enabled/repos/*/bins/"${@: -1}"*; do
+	for path in "${ONE_DIR}"/enabled/repo/*/bins/"${@: -1}"*; do
 		name=${path##*/}
 		echo "${name%.opt.bash}"
 	done
@@ -31,7 +31,7 @@ main() {
 	PRINT_INFO_KEY_WIDTH=-6
 
 	shopt -s nullglob
-	for path in "$ONE_DIR"/enabled/repos/*/bins/"$name"{,.opt.bash}; do
+	for path in "$ONE_DIR"/enabled/repo/*/bins/"$name"{,.opt.bash}; do
 		print_info_item Name "$name"
 
 		if [[ $path =~ \/data\/repos\/([^\/]+)\/ ]]; then

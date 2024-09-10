@@ -17,7 +17,7 @@ EOF
 # 	shopt -s nullglob
 # 	local path filename
 
-# 	for path in "${ONE_DIR}"/enabled/repos/*/bins/"${@: -1}"*; do
+# 	for path in "${ONE_DIR}"/enabled/repo/*/bins/"${@: -1}"*; do
 # 		if [[ -x $path ]]; then
 # 			filename=${path##*/}
 # 			basename "${filename%.opt.bash}"
@@ -107,13 +107,13 @@ main() {
 
 	if [[ ${opts[a]} == true ]]; then
 		if [[ -z $repo ]]; then
-			for path in "${ONE_DIR}"/enabled/repos/*/bins/*; do
+			for path in "${ONE_DIR}"/enabled/repo/*/bins/*; do
 				name=${path##*/}
 				name=${name%.opt.bash}
 				enable "$path" "$name" || true
 			done
 		else
-			for path in "${ONE_DIR}/enabled/repos/$repo/bins/"*; do
+			for path in "${ONE_DIR}/enabled/repo/$repo/bins/"*; do
 				name=${path##*/}
 				name=${name%.opt.bash}
 				enable "$path" "$name" || true
@@ -125,11 +125,11 @@ main() {
 				paths=()
 
 				if [[ -z $repo ]]; then
-					for path in "${ONE_DIR}"/enabled/repos/*/bins/"$name"{,.opt.bash}; do
+					for path in "${ONE_DIR}"/enabled/repo/*/bins/"$name"{,.opt.bash}; do
 						paths+=("$path")
 					done
 				else
-					for path in "${ONE_DIR}/enabled/repos/$repo/bins/$name"{,.opt.bash}; do
+					for path in "${ONE_DIR}/enabled/repo/$repo/bins/$name"{,.opt.bash}; do
 						paths+=("$path")
 					done
 				fi

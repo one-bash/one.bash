@@ -20,25 +20,25 @@ A ONE Repo's file structure should be that.
 
 ```
 .
-├── aliases/
+├── alias/
 │   └── alias.bash
 ├── bin/
 │   └── file*
-├── completions/
+├── completion/
 │   └── cmp.bash
-├── configs/
+├── config/
 │   └── config
-├── plugins/
+├── plugin/
 │   └── plugin.bash
 └── sub/
     └── file*
 ```
 
 - `file*` must be executable.
-- `aliases/` stores alias modules.
-- `plugins/` stores plugin modules.
+- `alias/` stores alias modules.
+- `plugin/` stores plugin modules.
 - `completion/` stores completion modules.
-- `configs/` stores dotfile, rcfile and config files.
+- `config/` stores dotfile, rcfile and config files.
 - `bin/` stores user commands. Just like `/usr/local/bin/`. They must be executable. The path of bin has been added to `$PATH`.
 - `sub/` stores ONE_SUB commands. User can invoke it be `$ONE_SUB <cmd>` and `one sub run <cmd>`. They must be executable.
 

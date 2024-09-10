@@ -8,19 +8,18 @@ one alias disable --all
 one completion disable --all
 one bin disable --all
 
-one repo add /Users/adoyle/dotfiles/others/one.bash/data/repos/_mac
+one repo add /Users/adoyle/dotfiles/others/one.bash/data/repo/_mac
 one repo add git@github.com:adoyle-h/dotfiles.git
-one repo add /Users/adoyle/dotfiles/others/one.bash/data/repos/m01
+one repo add /Users/adoyle/dotfiles/others/one.bash/data/repo/m01
 one repo add git@github.com:one-bash/one-bash-it.git
 one repo add git@github.com:one-bash/one.share.git
 
-one plugin enable acme adoyle-post adoyle-pre alert asdf atuin broot completion direnv editor env-macos fnm forgit fuck fzf fzf-tab gettext gfw gnutools-for-mac go gpg grep history itmz java john k8s keymap lesspipe ls lua macos manbash manpage my-homebrew my-tmux ncurses nix nnn nvim python ruby rust shell starship vscode xcode xdg-user zl zoxide 
+one plugin enable acme adoyle-post adoyle-pre alert asdf atuin broot completion direnv editor env-macos fnm forgit fuck fzf fzf-tab gettext gfw gnutools-for-mac go gpg grep history itmz java john k8s keymap lesspipe ls lua macos manbash manpage my-homebrew my-tmux ncurses nix nnn nvim python ruby rust shell starship vscode xcode xdg-user zl zoxide
 
-one alias enable avoid-mistakes cd general 
+one alias enable avoid-mistakes cd general
 
-one completion enable adoyle aliases.completion bash-completion cheat docker docker-compose.v1 exa fnm git go gvm keybase kubebuilder nvim orbctl procs taskfile west yq zig 
+one completion enable adoyle aliases.completion bash-completion cheat docker docker-compose.v1 exa fnm git go gvm keybase kubebuilder nvim orbctl procs taskfile west yq zig
 
-one bin enable cht diff-cheats diff-so-fancy diff-so-fancy diff fkill git-forgit gitcloneproxy grip highlights imgcat imgls it2dl script.bash sphinx-apidoc sphinx-autogen sphinx-build sphinx-quickstart tmux-choose-pane trim-color 
-
+one bin enable cht diff-cheats diff-so-fancy diff-so-fancy diff fkill git-forgit gitcloneproxy grip highlights imgcat imgls it2dl script.bash sphinx-apidoc sphinx-autogen sphinx-build sphinx-quickstart tmux-choose-pane trim-color
 
 echo "[All Done]"

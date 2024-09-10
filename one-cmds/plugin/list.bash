@@ -22,7 +22,7 @@ completion() {
 
 	word="${*:$((COMP_CWORD - 1)):1}"
 	if [[ $word == -r ]]; then
-		for repo in "${ONE_DIR}/enabled/repos"/*; do
+		for repo in "${ONE_DIR}/enabled/repo"/*; do
 			echo "${repo##*/}"
 		done
 		return
@@ -76,14 +76,14 @@ main() {
 		# list all available mods
 		if [[ -z $repo_name ]]; then
 			# shellcheck disable=2153
-			for repo in "${ONE_DIR}"/enabled/repos/*; do
+			for repo in "${ONE_DIR}"/enabled/repo/*; do
 				# shellcheck disable=2154
 				if [[ ! -d "$repo/$ts" ]]; then continue; fi
 				repo_name="${repo##*/}"
 				list_mods
 			done
 		else
-			repo="${ONE_DIR}/enabled/repos/$repo_name"
+			repo="${ONE_DIR}/enabled/repo/$repo_name"
 			if [[ ! -d "$repo/$ts" ]]; then return; fi
 			list_mods
 		fi

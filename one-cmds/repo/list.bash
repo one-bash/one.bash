@@ -16,7 +16,7 @@ main() {
 		name="${repo##*/}"
 		name_str=$(printf '%b%s' "$BLUE" "$name")
 
-		if [[ -e "$ONE_DIR/enabled/repos/$name" ]]; then
+		if [[ -e "$ONE_DIR/enabled/repo/$name" ]]; then
 			repo_status_color="$GREEN"
 			repo_status=Enabled
 		else

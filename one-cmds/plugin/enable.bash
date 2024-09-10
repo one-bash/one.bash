@@ -112,7 +112,7 @@ enable_mod() {
 	case ${#filepaths[@]} in
 		1)
 			local filepath=${filepaths[0]}
-			repo_name=${filepath#"$ONE_DIR/enabled/repos/"}
+			repo_name=${filepath#"$ONE_DIR/enabled/repo/"}
 			repo_name=${repo_name%%/*}
 
 			if [[ $filepath == *.opt.bash ]]; then

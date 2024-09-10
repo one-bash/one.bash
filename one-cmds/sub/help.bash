@@ -58,7 +58,7 @@ main() {
 
 	local name path
 	for name in "$@"; do
-		for path in "${ONE_DIR}"/enabled/repos/*/sub/"$name"{,.bash,.sh}; do
+		for path in "${ONE_DIR}"/enabled/repo/*/sub/"$name"{,.bash,.sh}; do
 			print_help "$name" "$path"
 		done
 	done

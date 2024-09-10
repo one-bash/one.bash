@@ -51,7 +51,7 @@ print_help() {
 
 print_info() {
 	local name=$1 path
-	for path in "${ONE_DIR}"/enabled/repos/*/sub/"$name"{,.bash,.sh}; do
+	for path in "${ONE_DIR}"/enabled/repo/*/sub/"$name"{,.bash,.sh}; do
 		print_info_item Name "$name"
 		print_info_item Repo "$(get_enabled_repo_name "$path")"
 		print_info_item "Path" "$path"

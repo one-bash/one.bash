@@ -4,7 +4,7 @@ completion() {
 
 	if ((COMP_CWORD == 1)); then
 		printf '%s\n' '-r'
-		for repo in "${ONE_DIR}/enabled/repos"/*; do
+		for repo in "${ONE_DIR}/enabled/repo"/*; do
 			if [[ -d "$repo/$ts" ]]; then
 				plugin_dirs+=("$repo/$ts")
 			fi
@@ -25,7 +25,7 @@ completion() {
 
 	word="${*:$((COMP_CWORD - 1)):1}"
 	if [[ $word == -r ]]; then
-		for repo in "${ONE_DIR}/enabled/repos"/*; do
+		for repo in "${ONE_DIR}/enabled/repo"/*; do
 			echo "${repo##*/}"
 		done
 		return
@@ -42,15 +42,15 @@ completion() {
 
 	if [[ -z ${repo:-} ]]; then
 		# user not pass -r
-		for repo in "${ONE_DIR}/enabled/repos"/*; do
+		for repo in "${ONE_DIR}/enabled/repo"/*; do
 			if [[ -d "$repo/$ts" ]]; then
 				plugin_dirs+=("$repo/$ts")
 			fi
 		done
 	else
 		# user pass -r repo
-		if [[ -d "${ONE_DIR}/enabled/repos/$repo/$ts" ]]; then
-			plugin_dirs+=("${ONE_DIR}/enabled/repos/$repo/$ts")
+		if [[ -d "${ONE_DIR}/enabled/repo/$repo/$ts" ]]; then
+			plugin_dirs+=("${ONE_DIR}/enabled/repo/$repo/$ts")
 		fi
 	fi
 

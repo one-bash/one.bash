@@ -21,7 +21,7 @@ main() {
 	shopt -s nullglob
 	local path repo name link repo_name
 
-	for repo in "${ONE_DIR}"/enabled/repos/*; do
+	for repo in "${ONE_DIR}"/enabled/repo/*; do
 		repo_name="${repo##*/}"
 		printf '%b[%s]%b' "$BLUE" "$repo_name" "$RESET_ALL"
 

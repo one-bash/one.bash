@@ -1,7 +1,6 @@
 # bats not open errexit, nounset and pipefail by default
-set -o errexit
+set -o errexit -o pipefail
 # set -o nounset
-set -o pipefail
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
 if [[ -n ${DOCKER:-} ]]; then
@@ -18,10 +17,6 @@ load_fixtrue() {
 	local path=$1
 	shift
 	load "$TEST_DIR/fixtrue/$path.bash" "$@"
-}
-
-load_module() {
-	[[ $# != 1 ]] && echo "load_module must have one argument at least." >&2 && return 3
 }
 
 # Fix: bats-core reset "set -e"
@@ -41,3 +36,9 @@ run() {
 	IFS="$origIFS"
 	set "-$origFlags"
 }
+
+# To fix run --separate-stderr
+bats_require_minimum_version 1.5.0
+
+# add bin/one to PATH
+PATH="$ROOT_DIR/bin:$PATH"
