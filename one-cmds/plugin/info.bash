@@ -4,9 +4,9 @@ usage() {
 Usage: one $t info [OPTIONS] <NAME>
 Desc:  Show info of matched $t
 Arguments:
-  <NAME>									$t name
+  <NAME>                    $t name
 Options:
-  -r <repo>								Show the matched $t in the repo
+  -r <repo>                 Show the matched $t in the repo
 EOF
 	# editorconfig-checker-enable
 }

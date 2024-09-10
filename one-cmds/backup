@@ -45,12 +45,6 @@ fi
 # shellcheck source=./base-scripts.bash
 . "$ONE_DIR/one-cmds/base-scripts.bash"
 
-# shellcheck source=../bash/load-config.bash
-. "$ONE_DIR/bash/load-config.bash"
-
-# shellcheck source=../bash/log.bash
-. "$ONE_DIR/bash/log.bash"
-
 # shellcheck source=../one-cmds/mod.bash
 . "$ONE_DIR/one-cmds/mod.bash"
 

@@ -14,13 +14,15 @@ fi
 # shellcheck source=../mod-base.bash
 . "$ONE_DIR/one-cmds/mod-base.bash"
 
-actions=(list info enable disable)
+actions=(list info enable disable which help)
 
 declare -A action_aliases=(
 	['e']=enable
 	['d']=disable
 	['l']=list
 	['i']=info
+	['w']=which
+	['h']=help
 )
 
 # shellcheck disable=2034
@@ -39,7 +41,7 @@ Desc:   Manage executable files in ONE_REPO/bin/
 ACTION:
   e, enable           Enable matched bin files
   d, disable          Disable matched bin files
-  l, list             List available bin files
+  l, list             List available bin files in each repo
   i, info             Show the information of matched bin files
 EOF
 	# editorconfig-checker-enable

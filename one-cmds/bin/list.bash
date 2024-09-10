@@ -1,10 +1,10 @@
 usage() {
 	# editorconfig-checker-disable
 	cat <<EOF
-Usage: one bin list [<OPTIONS>]
-Desc:  List available bin files in each repo
+Usage: one $t list [<OPTIONS>]
+Desc:  List available $t files in each repo
 Options:
-  -r <repo>           list bin files in the repo
+  -r <repo>           List $t files in the repo
 EOF
 	# editorconfig-checker-enable
 }
@@ -13,12 +13,15 @@ list() {
 	local path repo
 
 	# shellcheck disable=2153
-	for path in "${ONE_DIR}"/enabled/bin/*; do
+	for path in "${ONE_DIR}/enabled/$t"/*; do
 		printf '%b%20s%b -> %b%s\n' \
 			"$GREEN" "${path##*/}" "$GREY" \
 			"$WHITE" "$(readlink "$path")"
 	done
 }
+
+declare -A opts=()
+declare -a args=()
 
 main() {
 	shopt -s nullglob
@@ -28,11 +31,12 @@ main() {
 		repo_name="${repo##*/}"
 		printf '%b[%s]%b ' "$BLUE" "$repo_name" "$RESET_ALL"
 
-		for path in "$repo/bin"/*; do
+		for path in "$repo/$t"/*; do
 			name=${path##*/}
 			name=${name%.opt.bash}
 			name=${name%.bash}
-			link=${ONE_DIR}/enabled/bin/$name
+			name=${name%.sh}
+			link=${ONE_DIR}/enabled/$t/$name
 
 			if [[ -L $link ]] && [[ $(readlink "$link") == "$path" ]]; then
 				printf '%b%s%b ' "$BOLD_GREEN" "$name" "$RESET_ALL"

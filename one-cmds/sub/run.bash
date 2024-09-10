@@ -4,9 +4,9 @@ usage() {
 Usage: one sub run [-h] <NAME> [<ARGS>...]
 Desc:  Run sub command
 Options:
-  -h          Print the usage of sub command
+  -h                    Print the usage of sub command
 Arguments:
-  <NAME>      Sub name
+  <NAME>                Sub name
 EOF
 	# editorconfig-checker-enable
 }

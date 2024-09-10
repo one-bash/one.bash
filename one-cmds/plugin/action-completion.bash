@@ -1,17 +1,27 @@
 completion() {
 	declare -a plugin_dirs=()
-	local word dir repo i v repo_idx=0
+	local name path word dir repo i v repo_idx=0
+
+	shopt -s nullglob
 
 	if ((COMP_CWORD == 1)); then
 		printf '%s\n' '-r'
-		for repo in "${ONE_DIR}/enabled/repo"/*; do
-			if [[ -d "$repo/$t" ]]; then
-				plugin_dirs+=("$repo/$t")
+		for dir in "${ONE_DIR}/enabled/repo"/*/"$t"; do
+			if [[ -d "$dir" ]]; then
+				plugin_dirs+=("$dir")
 			fi
 		done
 
 		for dir in "${plugin_dirs[@]}"; do
-			find -L "$dir" -maxdepth 1 -type f -name "*.bash" -exec basename {} ".bash" \; | sed -E 's/\.opt$//'
+			for path in "$dir"/*; do
+				name=${path##*/}
+				case $name in
+					*.opt.bash) name="${name%.opt.bash}" ;;
+					*.bash) name="${name%.bash}" ;;
+					*.sh) name="${name%.sh}" ;;
+				esac
+				echo "$name"
+			done
 		done
 
 		return
@@ -55,6 +65,14 @@ completion() {
 	fi
 
 	for dir in "${plugin_dirs[@]}"; do
-		find -L "$dir" -maxdepth 1 -type f -name "*.bash" -exec basename {} ".bash" \; | sed -E 's/\.opt$//'
+		for path in "$dir"/*; do
+			name=${path##*/}
+			case $name in
+				*.opt.bash) name="${name%.opt.bash}" ;;
+				*.bash) name="${name%.bash}" ;;
+				*.sh) name="${name%.sh}" ;;
+			esac
+			echo "$name"
+		done
 	done
 }

@@ -1,10 +1,12 @@
 usage() {
+	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one dep update [<DEP>]
 Desc:  Update dep. If <DEP> is omit, update all deps.
 Arguments:
   <DEP>    dependency name
 EOF
+	# editorconfig-checker-enable
 }
 
 completion() {

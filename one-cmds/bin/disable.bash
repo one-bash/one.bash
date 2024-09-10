@@ -1,12 +1,12 @@
 usage() {
 	# editorconfig-checker-disable
 	cat <<EOF
-Usage: one bin disable [-a|--all] <NAME>...
-Desc:  Disable matched bin files
+Usage: one $t disable [OPTIONS] <NAME>...
+Desc:  Disable matched $t files
 Arguments:
-  <NAME>							 bin name
+  <NAME>               ${t^} name
 Options:
-  -a, --all						 Disable all bin files
+  -a, --all            Disable all $t files
 EOF
 	# editorconfig-checker-enable
 }
@@ -15,7 +15,7 @@ completion() {
 	shopt -s nullglob
 	local path
 
-	for path in "$ONE_DIR/enabled/bin/${@: -1}"*; do
+	for path in "$ONE_DIR/enabled/$t/${@: -1}"*; do
 		if [[ -L $path ]]; then
 			echo "${path##*/}"
 		fi
@@ -24,16 +24,16 @@ completion() {
 
 disable_it() {
 	local name=$1
-	local path="${2:-$ONE_DIR/enabled/bin/$name}"
-	local src
+	local path="${2:-$ONE_DIR/enabled/$t/$name}"
+	local target
 
 	if [[ -L $path ]]; then
-		src=$(readlink "$path")
+		target="$(readlink "$path")"
 		unlink "$path"
-		printf "Disabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$src"
+		printf "Disabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$target"
 	else
 		print_err "No matched file '$name'"
-		return 4
+		return "$ONE_EX_DATAERR"
 	fi
 }
 
@@ -45,13 +45,20 @@ declare -A opts_def=(
 )
 
 main() {
+	if ((${#args[*]} == 0)); then
+		usage
+		return "$ONE_EX_OK"
+	fi
+
 	local name path
 
 	if [[ ${opts[a]} == true ]]; then
 		shopt -s nullglob
-		for path in "${ONE_DIR}"/enabled/bin/*; do
-			name="${path##*/}"
-			disable_it "$name" "$path" || true
+		for path in "${ONE_DIR}/enabled/$t"/*; do
+			if [[ -L $path ]]; then
+				name="${path##*/}"
+				disable_it "$name" "$path" || true
+			fi
 		done
 	else
 		for name in "${args[@]}"; do

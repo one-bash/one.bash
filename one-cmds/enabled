@@ -83,8 +83,9 @@ trim_str() {
 }
 
 list() {
-	local type=$1 folder=$2 type_color=$3
-	local path repo name link repo_name priority='---'
+	local type=$1 type_color=$2
+	local path repo name link repo_name
+	local priority='---'
 
 	shopt -s nullglob
 	for path in "$ONE_DIR/enabled/$type"/*; do
@@ -97,27 +98,27 @@ list() {
 		fi
 
 		name="${path##*/}"
-		printf '%b%s %b%-4s %b%-18s %b%-18s' \
+		printf '%b%-4s %b%-4s %b%-18s %b%-18s' \
 			"$YELLOW" "$priority" \
 			"$type_color" "${type^}" \
 			"$CYAN" "$(trim_str "$name" 18)" \
 			"$BLUE" "$(trim_str "$repo_name" 18)"
 
-		if [[ -f $repo/$folder/$name.opt.bash ]]; then
+		if [[ -f $repo/$type/$name.opt.bash ]]; then
 			(
 				# shellcheck disable=1090
-				source "$repo/$folder/$name.opt.bash"
+				source "$repo/$type/$name.opt.bash"
 				printf '%b%s' "$WHITE" "${ABOUT:-}"
 			)
-		elif [[ -f $repo/$folder/$name ]]; then
-			printf '%b%s' "$WHITE" "$(metafor about-plugin <"$repo/$folder/$name")"
+		elif [[ -f $repo/$type/$name ]]; then
+			printf '%b%s' "$WHITE" "$(metafor about-plugin <"$repo/$type/$name")"
 		else
-			printf '%b%s' "$WHITE" '<ERROR>'
+			printf '%b%s' "$GREY" '<ERROR>'
 		fi
 
 		printf '\n'
 	done
 }
 
-list bin bins "$WHITE"
-list sub sub "$YELLOW"
+list bin "$WHITE"
+list sub "$YELLOW"

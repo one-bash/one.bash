@@ -27,8 +27,8 @@ Usage:
     $name (r|repo)                Manage one.bash repos
     $name (s|sub)                 Manage ONE_SUB command
 
-    $name enabled                 Manage enabled modules (alias/completion/plugin)
-    $name disable-all             Disable all modules (alias/completion/plugin)
+    $name enabled                 Manage enabled modules (alias/completion/plugin/bin/sub)
+    $name disable-all             Disable all modules (alias/completion/plugin/bin/sub)
 
     $name backup                  Output backup scripts for current enabled modules
     $name config                  Manage user's ONE_CONF

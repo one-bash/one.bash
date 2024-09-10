@@ -1,35 +1,31 @@
 usage() {
 	# editorconfig-checker-disable
 	cat <<EOF
-Usage: one bin enable [OPTIONS] <NAME>...
-Desc:  Enable matched bin files
+Usage: one $t enable [OPTIONS] <NAME>...
+Desc:  Enable matched $t files
 Arguments:
-  <NAME>              bin name
+  <NAME>              $t name
 Options:
-  -a, --all           Enable all bin files
-	-r <repo>           Enable bin files in the repo
+  -a, --all           Enable all $t files
+	-r <repo>           Enable $t files in the repo
 EOF
 	# editorconfig-checker-enable
 }
 
-# TODO FIX [[ -x $path ]]
-# completion() {
-# 	shopt -s nullglob
-# 	local path filename
-
-# 	for path in "${ONE_DIR}"/enabled/repo/*/bin/"${@: -1}"*; do
-# 		if [[ -x $path ]]; then
-# 			filename=${path##*/}
-# 			basename "${filename%.opt.bash}"
-# 		fi
-# 	done
-# }
+# TODO FIX the bin file should be executable. [[ -x $path ]]
 . "$ONE_DIR/one-cmds/plugin/action-completion.bash"
 
 create_symlink() {
-	local name=$1
-	local target=$2
-	ln -fs "$target" "$ONE_DIR/enabled/bin/$name"
+	local name=$1 target=$2 answer
+
+	if [[ -L "$ONE_DIR/enabled/$t/$name" ]]; then
+		local answer
+		printf 'Found existed enabled file: %s -> %s\n' "$name" "$(readlink "$ONE_DIR/enabled/$t/$name")" >&2
+		answer=$(one_l.ask "Do you want to override it?")
+		if [[ $answer != YES ]]; then return; fi
+	fi
+
+	ln -fs "$target" "$ONE_DIR/enabled/$t/$name"
 	printf "Enabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$target"
 }
 
@@ -42,8 +38,8 @@ set_exports() {
 
 	local file
 	for file in "${EXPORTS[@]}"; do
-		if [[ -f "$ONE_DIR/data/bin/${name}/$file" ]]; then
-			chmod +x "$ONE_DIR/data/bin/${name}/$file"
+		if [[ -f "$ONE_DIR/data/$t/${name}/$file" ]]; then
+			chmod +x "$ONE_DIR/data/$t/${name}/$file"
 		else
 			print_err "Not found file \"$file\" to export"
 		fi
@@ -67,11 +63,11 @@ enable() {
 		# shellcheck disable=1090
 		url=$(. "$path" && echo "${URL:-}")
 		if [[ -n $url ]]; then
-			chmod +x "$ONE_DIR/data/bin/$name/script.bash"
+			chmod +x "$ONE_DIR/data/$t/$name/script.bash"
 
 			# shellcheck disable=1090
 			while read -r bin_name; do
-				create_symlink "$bin_name" "$ONE_DIR/data/bin/$name/script.bash"
+				create_symlink "$bin_name" "$ONE_DIR/data/$t/$name/script.bash"
 			done < <(. "$path" && echo "${EXPORTS[@]}")
 		else
 			(
@@ -80,7 +76,7 @@ enable() {
 				set_exports "$name"
 				# shellcheck disable=1090
 				while read -r bin_name; do
-					create_symlink "$bin_name" "$ONE_DIR/data/bin/$name/$bin_name"
+					create_symlink "$bin_name" "$ONE_DIR/data/$t/$name/$bin_name"
 				done < <(. "$path" && echo "${EXPORTS[@]}")
 			)
 		fi
@@ -98,6 +94,12 @@ declare -A opts_def=(
 )
 
 main() {
+	if ((${#args[*]} == 0)); then
+		usage
+		return "$ONE_EX_OK"
+	fi
+
+	shopt -s nullglob
 	local name path filepaths
 
 	# shellcheck source=../../one-cmds/mod.bash
@@ -105,19 +107,21 @@ main() {
 
 	local repo=${opts[r]:-}
 
-	shopt -s nullglob
-
 	if [[ ${opts[a]} == true ]]; then
 		if [[ -z $repo ]]; then
-			for path in "${ONE_DIR}"/enabled/repo/*/bin/*; do
+			for path in "${ONE_DIR}"/enabled/repo/*/"$t"/*; do
 				name=${path##*/}
 				name=${name%.opt.bash}
+				name=${name%.bash}
+				name="${name%.sh}"
 				enable "$path" "$name" || true
 			done
 		else
-			for path in "${ONE_DIR}/enabled/repo/$repo/bin/"*; do
+			for path in "${ONE_DIR}/enabled/repo/$repo/$t/"*; do
 				name=${path##*/}
 				name=${name%.opt.bash}
+				name=${name%.bash}
+				name="${name%.sh}"
 				enable "$path" "$name" || true
 			done
 		fi
@@ -127,11 +131,11 @@ main() {
 				filepaths=()
 
 				if [[ -z $repo ]]; then
-					for path in "${ONE_DIR}"/enabled/repo/*/bin/"$name"{,.opt.bash}; do
+					for path in "${ONE_DIR}"/enabled/repo/*/"$t/$name"{,.opt.bash}; do
 						filepaths+=("$path")
 					done
 				else
-					for path in "${ONE_DIR}/enabled/repo/$repo/bin/$name"{,.opt.bash}; do
+					for path in "${ONE_DIR}/enabled/repo/$repo/$t/$name"{,.opt.bash}; do
 						filepaths+=("$path")
 					done
 				fi

@@ -40,7 +40,7 @@ Desc:  Manage ONE_SUB commands
 ACTION:
   e, enable <NAME>...        Enable matched sub commands
   d, disable <NAME>...       Disable matched sub commands
-  l, list                    List sub commands in each REPO/sub
+  l, list                    List sub commands in each repo
   i, info <NAME>             Show information of matched sub commands
   w, which <NAME>            Show realpath of sub command
   r, run <NAME> [<ARGS>...]  Run sub command

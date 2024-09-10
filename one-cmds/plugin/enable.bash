@@ -4,9 +4,9 @@ usage() {
 Usage: one $t enable [OPTIONS] <NAME> [<NAME>...]
 Desc:  Enable matched $t
 Arguments:
-  <NAME>									$t name
+  <NAME>                  $t name
 Options:
-  -r <repo>								Enable matched $t in the repo
+  -r <repo>               Enable matched $t in the repo
 EOF
 	# editorconfig-checker-enable
 }
