@@ -60,8 +60,6 @@ if ! check_shell; then
 	return 0
 fi
 
-printf '[one.bash] loading... Please wait and do not press Ctrl-C'
-
 # ---------------------- Load Optional Functions Below ------------------------
 
 # shellcheck source-path=SCRIPTDIR/../
@@ -88,4 +86,3 @@ _one_load "bash/repo.bash"
 ONE_LOAD_END_TIME=$(_one_now)
 one_debug "${GREEN}%s${RESET_ALL}" "loaded success (Total $((ONE_LOAD_END_TIME - ONE_LOAD_START_TIME))ms)"
 ONE_LOADED=loaded
-printf '\033[0G\033[2K'

@@ -25,13 +25,9 @@
 - 🚫 Windows 系统
 - 🚫 Zsh。本项目针对 Bash 用户开发. Zsh 用户请使用 [Oh My Zsh](https://github.com/robbyrussell/oh-my-zsh)。
 
-## CI 状态
-
-- [develop 分支](https://github.com/one-bash/one.bash/tree/develop): [![CI 状态](https://github.com/one-bash/one.bash/actions/workflows/ci.yaml/badge.svg?branch=develop)](https://github.com/one-bash/one.bash/actions/workflows/ci.yaml?query=branch%3Adevelop)
-
 ## 版本
 
-详见 [tags][]。
+详见 [releases][]。
 版本命名遵守 [SemVer 2.0.0](http://semver.org/)。
 
 ## 必要的依赖
@@ -40,6 +36,7 @@
 - [python3](https://www.python.org/)
 - [perl 5](https://github.com/Perl/perl5)
 - [git](https://github.com/git/git)
+- sed, awk, grep, find
 
 ## 灵感来源
 
@@ -314,7 +311,7 @@ Read the [NOTICE][] file distributed with this work for additional information r
 
 [LICENSE]: ./LICENSE
 [NOTICE]: ./NOTICE
-[tags]: https://github.com/one-bash/one.bash/tags
+[releases]: https://github.com/one-bash/one.bash/releases
 
 <!-- links -->
 

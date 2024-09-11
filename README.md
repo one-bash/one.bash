@@ -25,13 +25,9 @@ An elegant framework to manage commands, completions, dotfiles for bash players.
 - 🚫 Windows system
 - 🚫 Zsh. This project is just for Bash players. Zsh players should use [Oh My Zsh](https://github.com/robbyrussell/oh-my-zsh).
 
-## CI Status
-
-- [develop branch](https://github.com/one-bash/one.bash/tree/develop): [![CI Status](https://github.com/one-bash/one.bash/actions/workflows/ci.yaml/badge.svg?branch=develop)](https://github.com/one-bash/one.bash/actions/workflows/ci.yaml?query=branch%3Adevelop)
-
 ## Versions
 
-See [tags][].
+See [releases][].
 The versions follows the rules of [SemVer 2.0.0](http://semver.org/).
 
 ## Requires
@@ -40,6 +36,7 @@ The versions follows the rules of [SemVer 2.0.0](http://semver.org/).
 - [python3](https://www.python.org/)
 - [perl 5](https://github.com/Perl/perl5)
 - [git](https://github.com/git/git)
+- sed, awk, grep, find
 
 ## Inspired By
 
@@ -312,7 +309,7 @@ Read the [NOTICE][] file distributed with this work for additional information r
 
 [LICENSE]: ./LICENSE
 [NOTICE]: ./NOTICE
-[tags]: https://github.com/one-bash/one.bash/tags
+[releases]: https://github.com/one-bash/one.bash/releases
 
 <!-- links -->
 
