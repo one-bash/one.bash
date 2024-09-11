@@ -131,11 +131,11 @@ main() {
 				filepaths=()
 
 				if [[ -z $repo ]]; then
-					for path in "${ONE_DIR}"/enabled/repo/*/"$t/$name"{,.opt.bash}; do
+					for path in "${ONE_DIR}"/enabled/repo/*/"$t/$name"{,.bash,.sh,.opt.bash}; do
 						filepaths+=("$path")
 					done
 				else
-					for path in "${ONE_DIR}/enabled/repo/$repo/$t/$name"{,.opt.bash}; do
+					for path in "${ONE_DIR}/enabled/repo/$repo/$t/$name"{,.bash,.sh,.opt.bash}; do
 						filepaths+=("$path")
 					done
 				fi

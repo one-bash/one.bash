@@ -19,12 +19,22 @@ completion() {
 		sed -E "s/^[[:digit:]]{3}---([^@]+)@[^@]+@$t\.bash$/\1/" || true
 }
 
+declare -A opts=()
+declare -a args=()
+
 # shellcheck disable=2034
 declare -A opts_def=(
 	['-a --all']='bool'
 )
 
-disable_it() {
+main() {
+	# NOTE: should use $#, not ${#args[@]}
+	if (($# == 0)); then
+		usage
+		return "$ONE_EX_OK"
+	fi
+	. "$ONE_DIR/one-cmds/mod.bash"
+
 	local name
 	local found
 
@@ -43,9 +53,4 @@ disable_it() {
 			fi
 		done
 	fi
-}
-
-main() {
-	. "$ONE_DIR/one-cmds/mod.bash"
-	if (($# == 0)); then usage; else disable_it; fi
 }

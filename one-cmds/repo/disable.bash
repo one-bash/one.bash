@@ -25,6 +25,11 @@ declare -A opts=()
 declare -a args=()
 
 main() {
+	if ((${#args[@]} == 0)); then
+		usage
+		return "$ONE_EX_OK"
+	fi
+
 	local name filepath
 
 	for name in "${args[@]}"; do

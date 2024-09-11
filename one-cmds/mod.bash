@@ -91,11 +91,11 @@ search_mod() {
 
 	shopt -s nullglob
 	if [[ -z $repo ]]; then
-		for path in "$ONE_DIR"/enabled/repo/*/"$t/$name"{.bash,.opt.bash}; do
+		for path in "$ONE_DIR"/enabled/repo/*/"$t/$name"{.bash,.sh,.opt.bash}; do
 			output+=("$path")
 		done
 	else
-		for path in "$ONE_DIR/enabled/repo/$repo/$t/$name"{.bash,.opt.bash}; do
+		for path in "$ONE_DIR/enabled/repo/$repo/$t/$name"{.bash,.sh,.opt.bash}; do
 			if [[ -f $path ]]; then
 				output+=("$path")
 			fi

@@ -149,20 +149,17 @@ enable_mod() {
 	esac
 }
 
-enable_it() {
-	local name
-	local repo="${opts[r]:-}"
-	for name in "$@"; do
-		enable_mod "$name" "$repo" || print_err "Failed to enable '$name'."
-	done
-}
-
 . "$ONE_DIR/one-cmds/plugin/action-completion.bash"
 
 declare -A opts=()
 declare -a args=()
 
 main() {
+	if ((${#args[*]} == 0)); then
+		usage
+		return "$ONE_EX_OK"
+	fi
+
 	. "$ONE_DIR/one-cmds/mod.bash"
 
 	# shellcheck source=../../bash/load-config.bash
@@ -171,5 +168,9 @@ main() {
 	# shellcheck source=../../bash/log.bash
 	. "$ONE_DIR/bash/log.bash"
 
-	if (($# == 0)); then usage; else enable_it "${args[@]}"; fi
+	local name
+	local repo="${opts[r]:-}"
+	for name in "${args[@]}"; do
+		enable_mod "$name" "$repo" || print_err "Failed to enable '$name'."
+	done
 }

@@ -45,7 +45,8 @@ declare -A opts_def=(
 )
 
 main() {
-	if ((${#args[*]} == 0)); then
+	# NOTE: should use $#, not ${#args[@]}
+	if (($# == 0)); then
 		usage
 		return "$ONE_EX_OK"
 	fi

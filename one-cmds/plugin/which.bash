@@ -13,17 +13,19 @@ EOF
 
 . "$ONE_DIR/one-cmds/plugin/action-completion.bash"
 
-search() {
-	local -a filepaths=()
-	local repo="${opts[r]:-}"
-	search_mod "$1" "$repo" filepaths
-	printf '%s\n' "${filepaths[@]}"
-}
-
 declare -A opts=()
 declare -a args=()
 
 main() {
+	if ((${#args[*]} == 0)); then
+		usage
+		return "$ONE_EX_OK"
+	fi
+
 	. "$ONE_DIR/one-cmds/mod.bash"
-	if (($# == 0)); then usage; else search "${args[0]}"; fi
+
+	local -a filepaths=()
+	local repo="${opts[r]:-}"
+	search_mod "${args[0]}" "$repo" filepaths
+	printf '%s\n' "${filepaths[@]}"
 }
