@@ -26,7 +26,7 @@ main() {
 		cd "$repo_dir" || return 20
 		# shellcheck disable=1091
 		. "$repo_dir/one.repo.bash"
-		if type -t repo_update >/dev/null; then repo_update; fi
+		if type -t repo_update &>/dev/null; then repo_update; fi
 	)
 
 	print_success "Updated repo: $name"

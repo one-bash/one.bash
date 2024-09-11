@@ -57,7 +57,7 @@ main() {
 			print_warn "Not found one.repo.bash file in $ONE_DIR/data/repo/$name"
 		fi
 
-		if type -t repo_add_post >/dev/null; then
+		if type -t repo_add_post &>/dev/null; then
 			print_verb "[REPO: $name] To execute repo_add_post()"
 			repo_add_post
 			print_verb "[REPO: $name] repo_add_post() success done"

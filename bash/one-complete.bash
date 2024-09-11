@@ -1,5 +1,5 @@
 _one_is_completable() {
-	grep -i '^# one.bash:completion' "$1" >/dev/null
+	grep -i '^# one.bash:completion' "$1" &>/dev/null
 }
 
 # @param cmd_dir  command directory

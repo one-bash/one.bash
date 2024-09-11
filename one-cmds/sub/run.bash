@@ -12,7 +12,7 @@ EOF
 }
 
 _one_is_completable() {
-	grep -i '^# one.bash:completion' "$1" >/dev/null
+	grep -i '^# one.bash:completion' "$1" &>/dev/null
 }
 
 completion() {

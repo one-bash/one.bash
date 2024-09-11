@@ -25,9 +25,10 @@ EOF
 fi
 
 if [[ -z ${ONE_DIR:-} ]]; then
-	SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-	readonly SCRIPT_DIR
-	ONE_DIR=$SCRIPT_DIR/..
+	ONE_DIR=$(realpath "$0")
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	declare -rx ONE_DIR
 fi
 
 # one.bash:completion

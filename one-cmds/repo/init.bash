@@ -84,6 +84,6 @@ EOF
 		create_one_links_yaml
 	fi
 
-	cd - >/dev/null || return 21
+	cd - &>/dev/null || return 21
 	print_success "Created repo: $repo_dir"
 }

@@ -73,10 +73,10 @@ create_mod() {
 		if [[ -n ${URL:-} ]]; then
 			if l.end_with "$URL" '.git'; then
 				if [[ -n ${SCRIPT:-} ]]; then
-					echo "source $MOD_DATA_DIR/${SCRIPT}"
+					echo "source \"\$ONE_DIR/data/$t/$name/${SCRIPT}\""
 				fi
 			else
-				echo "source $MOD_DATA_DIR/script.bash"
+				echo "source \"\$ONE_DIR/data/$t/$name/script.bash\""
 			fi
 		fi
 

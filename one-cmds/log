@@ -13,8 +13,10 @@ if [[ ${1:-} == --complete ]]; then
 fi
 
 if [[ -z ${ONE_DIR:-} ]]; then
-	SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-	ONE_DIR=$SCRIPT_DIR/..
+	ONE_DIR=$(realpath "$0")
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	declare -rx ONE_DIR
 fi
 
 # shellcheck source=../../bash/load-config.bash

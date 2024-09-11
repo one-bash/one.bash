@@ -5,9 +5,10 @@ set -o errexit -o nounset -o pipefail -o errtrace
 
 # If ONE_DIR environment variable not defined, search the path of ONE_DIR and export it
 if [[ -z ${ONE_DIR:-} ]]; then
-	# ONE_DIR=$(dirname "$(readlinkf "$0")")
-	ONE_DIR=$(dirname "$(dirname "$(realpath "$0")")")
-	export ONE_DIR
+	ONE_DIR=$(realpath "$0")
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	declare -rx ONE_DIR
 fi
 
 # one.bash:usage

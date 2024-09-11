@@ -6,7 +6,8 @@ ONE_CONF=${ONE_CONF:-${XDG_CONFIG_HOME:-$HOME/.config}/one.bash/one.config.bash}
 # shellcheck source=../one.config.default.bash
 [[ -f $ONE_CONF ]] && . "$ONE_CONF"
 
-ONE_CONF_DIR=$(dirname "$(realpath "$ONE_CONF")")
+ONE_CONF_DIR=$(realpath "$ONE_CONF")
+ONE_CONF_DIR=${ONE_CONF_DIR%/*}
 
 # shellcheck source=../one.config.default.bash
 . "$ONE_DIR/one.config.default.bash"
