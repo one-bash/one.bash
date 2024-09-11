@@ -31,7 +31,7 @@ _parse_help() {
 			action=$(_get_action "$2")
 			# shellcheck disable=1090
 			. "$ONE_DIR/one-cmds/$cmd/$action.bash"
-			"usage"
+			_show_usage
 		else
 			_show_usage
 		fi
@@ -41,8 +41,10 @@ _parse_help() {
 			action=$(_get_action "$1")
 			# shellcheck disable=1090
 			. "$ONE_DIR/one-cmds/$cmd/$action.bash"
-			"usage"
+			if [[ -n ${last_param_no_help:-} ]]; then return; fi
+			_show_usage
 		else
+			if [[ -n ${last_param_no_help:-} ]]; then return; fi
 			_show_usage
 		fi
 		exit 0

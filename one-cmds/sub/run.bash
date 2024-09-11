@@ -33,6 +33,9 @@ completion() {
 	fi
 }
 
+# shellcheck disable=2034
+last_param_no_help=true
+
 main() {
 	# NOTE: should use $#, not ${#args[@]}
 	if (($# == 0)); then

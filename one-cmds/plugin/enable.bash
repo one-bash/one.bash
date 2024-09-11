@@ -171,6 +171,8 @@ main() {
 	local name
 	local repo="${opts[r]:-}"
 	for name in "${args[@]}"; do
+		#  BUG: when curl failed in download_mod_data(), the enable_mod() not stopped
+		#       If remove || print_err "Failed to enable '$name'.", it will work well
 		enable_mod "$name" "$repo" || print_err "Failed to enable '$name'."
 	done
 }

@@ -138,7 +138,7 @@ download_github_release_files() {
 		fi
 
 		print_verb 'To download file "%s" from %s\n' "$file" "$url"
-		curl -Lo "$MOD_DATA_DIR/$file" "$url"
+		curl -fLo "$MOD_DATA_DIR/$file" "$url"
 	done
 }
 
@@ -162,8 +162,8 @@ download_mod_data() {
 		else
 			local target="$MOD_DATA_DIR/script.bash"
 			if _ask_update_mod_data "$target"; then
-				print_verb 'To curl -Lo "%s" "%s"\n' "$target" "$url"
-				curl -Lo "$target" "$url"
+				print_verb 'To curl -fLo "%s" "%s"\n' "$target" "$url"
+				curl -fLo "$target" "$url"
 			fi
 		fi
 	else

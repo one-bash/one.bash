@@ -20,7 +20,7 @@ cd "$TMP_DIR/bash-src"
 
 if [[ ! -f "bash-$BASHVER.tar.gz" ]]; then
 	echo "To download bash from $MIRROR/gnu/bash/bash-$BASHVER.tar.gz"
-	curl -sSkLO "$MIRROR/gnu/bash/bash-$BASHVER.tar.gz"
+	curl -sSfkLO "$MIRROR/gnu/bash/bash-$BASHVER.tar.gz"
 fi
 
 if [[ ! -d "bash-$BASHVER" ]]; then
