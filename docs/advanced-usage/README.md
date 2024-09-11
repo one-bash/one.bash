@@ -28,5 +28,4 @@ You can manage `PATH` by `ONE_PATHS` in your ONE_CONF.
 - [ONE Dependencies](./dep.md)
 - [ONE Functions](./one-functions.md)
 - [ONE_SUB Command](./one-sub-cmd.md)
-- [Fig](./fig.md)
 - [Bash-it](./bash-it.md)

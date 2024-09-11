@@ -83,7 +83,7 @@ main() {
 			if [[ $mod_name == *.opt.bash ]]; then
 				mod_name=${mod_name%.opt.bash}
 				# shellcheck disable=1090,2153
-				about="$(. "$filepath" && echo "$ABOUT")"
+				about="$(. "$filepath" && echo "${ABOUT:-}")"
 				priority=$(get_priority_from_mod "$filepath")
 			else
 				mod_name=${mod_name%.bash}

@@ -60,6 +60,8 @@ if ! check_shell; then
 	return 0
 fi
 
+printf '[one.bash] loading... Please wait and do not press Ctrl-C'
+
 # ---------------------- Load Optional Functions Below ------------------------
 
 # shellcheck source-path=SCRIPTDIR/../
@@ -70,15 +72,6 @@ _one_load "bash/helper.bash"
 
 # shellcheck source=./env.bash
 _one_load "bash/env.bash"
-
-# Fig: https://github.com/withfig/fig
-if [[ $ONE_FIG == true ]]; then
-	if one_l.has command fig; then
-		_one_eval fig init bash pre
-	else
-		one_stderr "Not found command: fig. You can set 'ONE_FIG=false' in ONE_CONF to turn off Fig feature."
-	fi
-fi
 
 # shellcheck source=./get-command-name.bash
 _one_load "bash/get-command-name.bash"
@@ -92,12 +85,7 @@ _one_load "bash/repo.bash"
 # shellcheck source=./load-enabled-mods.bash
 [[ $ONE_NO_MODS == false ]] && _one_load "bash/load-enabled-mods.bash"
 
-if [[ $ONE_FIG == true ]]; then
-	if one_l.has command fig; then
-		_one_eval fig init bash post
-	fi
-fi
-
 ONE_LOAD_END_TIME=$(_one_now)
 one_debug "${GREEN}%s${RESET_ALL}" "loaded success (Total $((ONE_LOAD_END_TIME - ONE_LOAD_START_TIME))ms)"
 ONE_LOADED=loaded
+printf '\033[0G\033[2K'

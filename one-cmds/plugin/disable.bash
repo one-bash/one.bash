@@ -14,9 +14,12 @@ EOF
 completion() {
 	printf -- '--all\n-r\n'
 
-	# shellcheck disable=2154
-	find "$ENABLED_DIR" -maxdepth 1 -name "*---*@$t.bash" -print0 |
-		sed -E "s/^[[:digit:]]{3}---([^@]+)@[^@]+@$t\.bash$/\1/" || true
+	shopt -s nullglob
+	local path
+	for path in "$ONE_DIR"/enabled/*---*"@$t.bash"; do
+		path=${path##*---}
+		echo "${path%%@*}"
+	done
 }
 
 declare -A opts=()

@@ -15,7 +15,6 @@ An elegant framework to manage commands, completions, dotfiles for bash players.
 - Manage commands under your own scope. Like `a <cmd>` to invoke command that no worry about duplicated in `PATH`. Read the [ONE_SUB Commands](./docs/advanced-usage/one-sub-cmd.md).
 - Configurable one.bash. Read [ONE_CONF](#oneconf).
 - Support [bash-it][] via [one-bash-it][]. You can use `one` commands to manage bash-it's aliases/completions/plugins. Read [bash-it.md](./docs/advanced-usage/bash-it.md).
-- Support [Fig][]. Read [docs/advanced-usage/fig.md](./docs/advanced-usage/fig.md).
 
 ## Environments
 
@@ -286,7 +285,6 @@ Read [this document](./docs/advanced-usage/one-sub-cmd.md) for more details.
   - [ONE Dependencies](./docs/advanced-usage/dep.md)
   - [ONE Functions](./docs/advanced-usage/one-functions.md)
   - [ONE_SUB Command](./docs/advanced-usage/one-sub-cmd.md)
-  - [Fig](./docs/advanced-usage/fig.md)
   - [Bash-it](./docs/advanced-usage/bash-it.md)
 
 ## Suggestion, Bug Reporting, Contributing
@@ -326,5 +324,4 @@ Read the [NOTICE][] file distributed with this work for additional information r
 [dotbot]: https://github.com/anishathalye/dotbot/
 [bash-it]: https://github.com/Bash-it/bash-it
 [bash-completion]: https://github.com/scop/bash-completion
-[Fig]: https://github.com/withfig/fig
 [sub]: https://github.com/basecamp/sub

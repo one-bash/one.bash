@@ -22,14 +22,17 @@ search_repos() {
 	grep -l -E "name=['\"]?${repo_name}['\"]?" "$ONE_DIR"/data/repo/*/one.repo.bash
 }
 
-main() {
-	local repo_name=${1:-}
-	local repo_path path
+declare -A opts=()
+declare -a args=()
 
-	if [[ -z $repo_name ]]; then
-		usage_info
-		return 0
+main() {
+	if ((${#args[@]} == 0)); then
+		usage
+		return "$ONE_EX_OK"
 	fi
+
+	local repo_name=${args[0]}
+	local repo_path path
 
 	while read -r path; do
 		repo_path=$(dirname "$path")
@@ -43,7 +46,7 @@ main() {
 			declare -f repo_update || true
 			declare -f repo_onload || true
 		)
-	done < <(search_repos "$1")
+	done < <(search_repos "$repo_name")
 
 	if [[ -z ${repo_path:-} ]]; then
 		print_err "No matched repo '$repo_name'"

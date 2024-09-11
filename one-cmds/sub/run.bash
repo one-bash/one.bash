@@ -34,8 +34,9 @@ completion() {
 }
 
 main() {
+	# NOTE: should use $#, not ${#args[@]}
 	if (($# == 0)); then
-		usage_run
+		usage
 		return "$ONE_EX_OK"
 	fi
 

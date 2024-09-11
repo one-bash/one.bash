@@ -15,7 +15,6 @@
 - 可以在一个作用域下管理自己的命令。如 `a <cmd>` 来调用命令，避免在 `PATH` 中重复命令。请阅读 [ONE_SUB Commands](./docs/advanced-usage/one-sub-cmd.md)。
 - 可配置的 one.bash。请阅读 [ONE_CONF](#oneconf)。
 - 支持 [bash-it][]。使用 [one-bash-it][] 即可。你可以使用 one 命令来管理 bash-it 的 aliases/completions/plugins。请阅读 [bash-it.md](./docs/advanced-usage/bash-it.md)。
-- 支持 [Fig][]。请阅读 [docs/advanced-usage/fig.md](./docs/advanced-usage/fig.md)。
 
 ## 环境
 
@@ -288,7 +287,6 @@ one.bash 只是一个管理框架。它不包含任何配置文件。
   - [ONE Dependencies](./docs/advanced-usage/dep.md)
   - [ONE Functions](./docs/advanced-usage/one-functions.md)
   - [ONE_SUB Command](./docs/advanced-usage/one-sub-cmd.md)
-  - [Fig](./docs/advanced-usage/fig.md)
   - [Bash-it](./docs/advanced-usage/bash-it.md)
 
 ## 提建议，修 Bug，做贡献
@@ -328,5 +326,4 @@ Read the [NOTICE][] file distributed with this work for additional information r
 [dotbot]: https://github.com/anishathalye/dotbot/
 [bash-it]: https://github.com/Bash-it/bash-it
 [bash-completion]: https://github.com/scop/bash-completion
-[Fig]: https://github.com/withfig/fig
 [sub]: https://github.com/basecamp/sub

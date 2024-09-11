@@ -8,7 +8,7 @@ if [ "${1:-}" = "--complete" ]; then
 	if [[ $COMP_CWORD -lt 3 ]]; then
 		words=(
 			-h --help -l --list --edit
-			SUB RC DEBUG FIG NO_MODS BASHRC_FO REPOS PATHS SKIP_COMPS LINKS_CONF
+			SUB RC DEBUG NO_MODS BASHRC_FO REPOS PATHS SKIP_COMPS LINKS_CONF
 		)
 		for w in "${words[@]}"; do echo "$w"; done
 	fi
@@ -37,8 +37,8 @@ Options:
   --edit                     Edit config file
 
 Example:
-  one config fig true        To set ONE_FIG=true
-  one config fig             To query the value of ONE_FIG
+  one config sub b           To set ONE_SUB=b
+  one config sub             To query the value of ONE_SUB
 EOF
 	# editorconfig-checker-enable
 	exit 0
@@ -46,12 +46,6 @@ fi
 
 SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 readonly SCRIPT_DIR
-
-# shellcheck source=../../bash/load-config.bash
-. "$ONE_DIR/bash/load-config.bash"
-
-# shellcheck source=../deps/lobash.bash
-. "$SCRIPT_DIR/../deps/lobash.bash"
 
 get_val() {
 	declare -p "$1" | sed -E 's/^declare -[-a-zA-Z]+ //'
@@ -72,12 +66,6 @@ list_options() {
 	done
 }
 
-if l.is_gnu_sed; then
-	sedi() { sed -i'' "$@"; }
-else
-	sedi() { sed -i '' "$@"; }
-fi
-
 parse_pairs() {
 	declare -a list
 
@@ -90,36 +78,60 @@ parse_pairs() {
 	local key=ONE_${list[0]^^}
 
 	if [[ ${#list[@]} == 1 ]]; then
+		# to get value
 		if [[ $key == ONE_LINKS_CONF ]]; then
 			get_func "$key"
 		else
 			get_val "$key"
 		fi
 	else
+		# to set value
+		local path
 		if [[ -L $ONE_CONF ]]; then
-			ONE_CONF=$(readlink "$ONE_CONF")
+			path=$(readlink "$ONE_CONF")
+		else
+			path=$ONE_CONF
 		fi
 
-		sedi -E "s/^${key}=.+/${key}=${list[1]}/" "$ONE_CONF"
+		if grep -E "^${key}=" "$path" >/dev/null; then
+			l.sedi -E "s/^${key}=.+/${key}='${list[1]}'/" "$path"
+		else
+			printf '\n%s\n' "${key}='${list[1]}'" >>"$path"
+		fi
 
-		# shellcheck source=../../bash/load-config.bash
-		. "$ONE_DIR/bash/load-config.bash"
-
-		get_val "$key"
+		echo "You should restart shell to takes effect"
 	fi
 }
 
-case "$1" in
-	-l | --list)
+# shellcheck source=../deps/lobash.bash
+. "$SCRIPT_DIR/../deps/lobash.bash"
+
+declare -A opts=()
+declare -a args=()
+declare -A opts_def=(
+	[opts]=opts
+	[args]=args
+	['-h --help']=bool
+	['-l --list']=bool
+	[--edit]=bool
+)
+l.parse_args opts_def "$@"
+
+main() {
+
+	# shellcheck source=../bash/load-config.bash
+	. "$ONE_DIR/bash/load-config.bash"
+
+	if [[ ${opts[l]} == true ]]; then
 		list_options
-		exit 0
-		;;
+		return 0
+	fi
 
-	--edit)
+	if [[ ${opts[edit]} == true ]]; then
 		$EDITOR "$ONE_CONF"
-		;;
+		return 0
+	fi
 
-	*)
-		parse_pairs "$@"
-		;;
-esac
+	parse_pairs "${args[@]}"
+}
+main
