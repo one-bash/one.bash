@@ -20,7 +20,6 @@ create_mod() {
 	local MOD_META="$MOD_DATA_DIR/meta.bash"
 	local log_tag="enable:$t:$name"
 	local repo_name
-	local PRIORITY SCRIPT ABOUT URL
 
 	repo_name=$(get_enabled_repo_name "$opt_path")
 	log_verb "$log_tag:mod_meta" "opt_path=$opt_path repo_name=$repo_name"
@@ -28,18 +27,14 @@ create_mod() {
 	(
 		# shellcheck disable=1090
 		. "$opt_path"
-		if declare -F RUN &>/dev/null; then
-			(RUN 2>&1 | tee -a "$ONE_LOG_FILE" >&2) || {
-				log_err "$log_tag:RUN" "Failed to execute RUN function"
+		if declare -F AFTER_DOWNLOAD &>/dev/null; then
+			log_verb "$log_tag" "To execute AFTER_DOWNLOAD fucntion"
+			(AFTER_DOWNLOAD 2>&1 | tee -a "$ONE_LOG_FILE" >&2) || {
+				log_err "$log_tag" "Failed to execute AFTER_DOWNLOAD function"
 				return 7
 			}
 		fi
 	)
-
-	PRIORITY=$(get_opt "$opt_path" PRIORITY)
-	ABOUT=$(get_opt "$opt_path" ABOUT)
-	SCRIPT=$(get_opt "$opt_path" SCRIPT)
-	URL=$(get_opt "$opt_path" URL)
 
 	{
 		echo "$mod_annotation"
@@ -48,37 +43,57 @@ create_mod() {
 
 	echo "$mod_annotation" >"$MOD_FILE"
 
-	{
+	(
+		source "$opt_path"
+
 		if [[ -n ${ABOUT:-} ]]; then
-			printf '# About: %s\n' "$ABOUT"
+			echo "# About: $ABOUT" >>"$MOD_FILE"
 		fi
 
 		if [[ -n ${PRIORITY:-} ]]; then
-			echo "# ONE_LOAD_PRIORITY: $PRIORITY"
+			echo "# ONE_LOAD_PRIORITY: $PRIORITY" >>"$MOD_FILE"
 		fi
 
-		(
-			source "$opt_path"
-			if declare -F RUN_AND_INSERT &>/dev/null; then RUN_AND_INSERT; fi
-			if declare -F INSERT &>/dev/null; then INSERT; fi
-		)
+		if declare -F INSERT &>/dev/null; then
+			log_verb "$log_tag" "To execute INSERT fucntion"
+			{
+				printf -- '\n'
+				declare -f INSERT | sed -e '1,2d;$d' -e 's/^    //'
+			} >>"$MOD_FILE"
+		fi
 
-		if [[ -n ${URL:-} ]]; then
-			if l.end_with "$URL" '.git'; then
-				if [[ -n ${SCRIPT:-} ]]; then
-					echo "source \"\$ONE_DIR/data/$t/$name/${SCRIPT}\""
-				fi
-			else
-				echo "source \"\$ONE_DIR/data/$t/$name/script.bash\""
+		if declare -F RUN_AND_INSERT &>/dev/null; then
+			log_verb "$log_tag" "To execute RUN_AND_INSERT fucntion"
+			{
+				printf -- '\n'
+				RUN_AND_INSERT
+			} >>"$MOD_FILE"
+		fi
+
+		if [[ -n ${GITHUB_REPO:-} ]]; then
+			if [[ -n ${SCRIPT:-} ]]; then
+				echo "source \"\$ONE_DIR/data/$t/$name/git/${SCRIPT}\"" >>"$MOD_FILE"
 			fi
+		elif [[ -n ${SCRIPT:-} ]]; then
+			echo "source \"\$ONE_DIR/data/$t/$name/script.bash\"" >>"$MOD_FILE"
 		fi
 
-		(
-			source "$opt_path"
-			if declare -F RUN_AND_APPEND &>/dev/null; then RUN_AND_APPEND; fi
-			if declare -F APPEND &>/dev/null; then APPEND; fi
-		)
-	} >>"$MOD_FILE"
+		if declare -F APPEND &>/dev/null; then
+			log_verb "$log_tag" "To execute APPEND fucntion"
+			{
+				printf -- '\n'
+				declare -f APPEND | sed -e '1,2d;$d' -e 's/^    //'
+			} >>"$MOD_FILE"
+		fi
+
+		if declare -F RUN_AND_APPEND &>/dev/null; then
+			log_verb "$log_tag" "To execute RUN_AND_APPEND fucntion"
+			{
+				printf -- '\n'
+				RUN_AND_APPEND
+			} >>"$MOD_FILE"
+		fi
+	)
 
 	echo "$MOD_FILE"
 }
@@ -107,7 +122,7 @@ enable_mod() {
 			repo_name=${repo_name%%/*}
 
 			if [[ $filepath == *.opt.bash ]]; then
-				check_opt_mod_dep_cmds "$filepath"
+				opt_mod_check_dep_cmds "$filepath"
 				# Disable first, prevent duplicated module enabled with different priority
 				disable_mod "$name"
 				download_mod_data "$name" "$filepath"

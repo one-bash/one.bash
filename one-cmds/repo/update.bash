@@ -17,6 +17,13 @@ main() {
 		return "${ONE_EX_DATAERR}"
 	fi
 
+	(
+		cd "$repo_dir" || return 23
+		# shellcheck disable=1091
+		if [[ -f "$repo_dir/one.repo.bash" ]]; then source "$repo_dir/one.repo.bash"; fi
+		if type -t repo_update_pre &>/dev/null; then repo_update_pre; fi
+	)
+
 	print_verb "[TODO] git -C $repo_dir pull"
 	git -C "$repo_dir" pull
 
@@ -24,7 +31,7 @@ main() {
 		cd "$repo_dir" || return 23
 		# shellcheck disable=1091
 		if [[ -f "$repo_dir/one.repo.bash" ]]; then source "$repo_dir/one.repo.bash"; fi
-		if type -t repo_update &>/dev/null; then repo_update; fi
+		if type -t repo_update_post &>/dev/null; then repo_update_post; fi
 	)
 
 	print_success "Updated repo: $name"

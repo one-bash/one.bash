@@ -36,28 +36,8 @@ get_repo_name() {
 	echo "${repo%%/*}"
 }
 
-# List all paths matched $ENABLED_DIR/*---$name@$repo@$t.bash
-match_enabled_modules() {
-	local name=$1
-	# shellcheck disable=2154
-	compgen -G "$ENABLED_DIR/*---$name@*@$t.bash" || true
-}
-
-_disable_mod() {
-	local filepath=$1
-	local target
-	target=$(readlink "$filepath")
-
-	if [[ -e $target ]] && grep "^$mod_annotation" "$filepath" &>/dev/null; then
-		unlink "$target"
-	fi
-
-	unlink "$filepath"
-}
-
 disable_mod() {
 	local name=$1
-	local filepath
 	if (($# > 1)); then
 		local -n _found_=$2
 	else
@@ -66,13 +46,23 @@ disable_mod() {
 
 	_found_=false
 
-	while read -r -d $'\n' filepath; do
-		if [[ -L $filepath ]] || [[ -f $filepath ]]; then
-			_disable_mod "$filepath"
+	local filepath target
+	shopt -s nullglob
+	# shellcheck disable=2154
+	for filepath in "$ENABLED_DIR/"*---"$name@"*"@$t.bash"; do
+		if [[ -L $filepath ]]; then
+			# TODO: below commented codes may be useless
+			# target=$(readlink "$filepath")
+			# if [[ -e $target ]] && grep "^$mod_annotation" "$filepath" &>/dev/null; then
+			# 	unlink "$target"
+			# fi
+
+			unlink "$filepath"
+
 			echo "Disabled ${filepath##*/}. Please restart shell to take effect."
 			_found_=true
 		fi
-	done < <(match_enabled_modules "$name")
+	done
 }
 
 check_file() {
@@ -123,18 +113,18 @@ _ask_update_mod_data() {
 }
 
 download_github_release_files() {
-	if [[ -z ${GITHUB_REPO:-} ]] || [[ ! -v GITHUB_DOWNLOAD ]]; then
+	if [[ -z ${GITHUB_REPO:-} ]] || [[ ! -v GITHUB_RELEASE_FILES ]]; then
 		return
 	fi
 
-	local version="${GITHUB_VERSION:-latest}"
+	local version="${GITHUB_RELEASE_VERSION:-latest}"
 
 	local file
-	for file in "${GITHUB_DOWNLOAD[@]}"; do
+	for file in "${GITHUB_RELEASE_FILES[@]}"; do
 		if [[ $version == latest ]]; then
-			url="https://github.com/$GITHUB_REPO/releases/latest/download/$file"
+			url="$GITHUB_REPO/releases/latest/download/$file"
 		else
-			url="https://github.com/$GITHUB_REPO/releases/download/$version/$file"
+			url="$GITHUB_REPO/releases/download/$version/$file"
 		fi
 
 		print_verb 'To download file "%s" from %s\n' "$file" "$url"
@@ -144,26 +134,32 @@ download_github_release_files() {
 
 download_mod_data() {
 	local name=$1 opt_path=$2
-	local url answer
+	local SCRIPT answer GITHUB_REPO
 
 	local MOD_DATA_ROOT="$ONE_DIR/data/$t"
 	local MOD_DATA_DIR="$MOD_DATA_ROOT/${name}"
 	mkdir -p "$MOD_DATA_DIR"
 
-	url=$(get_opt "$opt_path" URL)
+	SCRIPT=$(get_opt "$opt_path" SCRIPT)
+	GITHUB_REPO=$(get_opt "$opt_path" GITHUB_REPO)
 
-	if [[ -n $url ]]; then
-		if l.end_with "$url" '.git'; then
-			local target="$MOD_DATA_DIR/git"
-			if _ask_update_mod_data "$target"; then
-				print_verb 'To git clone "%s" "%s"\n' "$url" "$target"
-				git clone --depth 1 --single-branch --recurse-submodules --shallow-submodules "$url" "$target"
-			fi
-		else
-			local target="$MOD_DATA_DIR/script.bash"
-			if _ask_update_mod_data "$target"; then
-				print_verb 'To curl -fLo "%s" "%s"\n' "$target" "$url"
-				curl -fLo "$target" "$url"
+	if [[ -n $GITHUB_REPO ]]; then
+		local target="$MOD_DATA_DIR/git"
+		if _ask_update_mod_data "$target"; then
+			print_verb 'To git clone "%s" "%s"\n' "$GITHUB_REPO" "$target"
+			git clone --depth 1 --single-branch --recurse-submodules --shallow-submodules "$GITHUB_REPO" "$target"
+		fi
+	elif [[ -n $SCRIPT ]]; then
+		local target="$MOD_DATA_DIR/script.bash"
+		if _ask_update_mod_data "$target"; then
+			if [[ $SCRIPT =~ ^https?:// ]] || [[ $SCRIPT =~ ^ftp:// ]]; then
+				print_verb 'To curl -fLo "%s" "%s"\n' "$target" "$SCRIPT"
+				curl -fLo "$target" "$SCRIPT"
+			elif [[ $SCRIPT =~ ^/ ]]; then
+				cp "$SCRIPT" "$target"
+			else
+				echo "Unsupported script value: $SCRIPT" >&2
+				return 33
 			fi
 		fi
 	else
@@ -189,12 +185,10 @@ download_mod_data() {
 		fi
 
 		(
-			install() { return 0; }
 			cd "$MOD_DATA_DIR" || return 23
 			# shellcheck disable=1090
 			source "$opt_path"
 			download_github_release_files
-			install
 		)
 	fi
 }
@@ -245,7 +239,7 @@ get_enabled_link_to() {
 	fi
 }
 
-check_opt_mod_dep_cmds() {
+opt_mod_check_dep_cmds() {
 	local path=$1
 	local -a DEP_CMDS
 	# shellcheck disable=2207

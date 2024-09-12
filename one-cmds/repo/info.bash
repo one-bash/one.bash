@@ -44,7 +44,8 @@ main() {
 			print_info_item about "${ABOUT:-}"
 			printf '\n'
 			declare -f repo_add_post || true
-			declare -f repo_update || true
+			declare -f repo_update_pre || true
+			declare -f repo_update_post || true
 			declare -f repo_onload || true
 		)
 	fi

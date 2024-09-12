@@ -1,7 +1,11 @@
 # ONE Repo
 
+## The repos
+
 one.bash is just a management framework. It does not contain any dotfiles, configs.
-The official repo [one.share][] and [one-bash-it][] provides them to enhance shell.
+The official repo [one.share][] and [one-bash-it][] provides them.
+
+## one repo commands
 
 - List all local repos: `one repo list`
 - Download and enable repo:
@@ -12,9 +16,15 @@ The official repo [one.share][] and [one-bash-it][] provides them to enhance she
 - Disable repo: `one repo disable one.share`
 - Update repo: `one repo update one.share`
 - Remove repo: `one repo remove one.share`
-- Create repo: You can create your own repo. Read the [document](#create-repo) for details.
+- Create repo: You can create your own repo. Read the [Create Repo](#create-repo) for details.
 
-## File Structure
+`one help repo` for detailed usage.
+
+## Create Repo
+
+`one repo init` to scaffolding a repo.
+
+### File Structure
 
 A ONE Repo's file structure should be that.
 
@@ -30,8 +40,9 @@ A ONE Repo's file structure should be that.
 │   └── config
 ├── plugin/
 │   └── plugin.bash
-└── sub/
-    └── file*
+├── sub/
+│   └── file*
+└── one.repo.bash
 ```
 
 - `file*` must be executable.
@@ -42,11 +53,33 @@ A ONE Repo's file structure should be that.
 - `bin/` stores user commands. Just like `/usr/local/bin/`. They must be executable. The path of bin has been added to `$PATH`.
 - `sub/` stores ONE_SUB commands. User can invoke it be `$ONE_SUB <cmd>` and `one sub run <cmd>`. They must be executable.
 
-## Create Repo
+### one.repo.bash
 
-`one repo init` to scaffolding a repo.
+The file content:
 
-`one help repo` for usage.
+```sh
+ABOUT='the description of repo'
+
+# If defined, this function will be executed in the process of bashrc initialization. See ../entry.md
+# repo_onload() {
+# }
+
+# If defined, this function will be executed before downloading for "one repo add".
+# repo_add_pre() {
+# }
+
+# If defined, this function will be executed after downloading for  "one repo add".
+# repo_add_post() {
+# }
+
+# If defined, this function will be executed before git update for "one repo update".
+# repo_update_pre() {
+# }
+
+# If defined, this function will be executed after git update for "one repo update".
+# repo_update_post() {
+# }
+```
 
 <!-- links -->
 
