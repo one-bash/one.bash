@@ -49,13 +49,8 @@ main() {
 	(
 		cd "$ONE_DIR/data/repo/$name" || return 20
 		local repo_file=$ONE_DIR/data/repo/$name/one.repo.bash
-
 		# shellcheck disable=1090
-		if [[ -f $repo_file ]]; then
-			. "$repo_file"
-		else
-			print_warn "Not found one.repo.bash file in $ONE_DIR/data/repo/$name"
-		fi
+		if [[ -f $repo_file ]]; then source "$repo_file"; fi
 
 		if type -t repo_add_post &>/dev/null; then
 			print_verb "[REPO: $name] To execute repo_add_post()"

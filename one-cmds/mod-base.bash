@@ -4,7 +4,7 @@ print_info_item() {
 
 	[[ -z $val ]] && return
 
-	printf "%b%-${PRINT_INFO_KEY_WIDTH:-10}s%b= " "$BLUE" "$key" "$RESET_ALL"
+	printf "%b%-${PRINT_INFO_KEY_WIDTH:-10}s%b= " "$BLUE" "${key^}" "$RESET_ALL"
 
 	case ${val,,} in
 		true | enabled)

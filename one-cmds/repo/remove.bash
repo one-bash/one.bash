@@ -15,10 +15,8 @@ completion() {
 	shopt -s nullglob
 	local path
 	for path in "$ONE_DIR/data/repo/${@: -1}"*; do
-		if [[ -d $path ]] && [[ -f $path/one.repo.bash ]]; then
-			# shellcheck disable=1091
-			. "$path/one.repo.bash"
-			echo "${name:-}"
+		if [[ -d $path ]]; then
+			echo "${path##*/}"
 		fi
 	done
 }
@@ -32,12 +30,8 @@ main() {
 	answer=$(one_l.ask "Do you want to remove repo '$name'?")
 	if [[ $answer != YES ]]; then return; fi
 
-	if [[ -f $path/one.repo.bash ]]; then
-		# shellcheck disable=1091
-		name=$(. "$path/one.repo.bash" && echo "${name:-}")
-		if [[ -n ${name} ]] && [[ -e $ONE_DIR/enabled/repo/$name ]]; then
-			unlink "$ONE_DIR/enabled/repo/$name"
-		fi
+	if [[ -L $ONE_DIR/enabled/repo/$name ]]; then
+		unlink "$ONE_DIR/enabled/repo/$name"
 	fi
 
 	rm -rf "$path"

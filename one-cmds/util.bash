@@ -86,6 +86,9 @@ _parse_completion() {
 
 			if type -t "completion" &>/dev/null; then
 				"completion" "$@"
+			else
+				# a general completion function
+				compgen -c -b -f -v -- "${*: -1}"
 			fi
 		fi
 	fi

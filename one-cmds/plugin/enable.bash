@@ -20,24 +20,21 @@ create_mod() {
 	local MOD_META="$MOD_DATA_DIR/meta.bash"
 	local log_tag="enable:$t:$name"
 	local repo_name
-	local PRIORITY SCRIPT APPEND INSERT ABOUT URL RUN
+	local PRIORITY SCRIPT ABOUT URL
 
 	repo_name=$(get_enabled_repo_name "$opt_path")
 	log_verb "$log_tag:mod_meta" "opt_path=$opt_path repo_name=$repo_name"
 
-	APPEND=$(get_opt "$opt_path" APPEND)
-	INSERT=$(get_opt "$opt_path" INSERT)
-	RUN=$(get_opt "$opt_path" RUN)
-
-	if [[ -n ${RUN:-} ]]; then
-		log_verb "$log_tag:RUN" "$RUN"
-		# shellcheck disable=2094
-		(eval "$RUN" 2>&1 1>>"$ONE_LOG_FILE" | tee -a "$ONE_LOG_FILE" >&2) ||
-			{
-				log_err "$log_tag:RUN" "Failed to execute cmd: $RUN"
+	(
+		# shellcheck disable=1090
+		. "$opt_path"
+		if declare -F RUN &>/dev/null; then
+			(RUN 2>&1 | tee -a "$ONE_LOG_FILE" >&2) || {
+				log_err "$log_tag:RUN" "Failed to execute RUN function"
 				return 7
 			}
-	fi
+		fi
+	)
 
 	PRIORITY=$(get_opt "$opt_path" PRIORITY)
 	ABOUT=$(get_opt "$opt_path" ABOUT)
@@ -60,15 +57,11 @@ create_mod() {
 			echo "# ONE_LOAD_PRIORITY: $PRIORITY"
 		fi
 
-		if [[ -n ${INSERT:-} ]]; then
-			log_verb "$log_tag:INSERT" "$INSERT"
-			printf '\n'
-			(eval "$INSERT" 2> >(tee -a "$ONE_LOG_FILE" >&2)) ||
-				{
-					log_err "$log_tag:INSERT" "[Failed] $INSERT"
-					return 8
-				}
-		fi
+		(
+			source "$opt_path"
+			if declare -F RUN_AND_INSERT &>/dev/null; then RUN_AND_INSERT; fi
+			if declare -F INSERT &>/dev/null; then INSERT; fi
+		)
 
 		if [[ -n ${URL:-} ]]; then
 			if l.end_with "$URL" '.git'; then
@@ -80,15 +73,11 @@ create_mod() {
 			fi
 		fi
 
-		if [[ -n ${APPEND:-} ]]; then
-			log_verb "$log_tag:APPEND" "$APPEND"
-			printf '\n'
-			(eval "$APPEND" 2> >(tee -a "$ONE_LOG_FILE" >&2)) ||
-				{
-					log_err "$log_tag:APPEND" "[Failed] $APPEND"
-					return 9
-				}
-		fi
+		(
+			source "$opt_path"
+			if declare -F RUN_AND_APPEND &>/dev/null; then RUN_AND_APPEND; fi
+			if declare -F APPEND &>/dev/null; then APPEND; fi
+		)
 	} >>"$MOD_FILE"
 
 	echo "$MOD_FILE"

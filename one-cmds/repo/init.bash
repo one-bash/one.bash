@@ -38,41 +38,31 @@ EOF
 	# editorconfig-checker-enable
 }
 
+create_readme() {
+	cat <<EOF >README.md
+# one.bash repo: $repo_name
+
+A repo for [one.bash](https://github.com/one-bash/one.bash).
+EOF
+}
+
 main() {
 	local repo_dir=${1:-$PWD}
-	local repo_name answer
+	local repo_name="${repo_dir##*/}"
+	local answer
 
 	mkdir -p "$repo_dir"
 	cd "$repo_dir" || return 20
 
-	repo_name="${repo_dir##*/}"
-
-	if [[ -f one.repo.bash ]]; then
-		answer=$(l.ask "The file 'one.repo.bash' existed. Override it?")
-		if [[ $answer == YES ]]; then
-			echo "name=$repo_name" >one.repo.bash
-		fi
-	else
-		echo "name=$repo_name" >one.repo.bash
-	fi
+	touch one.repo.bash
 
 	mkdir -p alias bin config completion plugin sub
 
 	if [[ -f README.md ]]; then
 		answer=$(l.ask "The file 'README.md' existed. Override it?" N)
-		if [[ $answer == YES ]]; then
-			cat <<EOF >README.md
-# ONE REPO
-
-A repo for [one.bash](https://github.com/one-bash/one.bash).
-EOF
-		fi
+		if [[ $answer == YES ]]; then create_readme; fi
 	else
-		cat <<EOF >README.md
-# ONE REPO
-
-A repo for [one.bash](https://github.com/one-bash/one.bash).
-EOF
+		create_readme
 	fi
 
 	if [[ -f one.links.yaml ]]; then

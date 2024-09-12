@@ -1,31 +1,29 @@
 completion() {
-	local path
 	shopt -s nullglob
-	for path in "$ONE_DIR/data/repo/${@: -1}"*; do
-		if [[ -d $path ]] && [[ -f $path/one.repo.bash ]]; then
-			# shellcheck disable=1091
-			. "$path/one.repo.bash"
-			echo "${name:-}"
+	local path
+	for path in "$ONE_DIR/enabled/repo/${@: -1}"*; do
+		if [[ -d $path ]]; then
+			echo "${path##*/}"
 		fi
 	done
 }
 
 main() {
 	local name=$1
-	local repo_dir=$ONE_DIR/data/repo/$name
+	local repo_dir=$ONE_DIR/enabled/repo/$name
 
 	if [[ ! -d "$repo_dir/.git" ]]; then
 		print_err "The repo is not a git project"
-		return 4
+		return "${ONE_EX_DATAERR}"
 	fi
 
 	print_verb "[TODO] git -C $repo_dir pull"
 	git -C "$repo_dir" pull
 
 	(
-		cd "$repo_dir" || return 20
+		cd "$repo_dir" || return 23
 		# shellcheck disable=1091
-		. "$repo_dir/one.repo.bash"
+		if [[ -f "$repo_dir/one.repo.bash" ]]; then source "$repo_dir/one.repo.bash"; fi
 		if type -t repo_update &>/dev/null; then repo_update; fi
 	)
 

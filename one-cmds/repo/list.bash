@@ -6,17 +6,17 @@ EOF
 }
 
 main() {
-	local repo name repo_status repo_status_color
+	local repo_path repo_name repo_status repo_status_color ABOUT=''
 
-	printf '%-8s %-20s\t%b%s\n' "Status" "Name" "$RESET_ALL" "Path"
+	printf '%-8s %-20s\t%b%s\n' "Status" "Name" "$RESET_ALL" "About"
 
 	shopt -s nullglob
-	for repo in "$ONE_DIR"/data/repo/*; do
-		if [[ ! -d $repo ]]; then continue; fi
-		name="${repo##*/}"
-		name_str=$(printf '%b%s' "$BLUE" "$name")
+	for repo_path in "$ONE_DIR"/data/repo/*; do
+		if [[ ! -d $repo_path ]]; then continue; fi
+		repo_name="${repo_path##*/}"
+		name_str=$(printf '%b%s' "$BLUE" "$repo_name")
 
-		if [[ -e "$ONE_DIR/enabled/repo/$name" ]]; then
+		if [[ -e "$ONE_DIR/enabled/repo/$repo_name" ]]; then
 			repo_status_color="$GREEN"
 			repo_status=Enabled
 		else
@@ -24,6 +24,14 @@ main() {
 			repo_status=Disabled
 		fi
 
-		printf '%b%-8s %-20s\t%b%s\n' "$repo_status_color" "$repo_status" "$name_str" "$RESET_ALL" "$repo"
+		local repo_file=$repo_path/one.repo.bash
+		if [[ -f $repo_file ]]; then
+			# shellcheck disable=1090
+			ABOUT=$(
+				. "$repo_file"
+				echo "${ABOUT:-}"
+			)
+		fi
+		printf '%b%-8s %-20s\t%b%s\n' "$repo_status_color" "$repo_status" "$name_str" "$RESET_ALL" "$ABOUT"
 	done
 }

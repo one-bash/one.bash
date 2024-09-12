@@ -19,7 +19,7 @@ fi
 # shellcheck source=../../bash/load-config.bash
 . "$ONE_DIR/bash/load-config.bash"
 
-actions=(init list add remove update info enable disable)
+actions=(init list add remove update info enable disable exec)
 
 declare -A action_aliases=(
 	['l']=list
@@ -50,6 +50,7 @@ ACTION:
   d, disable       Disable a repo
   i, info          Show the informations of repo
   init [<PATH>]    Scaffolding a repo in <PATH> (Defaults to \$PWD)
+	exec <CMD>       Execute command in each enabled repo
 EOF
 	# editorconfig-checker-enable
 }

@@ -190,6 +190,7 @@ download_mod_data() {
 
 		(
 			install() { return 0; }
+			cd "$MOD_DATA_DIR" || return 23
 			# shellcheck disable=1090
 			source "$opt_path"
 			download_github_release_files
