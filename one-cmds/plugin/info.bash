@@ -2,7 +2,7 @@ usage() {
 	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one $t info [OPTIONS] <NAME>
-Desc:  Show info of matched $t
+Desc:  Show the information of matched $t
 Arguments:
   <NAME>                    $t name
 Options:

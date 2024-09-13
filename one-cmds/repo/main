@@ -19,7 +19,7 @@ fi
 # shellcheck source=../../bash/load-config.bash
 . "$ONE_DIR/bash/load-config.bash"
 
-actions=(init list add remove update info enable disable exec)
+actions=(init list add remove update info enable disable exec search)
 
 declare -A action_aliases=(
 	['l']=list
@@ -29,6 +29,7 @@ declare -A action_aliases=(
 	['e']=enable
 	['d']=disable
 	['i']=info
+	['s']=search
 )
 
 # one.bash:completion
@@ -41,16 +42,17 @@ Usage:  one repo [-h|--help] <ACTION>
 
 Desc:   Manage one.bash repos
 
-ACTION:
-  l, list          List available repos
-  a, add           Download and enable a repo
-  r, remove        Remove a repo
-  u, update        Update a repo
-  e, enable        Enable a repo
-  d, disable       Disable a repo
-  i, info          Show the informations of repo
-  init [<PATH>]    Scaffolding a repo in <PATH> (Defaults to \$PWD)
-	exec <CMD>       Execute command in each enabled repo
+Action:
+  l, list              List available repos
+  a, add               Download and enable a repo
+  r, remove            Remove a repo
+  u, update            Update a repo
+  e, enable            Enable a repo
+  d, disable           Disable a repo
+  i, info              Show the informations of repo
+  init [<PATH>]        Scaffolding a repo in <PATH> (Defaults to \$PWD)
+  exec <CMD>           Execute command in each enabled repo
+  s, search [<WORD>]   Search repos (topic: one-bash-repo) in Github
 EOF
 	# editorconfig-checker-enable
 }

@@ -40,7 +40,7 @@ Usage:  one bin [-h|--help] <ACTION>
 
 Desc:   Manage executable files in ONE_REPO/$t/
 
-ACTION:
+Action:
   e, enable           Enable matched $t files
   d, disable          Disable matched $t files
   l, list             List available $t files in each repo

@@ -6,34 +6,38 @@ Usage: one repo add <URL>
 Desc: Download and enable a repo
 
 Arguments:
-  <URL>          Support http, git, local directory.
+  <URL>          Support http/https, git, local directory.
                  Local directory must be absolute path. one.bash will create a symlink to the directory.
+
+Examples:
+  one repo add one-bash/one.share
+  one repo add https://github.com/one-bash/one.share
+  one repo add https://github.com/one-bash/one.share.git
+  one repo add /home/adoyle/any/folder
 EOF
 	# editorconfig-checker-enable
 }
 
 download() {
-	case $src in
-		http://* | https://* | *.git)
-			if [[ $NO_DOWNLOAD == false ]]; then
-				print_verb "[REPO: $name] to download via git"
-				git -C "$ONE_DIR/data/repo/" clone --single-branch --progress "$src"
-			fi
-			;;
+	local src=$1
 
-		/*)
-			if [[ $NO_DOWNLOAD == false ]]; then
-				print_verb "[REPO: $name] to download via local path"
-				ln -s "$src" "$ONE_DIR/data/repo/$name"
-			fi
-			;;
+	if [[ $NO_DOWNLOAD != false ]]; then
+		return
+	fi
 
-		*)
-			print_err "Invalid url: $src"
-			return "$ONE_EX_USAGE"
-			;;
-	esac
-
+	if [[ $src == *.git || $src == http?(s)://* ]]; then
+		print_verb "[REPO: $name] to download via git"
+		git -C "$ONE_DIR/data/repo/" clone --single-branch --progress "$src"
+	elif [[ $src =~ ^[^/]+/[^/]+$ ]]; then
+		print_verb "[REPO: $name] to download via git"
+		git -C "$ONE_DIR/data/repo/" clone --single-branch --progress "https://github.com/$src.git"
+	elif [[ $src == /* ]]; then
+		print_verb "[REPO: $name] to download via local path"
+		ln -s "$src" "$ONE_DIR/data/repo/$name"
+	else
+		print_err "Invalid url: $src"
+		return "$ONE_EX_USAGE"
+	fi
 }
 
 main() {
@@ -64,7 +68,7 @@ main() {
 		fi
 	)
 
-	download
+	download "$src"
 
 	(
 		cd "$ONE_DIR/data/repo/$name" || return 20

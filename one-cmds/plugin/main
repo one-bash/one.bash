@@ -43,7 +43,7 @@ Action:
   e, enable <NAME>...            Enable matched $t
   d, disable <NAME>...           Disable matched $t
   l, list                        List enabled $t
-  i, info <NAME>                 Show info of matched $t
+  i, info <NAME>                 Show the information of matched $t
   w, which <NAME>                Show realpath of $t
   edit <NAME>                    Edit matched $t file
 EOF

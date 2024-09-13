@@ -39,7 +39,7 @@ Usage: one sub [-h|--help] <ACTION>
 
 Desc:  Manage ONE_SUB commands
 
-ACTION:
+Action:
   e, enable <NAME>...        Enable matched sub commands
   d, disable <NAME>...       Disable matched sub commands
   l, list                    List sub commands in each repo

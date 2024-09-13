@@ -34,7 +34,7 @@ Usage: one dep [<ACTION>]
 
 Desc: Manage one.bash deps
 
-ACTION:
+Action:
   i, install          Install all deps.
   u, update [<DEP>]   Update dep. If <DEP> is omit, update all deps.
   s, status [<DEP>]   Show status of each dep. If <DEP> is omit, show all deps' status.

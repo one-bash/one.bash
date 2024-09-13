@@ -14,9 +14,6 @@ EOF
 # TODO FIX the bin file should be executable. [[ -x $path ]]
 . "$ONE_DIR/one-cmds/plugin/action-completion.bash"
 
-declare -A opts=()
-declare -a args=()
-
 print_info() {
 	local path=$1 name=$2
 
