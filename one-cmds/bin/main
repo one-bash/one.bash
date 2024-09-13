@@ -16,7 +16,7 @@ fi
 # shellcheck source=../mod-base.bash
 . "$ONE_DIR/one-cmds/mod-base.bash"
 
-actions=(list info enable disable which help)
+actions=(list info enable edit disable which help)
 
 declare -A action_aliases=(
 	['e']=enable
@@ -38,13 +38,15 @@ usage() {
 Usage:  one bin [-h|--help] <ACTION>
         one bin [-h|--help]
 
-Desc:   Manage executable files in ONE_REPO/bin/
+Desc:   Manage executable files in ONE_REPO/$t/
 
 ACTION:
-  e, enable           Enable matched bin files
-  d, disable          Disable matched bin files
-  l, list             List available bin files in each repo
-  i, info             Show the information of matched bin files
+  e, enable           Enable matched $t files
+  d, disable          Disable matched $t files
+  l, list             List available $t files in each repo
+  i, info             Show the information of matched $t files
+  edit <NAME>         Edit matched $t file
+  h, help             Print the usage of $t files
 EOF
 	# editorconfig-checker-enable
 }

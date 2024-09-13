@@ -27,7 +27,7 @@ main() {
 	if [[ ! -d $path ]]; then return; fi
 
 	local answer
-	answer=$(l.ask "Do you want to remove repo '$name'?" N)
+	answer=$(l.ask "Do you want to remove repo '$name'?")
 	if [[ $answer != YES ]]; then return; fi
 
 	if [[ -L $ONE_DIR/enabled/repo/$name ]]; then

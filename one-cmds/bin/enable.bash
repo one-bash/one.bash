@@ -21,7 +21,7 @@ create_symlink() {
 	if [[ -L "$ONE_DIR/enabled/$t/$name" ]]; then
 		local answer
 		printf 'Found existed enabled file: %s -> %s\n' "$name" "$(readlink "$ONE_DIR/enabled/$t/$name")" >&2
-		answer=$(l.ask "Do you want to override it?" N)
+		answer=$(l.ask "Do you want to override it?")
 		if [[ $answer != YES ]]; then return; fi
 	fi
 
@@ -59,7 +59,7 @@ enable() {
 		disable_mod "$name"
 		download_mod_data "$name" "$path"
 
-		local SCRIPT bin_name
+		local SCRIPT exports bin_name
 
 		# shellcheck disable=1090
 		SCRIPT=$(. "$path" && echo "${SCRIPT:-}")
@@ -73,18 +73,21 @@ enable() {
 			chmod +x "$script_file"
 
 			# shellcheck disable=1090
-			while read -r bin_name; do
+			read -ra exports < <(. "$path" && echo "${EXPORTS[@]}")
+			for bin_name in "${exports[@]}"; do
 				create_symlink "$bin_name" "$script_file"
-			done < <(. "$path" && echo "${EXPORTS[@]}")
+			done
 		else
 			(
 				# shellcheck disable=1090
 				. "$path"
 				set_exports "$name"
+
 				# shellcheck disable=1090
-				while read -r bin_name; do
+				read -ra exports < <(. "$path" && echo "${EXPORTS[@]}")
+				for bin_name in "${exports[@]}"; do
 					create_symlink "$bin_name" "$ONE_DIR/data/$t/$name/$bin_name"
-				done < <(. "$path" && echo "${EXPORTS[@]}")
+				done
 			)
 		fi
 	else
@@ -134,41 +137,39 @@ main() {
 		fi
 	else
 		for name in "${args[@]}"; do
-			{
-				filepaths=()
+			filepaths=()
 
-				if [[ -z $repo ]]; then
-					for path in "${ONE_DIR}"/enabled/repo/*/"$t/$name"{,.bash,.sh,.opt.bash}; do
-						filepaths+=("$path")
+			if [[ -z $repo ]]; then
+				for path in "${ONE_DIR}"/enabled/repo/*/"$t/$name"{,.bash,.sh,.opt.bash}; do
+					filepaths+=("$path")
+				done
+			else
+				for path in "${ONE_DIR}/enabled/repo/$repo/$t/$name"{,.bash,.sh,.opt.bash}; do
+					filepaths+=("$path")
+				done
+			fi
+
+			case ${#filepaths[@]} in
+				1)
+					enable "${filepaths[0]}" "$name"
+					;;
+
+				0)
+					print_err "No matched $t '$name'"
+					return "$ONE_EX_DATAERR"
+					;;
+
+				*)
+					print_err "Matched multi $t for '$name'. You should use '-r' option for specified repo:"
+					local repo
+					for filepath in "${filepaths[@]}"; do
+						repo=$(get_enabled_repo_name "$filepath")
+						echo "   one $t enable $name -r $repo" >&2
 					done
-				else
-					for path in "${ONE_DIR}/enabled/repo/$repo/$t/$name"{,.bash,.sh,.opt.bash}; do
-						filepaths+=("$path")
-					done
-				fi
+					return "$ONE_EX_USAGE"
 
-				case ${#filepaths[@]} in
-					1)
-						enable "${filepaths[0]}" "$name"
-						;;
-
-					0)
-						print_err "No matched $t '$name'"
-						return "$ONE_EX_DATAERR"
-						;;
-
-					*)
-						print_err "Matched multi $t for '$name'. You should use '-r' option for specified repo:"
-						local repo
-						for filepath in "${filepaths[@]}"; do
-							repo=$(get_enabled_repo_name "$filepath")
-							echo "   one $t enable $name -r $repo" >&2
-						done
-						return "$ONE_EX_USAGE"
-
-						;;
-				esac
-			}
+					;;
+			esac
 		done
 	fi
 }

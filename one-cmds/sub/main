@@ -16,7 +16,7 @@ fi
 # shellcheck source=../mod-base.bash
 . "$ONE_DIR/one-cmds/mod-base.bash"
 
-actions=(list info enable disable which run help)
+actions=(list info enable edit disable which run help)
 
 declare -A action_aliases=(
 	['e']=enable
@@ -45,6 +45,7 @@ ACTION:
   l, list                    List sub commands in each repo
   i, info <NAME>             Show information of matched sub commands
   w, which <NAME>            Show realpath of sub command
+  edit <NAME>                Edit matched sub file
   r, run <NAME> [<ARGS>...]  Run sub command
   h, help                    Print the usage of ONE_SUB command
 EOF

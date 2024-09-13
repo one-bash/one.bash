@@ -77,6 +77,10 @@ declare -A opts=()
 declare -a args=()
 
 main() {
+	if ((${#args[*]} == 0)); then
+		usage
+		return "$ONE_EX_OK"
+	fi
 	. "$ONE_DIR/one-cmds/mod.bash"
-	if (($# == 0)); then usage; else info_mod "${args[0]}"; fi
+	info_mod "${args[0]}"
 }

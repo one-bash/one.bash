@@ -2,7 +2,7 @@ usage() {
 	# editorconfig-checker-disable
 	cat <<EOF
 Usage: one $t edit [OPTIONS] <NAME>
-Desc:  Edit matched $t
+Desc:  Edit matched $t file
 Arguments:
   <NAME>                  $t name
 Options:
@@ -16,6 +16,9 @@ EOF
 edit_mod() {
 	local name=$1
 	local -a filepaths=()
+
+	# shellcheck source=../../one-cmds/mod.bash
+	. "$ONE_DIR/one-cmds/mod.bash"
 
 	search_mod "$name" "${opts[r]:-}" filepaths
 
@@ -45,14 +48,13 @@ declare -A opts=()
 declare -a args=()
 
 main() {
-	. "$ONE_DIR/one-cmds/mod.bash"
-
 	case ${#args[*]} in
-		0)
-			usage
-			;;
 		1)
 			edit_mod "${args[0]}"
+			;;
+
+		0)
+			usage
 			;;
 
 		*)

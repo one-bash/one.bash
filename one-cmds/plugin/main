@@ -45,7 +45,7 @@ Action:
   l, list                        List enabled $t
   i, info <NAME>                 Show info of matched $t
   w, which <NAME>                Show realpath of $t
-  edit <NAME>                    Edit matched $t
+  edit <NAME>                    Edit matched $t file
 EOF
 	# editorconfig-checker-enable
 }
