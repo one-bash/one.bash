@@ -10,6 +10,7 @@ load_failed() {
 
 _load_enabled() {
 	local filepath=$1
+
 	set -- # prevent the sourced script receiving the arguments of function _load_enabled
 
 	local filename="${filepath##*/}"
@@ -24,6 +25,17 @@ _load_enabled() {
 		return "$ONE_EX_SOFTWARE"
 	fi
 	# echo "mod_name=$mod_name , mod_type=$mod_type"
+
+	local cmd
+	local -a DEPS
+	# shellcheck disable=2207
+	IFS=' ' DEPS=($(metafor one-bash:mod:deps <"$filepath"))
+	for cmd in "${DEPS[@]}"; do
+		if one_l.has_not command "$cmd"; then
+			printf '%b%s%b\n' "$YELLOW" "[one.bash] Not found command '$cmd'. Skip loading $mod_type '$mod_name'." "$RESET_ALL" >&2
+			return 0
+		fi
+	done
 
 	# shellcheck disable=1090
 	source "$filepath" \

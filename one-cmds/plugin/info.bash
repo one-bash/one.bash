@@ -33,27 +33,36 @@ info_mod() {
 
 			link_to=$(get_enabled_link_to "$name" "$repo")
 
+			PRINT_INFO_KEY_WIDTH=12
+
 			print_info_item Name "$name"
 			print_info_item Status "$([[ -n $link_to ]] && echo enabled || echo disabled)"
 			print_info_item Repo "$repo"
-			print_info_item "Path" "$link_to"
-			print_info_item "Source" "$filepath"
 
 			if [[ $filepath == *.opt.bash ]]; then
 				(
 					# shellcheck disable=1090
 					source "$filepath"
-					print_info_item "About" "${ABOUT:-}"
-					print_info_item "Priority" "${PRIORITY:-}"
-					print_info_item "Script" "${SCRIPT:-}"
-					print_info_item "DEPS" "${DEPS:-}"
+					print_info_item About "${ABOUT:-}"
+					print_info_item Priority "${PRIORITY:-}"
+					print_info_item DEPS "${DEPS:-}"
+					print_info_item GITHUB_REPO "${GITHUB_REPO:-}"
+					print_info_item GITHUB_RELEASE_VERSION "${GITHUB_RELEASE_VERSION:-}"
+					print_info_item GITHUB_RELEASE_FILES "${GITHUB_RELEASE_FILES:-}"
+					print_info_item Script "${SCRIPT:-}"
 				)
 			else
 				ABOUT=$(metafor about-plugin <"$filepath")
 				PRIORITY=$(get_priority "$filepath")
-				print_info_item "About" "${ABOUT:-}"
-				print_info_item "Priority" "${PRIORITY:-}"
+				DEPS=$(metafor one-bash:mod:deps <"$filepath")
+
+				print_info_item About "${ABOUT:-}"
+				print_info_item Priority "${PRIORITY:-}"
+				print_info_item DEPS "${DEPS:-}"
 			fi
+
+			print_info_item Path "$link_to"
+			print_info_item Source "$filepath"
 			;;
 
 		0)

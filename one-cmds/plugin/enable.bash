@@ -54,6 +54,10 @@ create_mod() {
 			echo "# ONE_LOAD_PRIORITY: $PRIORITY" >>"$MOD_FILE"
 		fi
 
+		if [[ -n ${DEPS:-} ]]; then
+			echo "one-bash:mod:deps $DEPS" >>"$MOD_FILE"
+		fi
+
 		if declare -F INSERT &>/dev/null; then
 			log_verb "$log_tag" "To execute INSERT fucntion"
 			{
