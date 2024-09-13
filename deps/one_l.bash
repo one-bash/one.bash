@@ -2,15 +2,15 @@
 # Command: lobash-gen -c ../one_l.conf one_l.bash
 # Author: ADoyle <adoyle.h@gmail.com>
 # License: Apache License Version 2.0
-# Version: 0.6.0 (7c4e3079419f112e020b0afffd6f96c9afedc2fc)
+# Version: 0.7.0 (7ac03387f41cb7e5792c11ff06d8d58d9ac285b0)
 # Prefix: one_l.
 # Bash Minimum Version: 4.4
-# UNIQ_KEY: 0_6_0_134776242_1950
-# Included Modules: array_include has has_not is_array is_function start_with str_include ask join str_replace trim trim_start trim_end detect_os
+# UNIQ_KEY: 0_7_0_164825828_12785
+# Included Modules: array_include has has_not is_array var_attrs is_function start_with str_include ask join str_replace trim trim_start trim_end detect_os
 
 ######################## Lobash Internals ########################
 
-_lobash.0_6_0_134776242_1950_detect_os() {
+_lobash.0_7_0_164825828_12785_detect_os() {
   local kernel_name
   kernel_name="$(uname -s)"
 
@@ -31,59 +31,59 @@ _lobash.0_6_0_134776242_1950_detect_os() {
 
 
 
-[[ -n ${_LOBASH_0_6_0_134776242_1950_INTERNAL_FUNC_PREFIX:-} ]] && return
+[[ -n ${_LOBASH_0_7_0_164825828_12785_INTERNAL_FUNC_PREFIX:-} ]] && return
 
-readonly _LOBASH_0_6_0_134776242_1950_INTERNAL_FUNC_PREFIX=_lobash.
-readonly _LOBASH_0_6_0_134776242_1950_INTERNAL_CONST_PREFIX=_LOBASH_
-readonly _LOBASH_0_6_0_134776242_1950_PRIVATE_FUNC_PREFIX=_l.
-readonly _LOBASH_0_6_0_134776242_1950_PRIVATE_CONST_PREFIX=_L_
-readonly _LOBASH_0_6_0_134776242_1950_PUBLIC_FUNC_PREFIX=one_l.
-readonly _LOBASH_0_6_0_134776242_1950_PUBLIC_CONST_PREFIX=ONE_L_
+readonly _LOBASH_0_7_0_164825828_12785_INTERNAL_FUNC_PREFIX=_lobash.
+readonly _LOBASH_0_7_0_164825828_12785_INTERNAL_CONST_PREFIX=_LOBASH_
+readonly _LOBASH_0_7_0_164825828_12785_PRIVATE_FUNC_PREFIX=_l.
+readonly _LOBASH_0_7_0_164825828_12785_PRIVATE_CONST_PREFIX=_L_
+readonly _LOBASH_0_7_0_164825828_12785_PUBLIC_FUNC_PREFIX=one_l.
+readonly _LOBASH_0_7_0_164825828_12785_PUBLIC_CONST_PREFIX=ONE_L_
 
-readonly _LOBASH_0_6_0_134776242_1950_PREFIX=one_l.
-_LOBASH_0_6_0_134776242_1950_PUBLIC_DEPTH=1  # NOTE: _LOBASH_0_6_0_134776242_1950_PUBLIC_DEPTH should not be readonly
-readonly _LOBASH_0_6_0_134776242_1950_MIN_BASHVER=4.4
+readonly _LOBASH_0_7_0_164825828_12785_PREFIX=one_l.
+_LOBASH_0_7_0_164825828_12785_PUBLIC_DEPTH=1  # NOTE: _LOBASH_0_7_0_164825828_12785_PUBLIC_DEPTH should not be readonly
+readonly _LOBASH_0_7_0_164825828_12785_MIN_BASHVER=4.4
 
-_LOBASH_0_6_0_134776242_1950_OS=$(_lobash.0_6_0_134776242_1950_detect_os)
-readonly _LOBASH_0_6_0_134776242_1950_OS
+_LOBASH_0_7_0_164825828_12785_OS=$(_lobash.0_7_0_164825828_12785_detect_os)
+readonly _LOBASH_0_7_0_164825828_12785_OS
 
-_lobash.0_6_0_134776242_1950_is_bash() {
+_lobash.0_7_0_164825828_12785_is_bash() {
   [[ -n "${BASH_VERSION:-}" ]]
 }
 
-_lobash.0_6_0_134776242_1950_check_os() {
-  if [[ ! $_LOBASH_0_6_0_134776242_1950_OS =~ ^(Linux|MacOS|BSD)$ ]]; then
-    echo "Not support current system: $_LOBASH_0_6_0_134776242_1950_OS" >&2
+_lobash.0_7_0_164825828_12785_check_os() {
+  if [[ ! $_LOBASH_0_7_0_164825828_12785_OS =~ ^(Linux|MacOS|BSD)$ ]]; then
+    echo "Not support current system: $_LOBASH_0_7_0_164825828_12785_OS" >&2
     return 5
   fi
 }
 
-_lobash.0_6_0_134776242_1950_check_shell() {
-  if ! _lobash.0_6_0_134776242_1950_is_bash; then
+_lobash.0_7_0_164825828_12785_check_shell() {
+  if ! _lobash.0_7_0_164825828_12785_is_bash; then
     echo 'Lobash only work in Bash.' >&2
     return 6
   fi
 }
 
-_lobash.0_6_0_134776242_1950_check_supported_bash_version() {
+_lobash.0_7_0_164825828_12785_check_supported_bash_version() {
   local info
-  read -r -d '.' -a info <<< "$_LOBASH_0_6_0_134776242_1950_MIN_BASHVER"
+  read -r -d '.' -a info <<< "$_LOBASH_0_7_0_164825828_12785_MIN_BASHVER"
   if (( BASH_VERSINFO[0] < info[0] )) \
     || ( (( BASH_VERSINFO[0] == info[0] )) && (( BASH_VERSINFO[1] < info[1] )) ); then
-    echo "Bash $BASH_VERSION is not supported. Upgrade your Bash to $_LOBASH_0_6_0_134776242_1950_MIN_BASHVER or higher version." >&2
+    echo "Bash $BASH_VERSION is not supported. Upgrade your Bash to $_LOBASH_0_7_0_164825828_12785_MIN_BASHVER or higher version." >&2
     return 7
   fi
 }
 
-_lobash.0_6_0_134776242_1950_check_support() {
-  _lobash.0_6_0_134776242_1950_check_os
-  _lobash.0_6_0_134776242_1950_check_shell
-  # _lobash.0_6_0_134776242_1950_check_supported_bash_version
+_lobash.0_7_0_164825828_12785_check_support() {
+  _lobash.0_7_0_164825828_12785_check_os
+  _lobash.0_7_0_164825828_12785_check_shell
+  # _lobash.0_7_0_164825828_12785_check_supported_bash_version
 }
 
-_lobash.0_6_0_134776242_1950_check_support
+_lobash.0_7_0_164825828_12785_check_support
 
-_lobash.0_6_0_134776242_1950_dirname() {
+_lobash.0_7_0_164825828_12785_dirname() {
   local str=${1:-}
   [[ $str == '/' ]] && echo '/' && return 0
   [[ $str =~ ^'../' ]] && echo '.' && return 0
@@ -92,17 +92,17 @@ _lobash.0_6_0_134776242_1950_dirname() {
   printf '%s\n' "${str%/*}"
 }
 
-_lobash.0_6_0_134776242_1950_with_IFS() {
+_lobash.0_7_0_164825828_12785_with_IFS() {
   local IFS=$1
   shift
   eval "$*"
 }
 
-_lobash.0_6_0_134776242_1950_is_tty_available() {
+_lobash.0_7_0_164825828_12785_is_tty_available() {
   { : >/dev/tty ; } &>/dev/null
 }
 
-_lobash.0_6_0_134776242_1950_is_gnu_sed() {
+_lobash.0_7_0_164825828_12785_is_gnu_sed() {
   local out
   out=$(${1:-sed} --version 2>/dev/null)
   [[ $out =~ 'GNU sed' ]]
@@ -168,12 +168,23 @@ one_l.is_array() {
   [[ -z ${1:-} ]] && return 1
 
   local attrs
-  # shellcheck disable=2207
-  attrs=$(declare -p "$1" 2>/dev/null | sed -E "s/^declare -([-a-zA-Z]+) .+/\\1/" || true)
+  attrs=$(one_l.var_attrs "$1")
 
   # a: array
   # A: associate array
-  if [[ ${attrs} =~ a|A ]]; then return 0; else return 1; fi
+  [[ ${attrs} =~ a|A ]]
+}
+
+one_l.var_attrs() {
+  [[ -z ${1:-} ]] && return 1
+
+  local attrs
+  # shellcheck disable=2207
+  attrs=$(declare -p "$1" 2>/dev/null || true)
+  attrs=${attrs#* -}
+  attrs=${attrs%% *}
+
+  echo "${attrs#-}"
 }
 
 one_l.is_function() {
@@ -190,7 +201,7 @@ one_l.str_include() {
   [[ "${1:-}" =~ "${2:-}" ]]
 }
 
-_l.0_6_0_134776242_1950_ask() {
+_l.0_7_0_164825828_12785_ask() {
   local msg=$1
   local default=$2
   local valid_values prompt
@@ -210,15 +221,17 @@ _l.0_6_0_134776242_1950_ask() {
   fi
 
   local answer result='' tty_available
-  tty_available=$(_lobash.0_6_0_134776242_1950_is_tty_available && echo true || echo false)
-  [[ $tty_available == true ]] && echo "$msg" > /dev/tty
+  tty_available=$(_lobash.0_7_0_164825828_12785_is_tty_available && echo true || echo false)
+  [[ $tty_available == true ]] && echo "$msg" >/dev/tty
+
+  local loop_limit=10
 
   while [[ -z $result ]]; do
     read -rp "$prompt " answer
 
     if [[ -z $answer ]]; then
       if [[ -z $default ]]; then
-        [[ $tty_available == true ]] && echo ">> Empty answer is not allowed." > /dev/tty
+        [[ $tty_available == true ]] && echo ">> Empty answer is not allowed." >/dev/tty
       else
         result="${default^^}"
       fi
@@ -232,8 +245,14 @@ _l.0_6_0_134776242_1950_ask() {
       done
 
       if [[ -z $result ]]; then
-        [[ $tty_available == true ]] && echo ">> Invalid answer '$answer'." > /dev/tty
+        [[ $tty_available == true ]] && echo ">> Invalid answer '$answer'." >/dev/tty
       fi
+    fi
+
+    loop_limit=$((loop_limit - 1))
+    if ((loop_limit == 0)); then
+      [[ $tty_available == true ]] && echo ">> Error: Reach the loop limit while asking" >/dev/tty
+      return 4
     fi
   done
   echo "$result"
@@ -241,7 +260,7 @@ _l.0_6_0_134776242_1950_ask() {
 
 one_l.ask() {
   local values=(yes no)
-  _l.0_6_0_134776242_1950_ask "$1" "${2:-}"
+  _l.0_7_0_164825828_12785_ask "$1" "${2:-}"
 }
 
 one_l.join() {
@@ -287,7 +306,7 @@ one_l.trim_end() {
 }
 
 one_l.detect_os() {
-  _lobash.0_6_0_134776242_1950_detect_os
+  _lobash.0_7_0_164825828_12785_detect_os
 }
 
 ######################## Skipped Modules ########################

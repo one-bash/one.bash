@@ -58,12 +58,12 @@ main() {
 		for path in "${ONE_DIR}/enabled/$t"/*; do
 			if [[ -L $path ]]; then
 				name="${path##*/}"
-				disable_it "$name" "$path" || true
+				disable_it "$name" "$path"
 			fi
 		done
 	else
 		for name in "${args[@]}"; do
-			disable_it "$name" || true
+			disable_it "$name"
 		done
 	fi
 }

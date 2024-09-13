@@ -43,14 +43,14 @@ main() {
 
 	if [[ ${opts[a]} == true ]]; then
 		for name in $(list_enabled "$t"); do
-			disable_mod "$name" found || print_err "Failed to disable '$name'."
+			disable_mod "$name" found
 			if [[ $found == false ]]; then
 				print_err "No matched enabled $t '$name'."
 			fi
 		done
 	else
 		for name in "${args[@]}"; do
-			disable_mod "$name" found || print_err "Failed to disable '$name'."
+			disable_mod "$name" found
 			if [[ $found == false ]]; then
 				print_err "No matched enabled $t '$name'."
 			fi

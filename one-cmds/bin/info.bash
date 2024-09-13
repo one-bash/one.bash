@@ -30,7 +30,7 @@ print_info() {
 				# shellcheck disable=1090
 				source "$path"
 				print_info_item About "${ABOUT:-}"
-				print_info_item URL "${URL:-}"
+				print_info_item SCRIPT "${SCRIPT:-}"
 			)
 		else
 			print_info_item About "$(metafor about-plugin <"$path")"

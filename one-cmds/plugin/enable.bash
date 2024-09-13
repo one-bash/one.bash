@@ -122,18 +122,19 @@ enable_mod() {
 			repo_name=${repo_name%%/*}
 
 			if [[ $filepath == *.opt.bash ]]; then
-				opt_mod_check_dep_cmds "$filepath"
+				mod_check_dep_cmds "$filepath"
 				# Disable first, prevent duplicated module enabled with different priority
 				disable_mod "$name"
 				download_mod_data "$name" "$filepath"
 				filepath=$(create_mod "$name" "$filepath")
 				[[ -z $filepath ]] && return
 			else
+				mod_check_dep_cmds "$filepath"
 				# Disable first, prevent duplicated module enabled with different priority
 				disable_mod "$name"
 			fi
 
-			enable_file "$name" "$repo_name" "$filepath" || print_err "Failed to enable '$name'."
+			enable_file "$name" "$repo_name" "$filepath"
 			;;
 
 		0)
@@ -175,8 +176,10 @@ main() {
 	local name
 	local repo="${opts[r]:-}"
 	for name in "${args[@]}"; do
-		#  BUG: when curl failed in download_mod_data(), the enable_mod() not stopped
-		#       If remove || print_err "Failed to enable '$name'.", it will work well
-		enable_mod "$name" "$repo" || print_err "Failed to enable '$name'."
+		#  NOTE: Do note write like that:
+		#        enable_mod "$name" "$repo" || print_err "Failed to enable '$name'."
+		#  Because it leads to "set -o errexit" failure, any error returned in enable_mod
+		#  would not stop executing the remaining code
+		enable_mod "$name" "$repo"
 	done
 }

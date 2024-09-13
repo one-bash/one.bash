@@ -61,7 +61,7 @@ load_enabled() {
 		paths+=("$filepath")
 	done < <(sort <(compgen -G "$ONE_DIR/enabled/*.bash" || true))
 
-	cite about-plugin
+	cite about-plugin one-bash:mod:deps
 
 	local load
 	if [[ $ONE_DEBUG == true ]]; then

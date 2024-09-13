@@ -239,18 +239,24 @@ get_enabled_link_to() {
 	fi
 }
 
-opt_mod_check_dep_cmds() {
+mod_check_dep_cmds() {
 	local path=$1
-	local -a DEP_CMDS
-	# shellcheck disable=2207
-	IFS=' ' DEP_CMDS=($(get_opt "$path" DEP_CMDS))
+	local -a DEPS
+
+	if [[ $path == *.opt.bash ]]; then
+		# shellcheck disable=2207
+		IFS=' ' DEPS=($(get_opt "$path" DEPS))
+	else
+		# shellcheck disable=2207
+		IFS=' ' DEPS=($(metafor one-bash:mod:deps <"$path"))
+	fi
 
 	local cmd
-	for cmd in "${DEP_CMDS[@]}"; do
+	for cmd in "${DEPS[@]}"; do
 		if one_l.has_not command "$cmd"; then
-			printf "%bThe command '%s' is required but not found in host.\nSee %s to install it.%b\n" \
-				"$RED" "$cmd" "https://command-not-found.com/$cmd" "$RESET_ALL" >&2
-			return 10
+			print_err "The command '%s' is required. But not found it in system. Please install the command first. \nSee %s to install it.\n" \
+				"$cmd" "https://command-not-found.com/$cmd"
+			return 11
 		fi
 	done
 }

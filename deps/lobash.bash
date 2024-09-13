@@ -2,15 +2,15 @@
 # Command: lobash-gen -p 'l.' -m 4.4 lobash.bash
 # Author: ADoyle <adoyle.h@gmail.com>
 # License: Apache License Version 2.0
-# Version: 0.7.0 (a6a157a253a8e76a59e2a7aabddff88c3a0f2733)
+# Version: 0.7.0 (7ac03387f41cb7e5792c11ff06d8d58d9ac285b0)
 # Prefix: l.
 # Bash Minimum Version: 4.4
-# UNIQ_KEY: 0_7_0_164262450_19851
+# UNIQ_KEY: 0_7_0_164825829_9578
 # Included Modules: array_has_key array_include array_include.s array_reverse array_size ask ask_input ask_with_cancel basename basename.p benchmark choose compose count_file_lines count_files count_lines.p cur_function_name cursor_col cursor_pos cursor_row date detect_os dirname dirname.p each each.p echo echo.p echo_array echo_screen end_with end_with.s extname extname.p extract first has has.s has_not has_not.s head hex_to_rgb hostname if inc is_array is_array.s is_associative_array is_associative_array.s is_bash is_bash.s is_dir is_dir.s is_empty_dir is_executable is_executable.s is_executable_file is_executable_file.s is_exported is_falsy is_falsy.s is_file is_file.s is_float is_float.s is_function is_function.s is_gnu_sed is_integer is_integer.s is_link is_link.s is_number is_number.s is_readable is_readable.s is_truthy is_truthy.s is_tty_available is_tty_available.s is_ubuntu is_undefined is_writable is_writable.s join keys last lower_case lower_case.p lower_first lower_first.p match match_list normalize normalize.p not.s not.s.p now now_s parse_args parse_params pwd random read_array relative repeat rgb_to_hex sedi seq sleep sort split start_with start_with.s str_include str_include.s str_len str_replace str_replace_all str_replace_last str_size sub term_size trace_count trace_end trace_stack trace_start trace_time trap_error trim trim.p trim_color trim_color.p trim_end trim_end.p trim_start trim_start.p union_array upper_case upper_case.p upper_first upper_first.p var_attrs with_ifs xdg_config_home
 
 ######################## Lobash Internals ########################
 
-_lobash.0_7_0_164262450_19851_detect_os() {
+_lobash.0_7_0_164825829_9578_detect_os() {
   local kernel_name
   kernel_name="$(uname -s)"
 
@@ -31,59 +31,59 @@ _lobash.0_7_0_164262450_19851_detect_os() {
 
 
 
-[[ -n ${_LOBASH_0_7_0_164262450_19851_INTERNAL_FUNC_PREFIX:-} ]] && return
+[[ -n ${_LOBASH_0_7_0_164825829_9578_INTERNAL_FUNC_PREFIX:-} ]] && return
 
-readonly _LOBASH_0_7_0_164262450_19851_INTERNAL_FUNC_PREFIX=_lobash.
-readonly _LOBASH_0_7_0_164262450_19851_INTERNAL_CONST_PREFIX=_LOBASH_
-readonly _LOBASH_0_7_0_164262450_19851_PRIVATE_FUNC_PREFIX=_l.
-readonly _LOBASH_0_7_0_164262450_19851_PRIVATE_CONST_PREFIX=_L_
-readonly _LOBASH_0_7_0_164262450_19851_PUBLIC_FUNC_PREFIX=l.
-readonly _LOBASH_0_7_0_164262450_19851_PUBLIC_CONST_PREFIX=L_
+readonly _LOBASH_0_7_0_164825829_9578_INTERNAL_FUNC_PREFIX=_lobash.
+readonly _LOBASH_0_7_0_164825829_9578_INTERNAL_CONST_PREFIX=_LOBASH_
+readonly _LOBASH_0_7_0_164825829_9578_PRIVATE_FUNC_PREFIX=_l.
+readonly _LOBASH_0_7_0_164825829_9578_PRIVATE_CONST_PREFIX=_L_
+readonly _LOBASH_0_7_0_164825829_9578_PUBLIC_FUNC_PREFIX=l.
+readonly _LOBASH_0_7_0_164825829_9578_PUBLIC_CONST_PREFIX=L_
 
-readonly _LOBASH_0_7_0_164262450_19851_PREFIX=l.
-_LOBASH_0_7_0_164262450_19851_PUBLIC_DEPTH=1  # NOTE: _LOBASH_0_7_0_164262450_19851_PUBLIC_DEPTH should not be readonly
-readonly _LOBASH_0_7_0_164262450_19851_MIN_BASHVER=4.4
+readonly _LOBASH_0_7_0_164825829_9578_PREFIX=l.
+_LOBASH_0_7_0_164825829_9578_PUBLIC_DEPTH=1  # NOTE: _LOBASH_0_7_0_164825829_9578_PUBLIC_DEPTH should not be readonly
+readonly _LOBASH_0_7_0_164825829_9578_MIN_BASHVER=4.4
 
-_LOBASH_0_7_0_164262450_19851_OS=$(_lobash.0_7_0_164262450_19851_detect_os)
-readonly _LOBASH_0_7_0_164262450_19851_OS
+_LOBASH_0_7_0_164825829_9578_OS=$(_lobash.0_7_0_164825829_9578_detect_os)
+readonly _LOBASH_0_7_0_164825829_9578_OS
 
-_lobash.0_7_0_164262450_19851_is_bash() {
+_lobash.0_7_0_164825829_9578_is_bash() {
   [[ -n "${BASH_VERSION:-}" ]]
 }
 
-_lobash.0_7_0_164262450_19851_check_os() {
-  if [[ ! $_LOBASH_0_7_0_164262450_19851_OS =~ ^(Linux|MacOS|BSD)$ ]]; then
-    echo "Not support current system: $_LOBASH_0_7_0_164262450_19851_OS" >&2
+_lobash.0_7_0_164825829_9578_check_os() {
+  if [[ ! $_LOBASH_0_7_0_164825829_9578_OS =~ ^(Linux|MacOS|BSD)$ ]]; then
+    echo "Not support current system: $_LOBASH_0_7_0_164825829_9578_OS" >&2
     return 5
   fi
 }
 
-_lobash.0_7_0_164262450_19851_check_shell() {
-  if ! _lobash.0_7_0_164262450_19851_is_bash; then
+_lobash.0_7_0_164825829_9578_check_shell() {
+  if ! _lobash.0_7_0_164825829_9578_is_bash; then
     echo 'Lobash only work in Bash.' >&2
     return 6
   fi
 }
 
-_lobash.0_7_0_164262450_19851_check_supported_bash_version() {
+_lobash.0_7_0_164825829_9578_check_supported_bash_version() {
   local info
-  read -r -d '.' -a info <<< "$_LOBASH_0_7_0_164262450_19851_MIN_BASHVER"
+  read -r -d '.' -a info <<< "$_LOBASH_0_7_0_164825829_9578_MIN_BASHVER"
   if (( BASH_VERSINFO[0] < info[0] )) \
     || ( (( BASH_VERSINFO[0] == info[0] )) && (( BASH_VERSINFO[1] < info[1] )) ); then
-    echo "Bash $BASH_VERSION is not supported. Upgrade your Bash to $_LOBASH_0_7_0_164262450_19851_MIN_BASHVER or higher version." >&2
+    echo "Bash $BASH_VERSION is not supported. Upgrade your Bash to $_LOBASH_0_7_0_164825829_9578_MIN_BASHVER or higher version." >&2
     return 7
   fi
 }
 
-_lobash.0_7_0_164262450_19851_check_support() {
-  _lobash.0_7_0_164262450_19851_check_os
-  _lobash.0_7_0_164262450_19851_check_shell
-  # _lobash.0_7_0_164262450_19851_check_supported_bash_version
+_lobash.0_7_0_164825829_9578_check_support() {
+  _lobash.0_7_0_164825829_9578_check_os
+  _lobash.0_7_0_164825829_9578_check_shell
+  # _lobash.0_7_0_164825829_9578_check_supported_bash_version
 }
 
-_lobash.0_7_0_164262450_19851_check_support
+_lobash.0_7_0_164825829_9578_check_support
 
-_lobash.0_7_0_164262450_19851_dirname() {
+_lobash.0_7_0_164825829_9578_dirname() {
   local str=${1:-}
   [[ $str == '/' ]] && echo '/' && return 0
   [[ $str =~ ^'../' ]] && echo '.' && return 0
@@ -92,17 +92,17 @@ _lobash.0_7_0_164262450_19851_dirname() {
   printf '%s\n' "${str%/*}"
 }
 
-_lobash.0_7_0_164262450_19851_with_IFS() {
+_lobash.0_7_0_164825829_9578_with_IFS() {
   local IFS=$1
   shift
   eval "$*"
 }
 
-_lobash.0_7_0_164262450_19851_is_tty_available() {
+_lobash.0_7_0_164825829_9578_is_tty_available() {
   { : >/dev/tty ; } &>/dev/null
 }
 
-_lobash.0_7_0_164262450_19851_is_gnu_sed() {
+_lobash.0_7_0_164825829_9578_is_gnu_sed() {
   local out
   out=$(${1:-sed} --version 2>/dev/null)
   [[ $out =~ 'GNU sed' ]]
@@ -159,7 +159,7 @@ l.array_size() {
   echo "$_size_"
 }
 
-_l.0_7_0_164262450_19851_ask() {
+_l.0_7_0_164825829_9578_ask() {
   local msg=$1
   local default=$2
   local valid_values prompt
@@ -179,15 +179,17 @@ _l.0_7_0_164262450_19851_ask() {
   fi
 
   local answer result='' tty_available
-  tty_available=$(_lobash.0_7_0_164262450_19851_is_tty_available && echo true || echo false)
-  [[ $tty_available == true ]] && echo "$msg" > /dev/tty
+  tty_available=$(_lobash.0_7_0_164825829_9578_is_tty_available && echo true || echo false)
+  [[ $tty_available == true ]] && echo "$msg" >/dev/tty
+
+  local loop_limit=10
 
   while [[ -z $result ]]; do
     read -rp "$prompt " answer
 
     if [[ -z $answer ]]; then
       if [[ -z $default ]]; then
-        [[ $tty_available == true ]] && echo ">> Empty answer is not allowed." > /dev/tty
+        [[ $tty_available == true ]] && echo ">> Empty answer is not allowed." >/dev/tty
       else
         result="${default^^}"
       fi
@@ -201,8 +203,14 @@ _l.0_7_0_164262450_19851_ask() {
       done
 
       if [[ -z $result ]]; then
-        [[ $tty_available == true ]] && echo ">> Invalid answer '$answer'." > /dev/tty
+        [[ $tty_available == true ]] && echo ">> Invalid answer '$answer'." >/dev/tty
       fi
+    fi
+
+    loop_limit=$((loop_limit - 1))
+    if ((loop_limit == 0)); then
+      [[ $tty_available == true ]] && echo ">> Error: Reach the loop limit while asking" >/dev/tty
+      return 4
     fi
   done
   echo "$result"
@@ -210,7 +218,7 @@ _l.0_7_0_164262450_19851_ask() {
 
 l.ask() {
   local values=(yes no)
-  _l.0_7_0_164262450_19851_ask "$1" "${2:-}"
+  _l.0_7_0_164825829_9578_ask "$1" "${2:-}"
 }
 
 l.ask_input() {
@@ -228,7 +236,7 @@ l.ask_input() {
 
 l.ask_with_cancel() {
   local values=(yes no cancel)
-  _l.0_7_0_164262450_19851_ask "$1" "${2:-}"
+  _l.0_7_0_164825829_9578_ask "$1" "${2:-}"
 }
 
 l.basename() {
@@ -244,7 +252,7 @@ l.basename.p() {
   l.basename "$str"
 }
 
-_l.0_7_0_164262450_19851_run_benchmark() {
+_l.0_7_0_164825829_9578_run_benchmark() {
   local c=$1
   local repeats=$2
   local i
@@ -264,12 +272,12 @@ l.benchmark() {
   type "$c"
   echo "============="
 
-  time _l.0_7_0_164262450_19851_run_benchmark "$c" "$repeats"
+  time _l.0_7_0_164825829_9578_run_benchmark "$c" "$repeats"
 
   printf '\n--------------------------\n\n'
 }
 
-_l.0_7_0_164262450_19851_choose_prompt() {
+_l.0_7_0_164825829_9578_choose_prompt() {
   printf '  %s\n' 'No. Item'
   local i
   for i in "${!items[@]}"; do
@@ -283,7 +291,7 @@ l.choose() {
   local items=("$@")
 
   local num prompt
-  prompt=$(_l.0_7_0_164262450_19851_choose_prompt)
+  prompt=$(_l.0_7_0_164825829_9578_choose_prompt)
   read -r -p "$prompt" num
 
   if ! [[ ${num} =~ ^[0-9]+$ ]]; then
@@ -340,8 +348,8 @@ l.count_lines.p() {
 }
 
 l.cur_function_name() {
-  # _LOBASH_0_7_0_164262450_19851_PUBLIC_DEPTH=1 in built lobash.bash, and _LOBASH_0_7_0_164262450_19851_PUBLIC_DEPTH=2 in test.
-  printf '%s\n' "${FUNCNAME[$_LOBASH_0_7_0_164262450_19851_PUBLIC_DEPTH]}"
+  # _LOBASH_0_7_0_164825829_9578_PUBLIC_DEPTH=1 in built lobash.bash, and _LOBASH_0_7_0_164825829_9578_PUBLIC_DEPTH=2 in test.
+  printf '%s\n' "${FUNCNAME[$_LOBASH_0_7_0_164825829_9578_PUBLIC_DEPTH]}"
 }
 
 l.cursor_col() {
@@ -379,17 +387,17 @@ l.date() {
 }
 
 l.detect_os() {
-  _lobash.0_7_0_164262450_19851_detect_os
+  _lobash.0_7_0_164825829_9578_detect_os
 }
 
 l.dirname() {
-  _lobash.0_7_0_164262450_19851_dirname "${1:-}"
+  _lobash.0_7_0_164825829_9578_dirname "${1:-}"
 }
 
 l.dirname.p() {
   local str
   IFS='' read -r str
-  _lobash.0_7_0_164262450_19851_dirname "$str"
+  _lobash.0_7_0_164825829_9578_dirname "$str"
 }
 
 l.each() {
@@ -617,11 +625,11 @@ l.is_associative_array.s() {
 }
 
 l.is_bash() {
-  _lobash.0_7_0_164262450_19851_is_bash
+  _lobash.0_7_0_164825829_9578_is_bash
 }
 
 l.is_bash.s() {
-  _lobash.0_7_0_164262450_19851_is_bash && echo true || echo false
+  _lobash.0_7_0_164825829_9578_is_bash && echo true || echo false
 }
 
 l.is_dir() {
@@ -705,7 +713,7 @@ l.is_function.s() {
 }
 
 l.is_gnu_sed() {
-  _lobash.0_7_0_164262450_19851_is_gnu_sed
+  _lobash.0_7_0_164825829_9578_is_gnu_sed
 }
 
 l.is_integer() {
@@ -749,11 +757,11 @@ l.is_truthy.s() {
 }
 
 l.is_tty_available() {
-  _lobash.0_7_0_164262450_19851_is_tty_available
+  _lobash.0_7_0_164825829_9578_is_tty_available
 }
 
 l.is_tty_available.s() {
-  _lobash.0_7_0_164262450_19851_is_tty_available && echo true || echo false
+  _lobash.0_7_0_164825829_9578_is_tty_available && echo true || echo false
 }
 
 l.is_ubuntu() {
@@ -939,16 +947,16 @@ if (( BASH_VERSINFO[0] > 4 )); then
     echo $(( ${EPOCHREALTIME/./} / 1000 ))
   }
 else
-  _l.0_7_0_164262450_19851_perl_now() {
+  _l.0_7_0_164825829_9578_perl_now() {
     perl -MTime::HiRes=time -e 'printf "%d\n", time * 1000'
   }
 
   l.now() {
     local timestamp
 
-    if [[ $_LOBASH_0_7_0_164262450_19851_OS == 'MacOS' ]]; then
+    if [[ $_LOBASH_0_7_0_164825829_9578_OS == 'MacOS' ]]; then
       # date '+%N' not supported in MacOS.
-      _l.0_7_0_164262450_19851_perl_now
+      _l.0_7_0_164825829_9578_perl_now
     else
       # Some Linux systems may not install the Perl module "Time::HiRes".
       # So use date '+%3N' to get milliseconds.
@@ -956,7 +964,7 @@ else
 
       if [[ ${#timestamp} == 10 ]]; then
         # But the date '+%N' is GNU date feature which not supported in Alpine/Busybox systems.
-        _l.0_7_0_164262450_19851_perl_now
+        _l.0_7_0_164825829_9578_perl_now
       else
         printf '%s\n' "$timestamp"
       fi
@@ -969,13 +977,13 @@ l.now_s() {
 }
 
 
-_l.0_7_0_164262450_19851_parse_args_add_arg() {
+_l.0_7_0_164825829_9578_parse_args_add_arg() {
   if [[ $__args != _ ]]; then
     eval "$__args+=(\"$1\")"
   fi
 }
 
-_l.0_7_0_164262450_19851_parse_args_add_opt() {
+_l.0_7_0_164825829_9578_parse_args_add_opt() {
   if [[ $__opts != _ ]]; then
     local str=${opt_props_map[alias:$1]:-}
 
@@ -1000,12 +1008,12 @@ _l.0_7_0_164262450_19851_parse_args_add_opt() {
   fi
 }
 
-_l.0_7_0_164262450_19851_parse_args_get_opt_val() {
+_l.0_7_0_164825829_9578_parse_args_get_opt_val() {
   # shellcheck disable=1083
   eval "echo "\${"$__opts"["$1"]:-}""
 }
 
-_l.0_7_0_164262450_19851_parse_args_single_hyphen_options() {
+_l.0_7_0_164825829_9578_parse_args_single_hyphen_options() {
   local opt=${1#-}
   local next=${2:-}
 
@@ -1025,24 +1033,24 @@ _l.0_7_0_164262450_19851_parse_args_single_hyphen_options() {
 
       # The front letters always be true
       for ((k = 0; k < end; k++)); do
-        _l.0_7_0_164262450_19851_parse_args_single_hyphen_options "-${opt:k:1}"
+        _l.0_7_0_164825829_9578_parse_args_single_hyphen_options "-${opt:k:1}"
       done
 
       # put the latest letter to parse again
       if (( $# > 1)); then
-        _l.0_7_0_164262450_19851_parse_args_single_hyphen_options "-${opt:k:1}" "$next"
+        _l.0_7_0_164825829_9578_parse_args_single_hyphen_options "-${opt:k:1}" "$next"
       else
-        _l.0_7_0_164262450_19851_parse_args_single_hyphen_options "-${opt:k:1}"
+        _l.0_7_0_164825829_9578_parse_args_single_hyphen_options "-${opt:k:1}"
       fi
     else
       # -abc=3 or -abc= or -f=abc
       end=$((${#prefix} - 1))
       # The front letters always be true
       for ((k = 0; k < end; k++)); do
-        _l.0_7_0_164262450_19851_parse_args_single_hyphen_options "-${opt:k:1}"
+        _l.0_7_0_164825829_9578_parse_args_single_hyphen_options "-${opt:k:1}"
       done
 
-      _l.0_7_0_164262450_19851_parse_args_single_hyphen_options "-${opt:k:1}" "${opt:k+2}"
+      _l.0_7_0_164825829_9578_parse_args_single_hyphen_options "-${opt:k:1}" "${opt:k+2}"
     fi
   else
     # -a=3 or -a= or -a 3 or -a or -a -b or -a --
@@ -1051,20 +1059,20 @@ _l.0_7_0_164262450_19851_parse_args_single_hyphen_options() {
     if ((${#matches[@]} == 2)); then
       # -a=3 or -a=
       # shellcheck disable=2154
-      _l.0_7_0_164262450_19851_parse_args_add_opt "${matches[0]}" "${matches[1]}"
+      _l.0_7_0_164825829_9578_parse_args_add_opt "${matches[0]}" "${matches[1]}"
     else
       # -a 3 or -a or -a -b or -a abc
       if [[ ${opt_props_map["bool:${opt}"]:-} == true ]]; then
-        _l.0_7_0_164262450_19851_parse_args_add_opt "${opt}" true
+        _l.0_7_0_164825829_9578_parse_args_add_opt "${opt}" true
       elif [[ ${opt_props_map["count:${opt}"]:-} == true ]]; then
-        _l.0_7_0_164262450_19851_parse_args_add_opt "${opt}" "\$((\${$__opts[$opt]:-0} + 1))"
+        _l.0_7_0_164825829_9578_parse_args_add_opt "${opt}" "\$((\${$__opts[$opt]:-0} + 1))"
       elif [[ $next == -- ]]; then
         # -a --
         echo "Error: Missing parameter for the option '-${opt}'" >&2
         return 6
       else
         if (( $# > 1)); then
-          _l.0_7_0_164262450_19851_parse_args_add_opt "${opt}" "$next"
+          _l.0_7_0_164825829_9578_parse_args_add_opt "${opt}" "$next"
           ((i += 1))
         else
           echo "Error: Missing parameter for the option '-${opt}'" >&2
@@ -1075,7 +1083,7 @@ _l.0_7_0_164262450_19851_parse_args_single_hyphen_options() {
   fi
 }
 
-_l.0_7_0_164262450_19851_parse_args_double_hyphen_options() {
+_l.0_7_0_164825829_9578_parse_args_double_hyphen_options() {
   local param=$1
   local next=${2:-}
 
@@ -1087,19 +1095,19 @@ _l.0_7_0_164262450_19851_parse_args_double_hyphen_options() {
     # opt_type=bool
     if [[ $param == --no-* ]]; then
       # --no-opt
-      _l.0_7_0_164262450_19851_parse_args_add_opt "${opt}" false
+      _l.0_7_0_164825829_9578_parse_args_add_opt "${opt}" false
     else
-      _l.0_7_0_164262450_19851_parse_args_add_opt "${opt}" true
+      _l.0_7_0_164825829_9578_parse_args_add_opt "${opt}" true
     fi
   elif [[ ${opt_props_map["count:${opt}"]:-} == true ]]; then
     # opt_type=count
-    _l.0_7_0_164262450_19851_parse_args_add_opt "${opt}"  "\$((\${$__opts[$opt]:-0} + 1))"
+    _l.0_7_0_164825829_9578_parse_args_add_opt "${opt}"  "\$((\${$__opts[$opt]:-0} + 1))"
   else
     # opt_type=kv
 
     if [[ $param =~ ^--([^=]+)=(.*) ]]; then
       # --opt=value or --opt=
-      _l.0_7_0_164262450_19851_parse_args_add_opt "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
+      _l.0_7_0_164825829_9578_parse_args_add_opt "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
     elif [[ $next == -- ]]; then
       # --opt --
       echo "Error: Missing parameter for the option '--${opt}'" >&2
@@ -1107,7 +1115,7 @@ _l.0_7_0_164262450_19851_parse_args_double_hyphen_options() {
     else
       if (( $# > 1)); then
         # --opt value
-        _l.0_7_0_164262450_19851_parse_args_add_opt "${opt}" "${next}"
+        _l.0_7_0_164825829_9578_parse_args_add_opt "${opt}" "${next}"
         ((i += 1))
       else
         # --opt
@@ -1118,7 +1126,7 @@ _l.0_7_0_164262450_19851_parse_args_double_hyphen_options() {
   fi
 }
 
-_l.0_7_0_164262450_19851_parse_args_def() {
+_l.0_7_0_164825829_9578_parse_args_def() {
   local key=$2
   if [[ $key == opts || $key == args ]]; then return ; fi
 
@@ -1163,26 +1171,26 @@ _l.0_7_0_164262450_19851_parse_args_def() {
   done
 }
 
-_l.0_7_0_164262450_19851_parse_args_handle_rest() {
+_l.0_7_0_164825829_9578_parse_args_handle_rest() {
   local val=$1
   local key=$2
 
   if [[ $key == default:* ]]; then
     if ! l.array_has_key "$__opts" "${key#default:}" ; then
-      _l.0_7_0_164262450_19851_parse_args_add_opt "${key#default:}" "$val"
+      _l.0_7_0_164825829_9578_parse_args_add_opt "${key#default:}" "$val"
     fi
   elif [[ $key == bool:* ]]; then
     if ! l.array_has_key "$__opts" "${key#bool:}" ; then
-      _l.0_7_0_164262450_19851_parse_args_add_opt "${key#bool:}" false
+      _l.0_7_0_164825829_9578_parse_args_add_opt "${key#bool:}" false
     fi
   elif [[ $key == count:* ]]; then
     if ! l.array_has_key "$__opts" "${key#count:}" ; then
-    _l.0_7_0_164262450_19851_parse_args_add_opt "${key#count:}" 0
+    _l.0_7_0_164825829_9578_parse_args_add_opt "${key#count:}" 0
     fi
   fi
 }
 
-_l.0_7_0_164262450_19851_parse_args_init() {
+_l.0_7_0_164825829_9578_parse_args_init() {
   # Check "opts" and "args" defined in params_def
   __opts=$(eval "echo "\${"$1"[opts]:-}"")
   __args=$(eval "echo "\${"$1"[args]:-}"")
@@ -1220,9 +1228,9 @@ l.parse_args() {
   local -A opt_props_map=()
   local __opts __args
 
-  _l.0_7_0_164262450_19851_parse_args_init "$1"
+  _l.0_7_0_164825829_9578_parse_args_init "$1"
 
-  l.each "$1" _l.0_7_0_164262450_19851_parse_args_def
+  l.each "$1" _l.0_7_0_164825829_9578_parse_args_def
   # declare -p opt_props_map
   shift 1
 
@@ -1240,7 +1248,7 @@ l.parse_args() {
           ((i += 1))
           for (( ; i <= param_size; i++)); do
             # shellcheck disable=2154
-            _l.0_7_0_164262450_19851_parse_args_add_arg "${!i}"
+            _l.0_7_0_164825829_9578_parse_args_add_arg "${!i}"
           done
           break
         fi
@@ -1248,9 +1256,9 @@ l.parse_args() {
         local j=$((i + 1))
 
         if ((j >= param_size)); then
-          _l.0_7_0_164262450_19851_parse_args_double_hyphen_options "$cur" true
+          _l.0_7_0_164825829_9578_parse_args_double_hyphen_options "$cur" true
         else
-          _l.0_7_0_164262450_19851_parse_args_double_hyphen_options "$cur" "${!j}"
+          _l.0_7_0_164825829_9578_parse_args_double_hyphen_options "$cur" "${!j}"
         fi
 
         ;;
@@ -1259,21 +1267,21 @@ l.parse_args() {
         local j=$((i + 1))
 
         if ((j > param_size)); then
-          _l.0_7_0_164262450_19851_parse_args_single_hyphen_options "$cur" true
+          _l.0_7_0_164825829_9578_parse_args_single_hyphen_options "$cur" true
         else
-          _l.0_7_0_164262450_19851_parse_args_single_hyphen_options "$cur" "${!j}"
+          _l.0_7_0_164825829_9578_parse_args_single_hyphen_options "$cur" "${!j}"
         fi
 
         ;;
 
-      *) _l.0_7_0_164262450_19851_parse_args_add_arg "$cur" ;;
+      *) _l.0_7_0_164825829_9578_parse_args_add_arg "$cur" ;;
     esac
   done
 
-  l.each opt_props_map _l.0_7_0_164262450_19851_parse_args_handle_rest
+  l.each opt_props_map _l.0_7_0_164825829_9578_parse_args_handle_rest
 }
 
-_l.0_7_0_164262450_19851_parse_single_hyphen_options() {
+_l.0_7_0_164825829_9578_parse_single_hyphen_options() {
   local param=${1#-}
 
   # Possible Formats:
@@ -1322,7 +1330,7 @@ _l.0_7_0_164262450_19851_parse_single_hyphen_options() {
   return 4
 }
 
-_l.0_7_0_164262450_19851_parse_double_hyphen_options() {
+_l.0_7_0_164825829_9578_parse_double_hyphen_options() {
   local param=${1#--}
 
   local -a matches=()
@@ -1346,16 +1354,16 @@ _l.0_7_0_164262450_19851_parse_double_hyphen_options() {
   fi
 }
 
-_l.0_7_0_164262450_19851_parse_params_add_none() {
+_l.0_7_0_164825829_9578_parse_params_add_none() {
   return 0
 }
 
-_l.0_7_0_164262450_19851_parse_params_add_opt() {
+_l.0_7_0_164825829_9578_parse_params_add_opt() {
   # shellcheck disable=1087
   eval "$opts_name[\$1]=\"\$2\""
 }
 
-_l.0_7_0_164262450_19851_parse_params_add_arg() {
+_l.0_7_0_164825829_9578_parse_params_add_arg() {
   eval "$args_name+=(\"\$1\")"
 }
 
@@ -1368,16 +1376,16 @@ l.parse_params() {
   local add_opt add_arg
   if [[ $1 != _ ]]; then
     local opts_name=$1
-    add_opt=_l.0_7_0_164262450_19851_parse_params_add_opt
+    add_opt=_l.0_7_0_164825829_9578_parse_params_add_opt
   else
-    add_opt=_l.0_7_0_164262450_19851_parse_params_add_none
+    add_opt=_l.0_7_0_164825829_9578_parse_params_add_none
   fi
 
   if [[ $2 != _ ]]; then
     local args_name=$2
-    add_arg=_l.0_7_0_164262450_19851_parse_params_add_arg
+    add_arg=_l.0_7_0_164825829_9578_parse_params_add_arg
   else
-    add_arg=_l.0_7_0_164262450_19851_parse_params_add_none
+    add_arg=_l.0_7_0_164825829_9578_parse_params_add_none
   fi
 
   local param_size=$#
@@ -1398,9 +1406,9 @@ l.parse_params() {
       fi
 
       if l.start_with "$param" '--'; then
-        f=_l.0_7_0_164262450_19851_parse_double_hyphen_options
+        f=_l.0_7_0_164825829_9578_parse_double_hyphen_options
       else
-        f=_l.0_7_0_164262450_19851_parse_single_hyphen_options
+        f=_l.0_7_0_164825829_9578_parse_single_hyphen_options
       fi
 
       if (( j > param_size )) ; then
@@ -1523,7 +1531,7 @@ l.rgb_to_hex() {
   printf '#%02x%02x%02x\n' "$1" "$2" "$3"
 }
 
-if _lobash.0_7_0_164262450_19851_is_gnu_sed; then
+if _lobash.0_7_0_164825829_9578_is_gnu_sed; then
   l.sedi() { sed -i'' "$@"; }
 else
   l.sedi() { sed -i '' "$@"; }
@@ -1543,14 +1551,14 @@ l.sleep() {
   if [[ $OSTYPE =~ darwin ]]; then
     # MacOS will show shows "/dev/fd/62: Permission denied" on `exec {_sleep_fd}<> <(true)`. So we make a workaround.
 
-    if [[ ! -p ${_L_0_7_0_164262450_19851_SLEEP_TEMP:-} ]]; then
+    if [[ ! -p ${_L_0_7_0_164825829_9578_SLEEP_TEMP:-} ]]; then
       # Get available temp file path
-      _L_0_7_0_164262450_19851_SLEEP_TEMP=$(mktemp -u)
+      _L_0_7_0_164825829_9578_SLEEP_TEMP=$(mktemp -u)
       # Create a FIFO special file
-      mkfifo -m 700 "$_L_0_7_0_164262450_19851_SLEEP_TEMP"
+      mkfifo -m 700 "$_L_0_7_0_164825829_9578_SLEEP_TEMP"
     fi
 
-    exec {_sleep_fd}<>"$_L_0_7_0_164262450_19851_SLEEP_TEMP"
+    exec {_sleep_fd}<>"$_L_0_7_0_164825829_9578_SLEEP_TEMP"
   else
     exec {_sleep_fd}<> <(true)
   fi
@@ -1567,7 +1575,7 @@ l.sort() {
   eval "printf '%s\\n' \"\${${_array_name_}[@]:-}\" | sort \"\$@\""
 }
 
-_l.0_7_0_164262450_19851_split() {
+_l.0_7_0_164825829_9578_split() {
   local -i i
 
   local dLen=${#delimiter}
@@ -1624,9 +1632,9 @@ l.split() {
   fi
 
   if [[ $2 == '-' ]]; then
-    _l.0_7_0_164262450_19851_split
+    _l.0_7_0_164825829_9578_split
   else
-    IFS=$'\n' readarray -t "$output" < <(_l.0_7_0_164262450_19851_split)
+    IFS=$'\n' readarray -t "$output" < <(_l.0_7_0_164825829_9578_split)
   fi
 }
 
@@ -1711,7 +1719,7 @@ l.term_size() {
 
 l.trace_count() {
   local label=${1:-trace}
-  local key=_LOBASH_0_7_0_164262450_19851_trace_count_$label
+  local key=_LOBASH_0_7_0_164825829_9578_trace_count_$label
 
   if [[ -z ${!key:-} ]]; then
     read -r "$key" <<< 0
@@ -1724,7 +1732,7 @@ l.trace_count() {
 
 l.trace_end() {
   set +o xtrace
-  PS4=${_L_0_7_0_164262450_19851_TRACE_OLD_PS4:-$PS4}
+  PS4=${_L_0_7_0_164825829_9578_TRACE_OLD_PS4:-$PS4}
 }
 
 l.trace_stack() {
@@ -1733,14 +1741,14 @@ l.trace_stack() {
     "  # Function (File:Line)"
 
   local i
-  # _LOBASH_0_7_0_164262450_19851_PUBLIC_DEPTH=1 in built lobash.bash, and _LOBASH_0_7_0_164262450_19851_PUBLIC_DEPTH=2 in test.
-  for i in $(seq "$_LOBASH_0_7_0_164262450_19851_PUBLIC_DEPTH" $(( ${#FUNCNAME[@]} -1 ))); do
+  # _LOBASH_0_7_0_164825829_9578_PUBLIC_DEPTH=1 in built lobash.bash, and _LOBASH_0_7_0_164825829_9578_PUBLIC_DEPTH=2 in test.
+  for i in $(seq "$_LOBASH_0_7_0_164825829_9578_PUBLIC_DEPTH" $(( ${#FUNCNAME[@]} -1 ))); do
     printf -- '  - %s (%s:%s)\n' "${FUNCNAME[$i]}" "${BASH_SOURCE[$i]:-(shell)}" "${BASH_LINENO[$i]}"
   done
 }
 
 l.trace_start() {
-  read -r _L_0_7_0_164262450_19851_TRACE_OLD_PS4 <<< "$PS4"
+  read -r _L_0_7_0_164825829_9578_TRACE_OLD_PS4 <<< "$PS4"
   local label=${2:-}
   [[ -n "$label" ]] && label="[$label]"
 
@@ -1765,7 +1773,7 @@ l.trace_start() {
 
 l.trace_time() {
   local label=${1:-debug}
-  local key=_LOBASH_0_7_0_164262450_19851_TRACE_TIME_$label
+  local key=_LOBASH_0_7_0_164825829_9578_TRACE_TIME_$label
   local last_time=${!key:-}
   local current
   current="$(l.now)"
@@ -1780,7 +1788,7 @@ l.trace_time() {
   fi
 }
 
-_l.0_7_0_164262450_19851_trap_error() {
+_l.0_7_0_164825829_9578_trap_error() {
   echo "Error occurred. Error Stacks:" >&2
 
   local frame=0 LINE FUNC FILE
@@ -1791,7 +1799,7 @@ _l.0_7_0_164262450_19851_trap_error() {
 }
 
 l.trap_error() {
-  local trap_func=${1:-_l.0_7_0_164262450_19851_trap_error}
+  local trap_func=${1:-_l.0_7_0_164825829_9578_trap_error}
   # shellcheck disable=SC2064
   trap "$trap_func" ERR
 }
@@ -1808,25 +1816,25 @@ l.trim.p() {
   l.trim "$str"
 }
 
-_L_0_7_0_164262450_19851_TRIM_COLOR_ECS=$'\e'
-_L_0_7_0_164262450_19851_TRIM_COLOR_ECS2=$'\u001b'
-if [[ "$_L_0_7_0_164262450_19851_TRIM_COLOR_ECS" == "$_L_0_7_0_164262450_19851_TRIM_COLOR_ECS2" ]]; then
-  if [[ $_LOBASH_0_7_0_164262450_19851_OS == Linux ]]; then
-    _L_0_7_0_164262450_19851_TRIM_COLOR_REGEX=$_L_0_7_0_164262450_19851_TRIM_COLOR_ECS
-  elif [[ $_LOBASH_0_7_0_164262450_19851_OS == MacOS ]] || [[ $_LOBASH_0_7_0_164262450_19851_OS == BSD ]]; then
-    _L_0_7_0_164262450_19851_TRIM_COLOR_REGEX="\\$_L_0_7_0_164262450_19851_TRIM_COLOR_ECS"
+_L_0_7_0_164825829_9578_TRIM_COLOR_ECS=$'\e'
+_L_0_7_0_164825829_9578_TRIM_COLOR_ECS2=$'\u001b'
+if [[ "$_L_0_7_0_164825829_9578_TRIM_COLOR_ECS" == "$_L_0_7_0_164825829_9578_TRIM_COLOR_ECS2" ]]; then
+  if [[ $_LOBASH_0_7_0_164825829_9578_OS == Linux ]]; then
+    _L_0_7_0_164825829_9578_TRIM_COLOR_REGEX=$_L_0_7_0_164825829_9578_TRIM_COLOR_ECS
+  elif [[ $_LOBASH_0_7_0_164825829_9578_OS == MacOS ]] || [[ $_LOBASH_0_7_0_164825829_9578_OS == BSD ]]; then
+    _L_0_7_0_164825829_9578_TRIM_COLOR_REGEX="\\$_L_0_7_0_164825829_9578_TRIM_COLOR_ECS"
   fi
 else
-  if [[ $_LOBASH_0_7_0_164262450_19851_OS == Linux ]]; then
-    _L_0_7_0_164262450_19851_TRIM_COLOR_REGEX="($_L_0_7_0_164262450_19851_TRIM_COLOR_ECS|\\$_L_0_7_0_164262450_19851_TRIM_COLOR_ECS2)"
-  elif [[ $_LOBASH_0_7_0_164262450_19851_OS == MacOS ]] || [[ $_LOBASH_0_7_0_164262450_19851_OS == BSD ]]; then
-    _L_0_7_0_164262450_19851_TRIM_COLOR_REGEX="(\\$_L_0_7_0_164262450_19851_TRIM_COLOR_ECS|\\$_L_0_7_0_164262450_19851_TRIM_COLOR_ECS2)"
+  if [[ $_LOBASH_0_7_0_164825829_9578_OS == Linux ]]; then
+    _L_0_7_0_164825829_9578_TRIM_COLOR_REGEX="($_L_0_7_0_164825829_9578_TRIM_COLOR_ECS|\\$_L_0_7_0_164825829_9578_TRIM_COLOR_ECS2)"
+  elif [[ $_LOBASH_0_7_0_164825829_9578_OS == MacOS ]] || [[ $_LOBASH_0_7_0_164825829_9578_OS == BSD ]]; then
+    _L_0_7_0_164825829_9578_TRIM_COLOR_REGEX="(\\$_L_0_7_0_164825829_9578_TRIM_COLOR_ECS|\\$_L_0_7_0_164825829_9578_TRIM_COLOR_ECS2)"
   fi
 fi
 
 l.trim_color() {
   ( (( $# == 0 )) || [[ -z ${1:-} ]]) && echo '' && return
-  sed -E "s,${_L_0_7_0_164262450_19851_TRIM_COLOR_REGEX}[[0-9]*(;[0-9]+)*m,,g" <<< "$1"
+  sed -E "s,${_L_0_7_0_164825829_9578_TRIM_COLOR_REGEX}[[0-9]*(;[0-9]+)*m,,g" <<< "$1"
 }
 
 l.trim_color.p() {
@@ -1877,7 +1885,7 @@ l.trim_start.p() {
   fi
 }
 
-_l.0_7_0_164262450_19851_union_array() {
+_l.0_7_0_164825829_9578_union_array() {
   if [[ -z ${l_union_array_map[$l_union_array_item]:-} ]]; then
     l_union_array_arr+=("$l_union_array_item")
     l_union_array_map["$l_union_array_item"]=1
@@ -1889,10 +1897,10 @@ l.union_array() {
   local l_union_array_item
   local -a l_union_array_arr
 
-  eval "for l_union_array_item in \"\${${1}[@]}\"; do _l.0_7_0_164262450_19851_union_array; done || true"
+  eval "for l_union_array_item in \"\${${1}[@]}\"; do _l.0_7_0_164825829_9578_union_array; done || true"
 
   if (( $# > 1 )); then
-    eval "for l_union_array_item in \"\${${2}[@]}\"; do _l.0_7_0_164262450_19851_union_array; done || true"
+    eval "for l_union_array_item in \"\${${2}[@]}\"; do _l.0_7_0_164825829_9578_union_array; done || true"
   fi
 
   l.echo_array l_union_array_arr
@@ -1934,7 +1942,7 @@ l.var_attrs() {
 }
 
 l.with_ifs() {
-  _lobash.0_7_0_164262450_19851_with_IFS "$@"
+  _lobash.0_7_0_164825829_9578_with_IFS "$@"
 }
 
 l.xdg_config_home() {

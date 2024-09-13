@@ -17,6 +17,7 @@ The official repo [one.share][] and [one-bash-it][] provides them.
 - Update repo: `one repo update one.share`
 - Remove repo: `one repo remove one.share`
 - Create repo: You can create your own repo. Read the [Create Repo](#create-repo) for details.
+- Execute command in each repo: `one repo exec ls`
 
 `one help repo` for detailed usage.
 

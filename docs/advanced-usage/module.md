@@ -49,6 +49,7 @@ about-plugin 'Module Description'
 ```
 
 - `about-plugin`: Description of module. It is optional
+- `one-bash:mod:deps awk sed`: To check commands in system when `one <mod> enable`. The DEPS is a string which includes one or more command names separated with spaces.
 - `# ONE_LOAD_PRIORITY: <PRIORITY>`: At the head of script for setting priority.
 
 See the examples in https://github.com/one-bash/one.share
@@ -63,7 +64,7 @@ See the examples in https://github.com/one-bash/one.share
 - `PRIORITY=400`: Priority of module. It is optional
 - `GIT_REPO='https://github.com/user/repo.git'`: Git clone this repo. It is optional
 - `URL='https://raw.githubusercontent.com/...'`: curl this file. It is optional
-- `DEP_CMDS='awk sed'`: To check commands in host when `one <mod> enable`. The DEP_CMDS is a string which includes one or more command names separated with spaces.
+- `DEPS='awk sed'`: To check commands in system when `one <mod> enable`. The DEPS is a string which includes one or more command names separated with spaces.
 
 - hooks used in `one <mod> enable`. They are all optional.
   - `AFTER_DOWNLOAD() {}`: This function will be executed after files downloaded. User may use it to download the other requirements, compile and other things.
@@ -88,7 +89,7 @@ The final module will be: `$ONE_DIR/enabled/priority---name@repo@type.bash` -> `
 
 ### The order to generate mod.bash
 
-1. check dependencies if `DEP_CMDS` defined
+1. check dependencies if `DEPS` or `one-bash:mod:deps` defined
 2. download files
 3. run `AFTER_DOWNLOAD` if defined
 4. copy `INSERT` if defined

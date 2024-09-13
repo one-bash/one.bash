@@ -21,7 +21,7 @@ create_symlink() {
 	if [[ -L "$ONE_DIR/enabled/$t/$name" ]]; then
 		local answer
 		printf 'Found existed enabled file: %s -> %s\n' "$name" "$(readlink "$ONE_DIR/enabled/$t/$name")" >&2
-		answer=$(one_l.ask "Do you want to override it?")
+		answer=$(l.ask "Do you want to override it?" N)
 		if [[ $answer != YES ]]; then return; fi
 	fi
 
@@ -51,23 +51,30 @@ enable() {
 	local name=$2
 
 	if [[ -x $path ]]; then
+		mod_check_dep_cmds "$path"
 		create_symlink "$name" "$path"
 	elif [[ $path == *.opt.bash ]]; then
-		check_opt_mod_dep_cmds "$path"
+		mod_check_dep_cmds "$path"
 		# Disable first, prevent duplicated module enabled with different priority
 		disable_mod "$name"
 		download_mod_data "$name" "$path"
 
-		local url bin_name
+		local SCRIPT bin_name
 
 		# shellcheck disable=1090
-		url=$(. "$path" && echo "${URL:-}")
-		if [[ -n $url ]]; then
-			chmod +x "$ONE_DIR/data/$t/$name/script.bash"
+		SCRIPT=$(. "$path" && echo "${SCRIPT:-}")
+		if [[ -n $SCRIPT ]]; then
+			local script_file=$ONE_DIR/data/$t/$name/script.bash
+			if [[ ! -f $script_file ]]; then
+				print_err "The script file not exist: $script_file"
+				return 4
+			fi
+
+			chmod +x "$script_file"
 
 			# shellcheck disable=1090
 			while read -r bin_name; do
-				create_symlink "$bin_name" "$ONE_DIR/data/$t/$name/script.bash"
+				create_symlink "$bin_name" "$script_file"
 			done < <(. "$path" && echo "${EXPORTS[@]}")
 		else
 			(
@@ -114,7 +121,7 @@ main() {
 				name=${name%.opt.bash}
 				name=${name%.bash}
 				name="${name%.sh}"
-				enable "$path" "$name" || true
+				enable "$path" "$name"
 			done
 		else
 			for path in "${ONE_DIR}/enabled/repo/$repo/$t/"*; do
@@ -122,7 +129,7 @@ main() {
 				name=${name%.opt.bash}
 				name=${name%.bash}
 				name="${name%.sh}"
-				enable "$path" "$name" || true
+				enable "$path" "$name"
 			done
 		fi
 	else
@@ -161,7 +168,7 @@ main() {
 
 						;;
 				esac
-			} || true
+			}
 		done
 	fi
 }

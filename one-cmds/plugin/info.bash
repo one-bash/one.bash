@@ -24,7 +24,7 @@ info_mod() {
 	case ${#filepaths[@]} in
 		1)
 			local filepath=${filepaths[0]}
-			local ABOUT URL SCRIPT PRIORITY
+			local ABOUT SCRIPT PRIORITY
 			local link_to
 
 			if [[ -z $repo ]]; then
@@ -45,9 +45,8 @@ info_mod() {
 					source "$filepath"
 					print_info_item "About" "${ABOUT:-}"
 					print_info_item "Priority" "${PRIORITY:-}"
-					print_info_item "URL" "${URL:-}"
 					print_info_item "Script" "${SCRIPT:-}"
-					print_info_item "DEP_CMDS" "${DEP_CMDS:-}"
+					print_info_item "DEPS" "${DEPS:-}"
 				)
 			else
 				ABOUT=$(metafor about-plugin <"$filepath")
