@@ -27,12 +27,8 @@ list_enabled() {
 }
 
 get_enabled_repo_name() {
-	repo=${1#"$ONE_DIR/enabled/repo/"}
-	echo "${repo%%/*}"
-}
-
-get_repo_name() {
-	repo=${1#"$ONE_DIR/data/repo/"}
+	local s="$ONE_DIR/enabled/repo/"
+	repo=${1:${#s}}
 	echo "${repo%%/*}"
 }
 
@@ -222,8 +218,9 @@ get_priority() {
 
 get_priority_from_mod() {
 	priority=$(get_opt "$1" PRIORITY)
+	local mod_type=$2
 	if [[ -z $priority ]]; then
-		echo "${default_priority_map[$t]}"
+		echo "${default_priority_map[$mod_type]}"
 	else
 		echo "$priority"
 	fi
@@ -261,32 +258,34 @@ mod_check_dep_cmds() {
 	done
 }
 
+declare -A MOD_TYPE_COLOR=(
+	[completion]=$GREEN
+	[plugin]=$BLUE
+	[alias]=$PURPLE
+	[bin]=$WHITE
+	[sub]=$YELLOW
+)
+
 print_mod_props() {
-	local repo_filter=${1:-}
-	local line type mod_type mod_name repo_name priority
+	local filepath=$1
+	local -a prints=()
+	local format='' about='' repo_name mod_type mod_name
 
-	declare -A MOD_TYPE_COLOR=(
-		['completion']=$GREEN
-		['plugin']=$BLUE
-		['alias']=$PURPLE
-		['bin']=$WHITE
-		['sub']=$YELLOW
-	)
+	if [[ $filepath =~ \/repo\/([^\/]+)\/([^\/]+)\/([^\/]+) ]]; then
+		repo_name="${BASH_REMATCH[1]}"
+		mod_type="${BASH_REMATCH[2]}"
+		mod_name="${BASH_REMATCH[3]}"
+		mod_name=${mod_name##*/}
 
-	while read -r line; do
-		read -r -a list < <(echo "${line##*/}" | sed -E "s/^([[:digit:]]{3})---([^@]+)@([^@]+)@([^@]+)\.bash\$/\1 \2 \3 \4/")
-		priority="${list[0]}"
-		mod_name=${list[1]}
-		repo_name=${list[2]}
-		type=${list[3]}
-
-		local -a prints=()
-		local format='' about
-
-		about=$(metafor about-plugin <"$line")
-
-		if [[ -n $repo_filter ]] && [[ $repo_filter != "$repo_name" ]]; then
-			continue
+		if [[ $mod_name == *.opt.bash ]]; then
+			mod_name=${mod_name%.opt.bash}
+			# shellcheck disable=1090,2153
+			about="$(. "$filepath" && echo "${ABOUT:-}")"
+			priority=$(get_priority_from_mod "$filepath" "$mod_type")
+		else
+			mod_name=${mod_name%.bash}
+			about=$(metafor about-plugin <"$filepath")
+			priority=$(get_priority "$filepath")
 		fi
 
 		# load-priority
@@ -295,8 +294,8 @@ print_mod_props() {
 
 		# mod type
 		format="$format %b%-4s"
-		mod_type=${type^}
-		prints+=("${MOD_TYPE_COLOR[${type}]}" "${mod_type:0:4}")
+		local mod_type_str=${mod_type^}
+		prints+=("${MOD_TYPE_COLOR[$mod_type]}" "${mod_type_str:0:4}")
 
 		# mod_name repo_name
 		format="$format %b%-18s %b%-18s"
@@ -312,5 +311,54 @@ print_mod_props() {
 
 		# shellcheck disable=2059
 		printf "$format\n" "${prints[@]}"
-	done
+	fi
+}
+
+print_enabled_mod_props() {
+	local filepath=${1}
+	local filename=${filepath##*/}
+	local repo_filter=${2:-}
+	local filename mod_type mod_type mod_name repo_name priority
+
+	if [[ $filename =~ ^([[:digit:]]{3})---([^@]+)@([^@]+)@([^@]+).bash$ ]]; then
+		priority="${BASH_REMATCH[1]}"
+		mod_name=${BASH_REMATCH[2]}
+		repo_name=${BASH_REMATCH[3]}
+		mod_type=${BASH_REMATCH[4]}
+	else
+		# ignore invalid file
+		return 0
+	fi
+
+	if [[ -n $repo_filter ]] && [[ $repo_filter != "$repo_name" ]]; then
+		return 0
+	fi
+
+	local -a prints=()
+	local format='' about
+
+	# load-priority
+	format="$format%b%-4s"
+	prints+=("$YELLOW" "$priority")
+
+	# mod type
+	format="$format %b%-4s"
+	local mod_type_str=${mod_type^}
+	prints+=("${MOD_TYPE_COLOR[${mod_type}]}" "${mod_type_str:0:4}")
+
+	# mod_name repo_name
+	format="$format %b%-18s %b%-18s"
+
+	prints+=(
+		"$CYAN" "${mod_name:0:18}"
+		"$BLUE" "${repo_name:0:18}"
+	)
+
+	# About
+	format="$format %b%s"
+	about=$(metafor about-plugin <"$filepath")
+	prints+=("$WHITE" "${about//$'\n'/ }")
+
+	# shellcheck disable=2059
+	printf "$format\n" "${prints[@]}"
 }

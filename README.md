@@ -10,9 +10,9 @@ An elegant framework to manage commands, completions, dotfiles for bash players.
 ## Features
 
 - Manage collections of dotfiles in one place. Using YAML file to manage soft-links via [dotbot][].
-- Manage shell scripts, completions, aliases by [modules](#modules). Support custom modules.
-- Easy to share and reuse executable files, sub commands, configs and modules by [repo](#one-repo). Support custom repo and multiple repos.
-- Manage commands under your own scope. Like `a <cmd>` to invoke command that no worry about duplicated in `PATH`. Read the [ONE_SUB Commands](./docs/advanced-usage/one-sub-cmd.md).
+- Manage shell scripts, completions, aliases by [modules][one-module]. Support custom modules.
+- Easy to share and reuse executable files, sub commands, configs and modules by [repo][one-repo]. Support custom repo and multiple repos.
+- Manage commands under your own scope. Like `a <cmd>` to invoke command that no worry about duplicated in `PATH`. Read the [ONE_SUB Commands][one-sub].
 - Configurable one.bash. Read [ONE_CONF](#oneconf).
 - Support [bash-it][] via [one-bash-it][]. You can use `one` commands to manage bash-it's aliases/completions/plugins. Read [bash-it.md](./docs/advanced-usage/bash-it.md).
 
@@ -76,6 +76,29 @@ one upgrade
 # check the status of all dependencies
 one dep status
 ```
+
+## Quick Start
+
+```bash
+# Add a repo
+one repo add one-bash/one.share
+one repo add Bash-it/bash-it
+
+# List available plugins/completions/aliases/bins/subs
+one plugin list -a
+one completion list -a
+one alias list -a
+one bin list -a
+one sub list -a
+
+# Enable modules on demand
+# one plugin enable <name>
+# one completion enable <name>
+
+# Restart your shell
+```
+
+If shell broken after restart, you can try 
 
 ## Configuration
 
@@ -174,9 +197,7 @@ ONE_LINKS_CONF() {
 
 ## Usage
 
-## ONE Commands
-
-The `one` command is used to manage one.bash modules, one.config, and dependencies.
+The `one` command is used to manage one.bash [repos][one-repo] and [modules][one-module], one.config, and dependencies.
 
 ```bash
 # Enter "one" to show the usage.
@@ -223,59 +244,11 @@ Arguments:
     <SUB_CMD>                   The ONE_SUB command
 ```
 
-## Modules
+## [Documents](./docs)
 
-one.bash uses modules to manage shell scripts.
-
-User can use `one` commands to manage modules. Enable/Disable modules on your demand.
-
-The modules have three types: `alias`, `completion`, `plugin`.
-
-- All plugins are put in `plugin/` of each repo.
-- All completions are put in `completion/` of each repo.
-- All aliases are put in `alias/` of each repo.
-- All enabled modules are symbol linked in `$ONE_DIR/enabled/` directory.
-  - `one enabled` to view enabled modules.
-  - `one backup` to backup enabled modules to a file.
-- Read `one help <mod_type>` for usages.
-- `one <mod_type> enable` to enable modules.
-- `one <mod_type> disable` to disable modules.
-- `one <mod_type> list` to list modules.
-
-[one.share][] has provided many modules, configs, ONE_SUB commands, and bin commands.
-
-It's suggested to move your shell codes to modules for management.
-
-Read the [Module document](./docs/advanced-usage/module.md) for details.
-
-## One Repo
-
-one.bash is just a management framework. It does not contain any dotfiles, configs.
-The official repo [one.share][] and [one-bash-it][] provides them to enhance shell.
-
-- List all local repos: `one repo list`
-- Download and enable repo:
-  - `one repo add https://github.com/one-bash/one.share`
-  - `one repo add git@github.com:one-bash/one.share.git`
-  - `one repo add /local/directory`
-- Enable repo: `one repo enable one.share`
-- Disable repo: `one repo disable one.share`
-- Update repo: `one repo update one.share`
-- Remove repo: `one repo remove one.share`
-- Create repo: You can create your own repo. Read the [document](./docs/advanced-usage/repo.md#create-repo) for details.
-
-
-## ONE_SUB Commands
-
-All executable files in `sub/` of each [repo](./docs/advanced-usage/repo.md) could be invoked
-by `one sub run <cmd>` or `a <cmd>` (`$ONE_SUB <cmd>`, `ONE_SUB` defaults to `a`, read the usage in [`ONE_CONF`][one.config.default]).
-
-The `sub/` path is not included in `$PATH`. So you cannot invoke ONE_SUB commands directly.
-
-Read [this document](./docs/advanced-usage/one-sub-cmd.md) for more details.
-
-## [Docs](./docs)
-
+- [Module][one-module]
+- [One Repo]()
+- [ONE_SUB Commands](./docs/advanced-usage/one-sub-cmd.md)
 - [Bashrc Initialization Proces](./docs/entry.md)
 - [Project File Structure](./docs/file-structure.md)
 - [Advanced Usages](./docs/advanced-usage/README.md)
@@ -322,3 +295,6 @@ Read the [NOTICE][] file distributed with this work for additional information r
 [bash-it]: https://github.com/Bash-it/bash-it
 [bash-completion]: https://github.com/scop/bash-completion
 [sub]: https://github.com/basecamp/sub
+[one-repo]: ./docs/advanced-usage/repo.md
+[one-module]: ./docs/advanced-usage/module.md
+[one-sub]: ./docs/advanced-usage/one-sub-cmd.md

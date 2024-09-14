@@ -1,7 +1,7 @@
 usage() {
 	cat <<EOF
 Usage: one repo info <NAME>
-Desc:  Show the informations of repo
+Desc:  Show the informations of downloaded repo
 EOF
 }
 

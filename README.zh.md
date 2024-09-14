@@ -10,9 +10,9 @@
 ## 功能
 
 - 集中管理一系列配置文件。使用 YAML 文件通过 [dotbot][] 来管理软链接。
-- 通过[模块](#模块)管理 shell 脚本、补语、别名。支持自定义模块。
-- 通过 [repo](#one-repo) 轻松分享和重用可执行文件、子命令、配置和模块。支持自定义 repo 和多个 repo。
-- 可以在一个作用域下管理自己的命令。如 `a <cmd>` 来调用命令，避免在 `PATH` 中重复命令。请阅读 [ONE_SUB Commands](./docs/advanced-usage/one-sub-cmd.md)。
+- 通过[模块][one-module]管理 shell 脚本、补语、别名。支持自定义模块。
+- 通过 [repo][one-repo] 轻松分享和重用可执行文件、子命令、配置和模块。支持自定义 repo 和多个 repo。
+- 可以在一个作用域下管理自己的命令。如 `a <cmd>` 来调用命令，避免在 `PATH` 中重复命令。请阅读 [ONE_SUB Commands][one-sub]。
 - 可配置的 one.bash。请阅读 [ONE_CONF](#oneconf)。
 - 支持 [bash-it][]。使用 [one-bash-it][] 即可。你可以使用 one 命令来管理 bash-it 的 aliases/completions/plugins。请阅读 [bash-it.md](./docs/advanced-usage/bash-it.md)。
 
@@ -76,6 +76,8 @@ one upgrade
 # 检查依赖状态
 one dep status
 ```
+
+## 快速上手
 
 ## 配置
 
@@ -176,7 +178,7 @@ ONE_LINKS_CONF() {
 
 ## ONE 命令
 
-`one` 命令用来管理 one.bash 模块、配置以及依赖。
+`one` 命令用来管理 one.bash [仓库][one-repo]和[模块][one-module]、配置以及依赖。
 
 ```bash
 # 调用 `one` 会显示用法。
@@ -223,61 +225,11 @@ Arguments:
     <SUB_CMD>                   The ONE_SUB command
 ```
 
-## 模块
-
-one.bash 使用模块来管理脚本。
-
-用户可以使用 `one` 命令来管理模块。按需启用或禁用模块。
-
-模块有三种类型：`alias`, `completion`, `plugin`。
-
-- 所有 plugins 放在每个 repo 的 `plugin/` 目录。
-- 所有 completions 放在每个 repo 的 `completion/` 目录。
-- 所有 aliases 放在每个 repo 的 `alias/` 目录。
-- 所有启用的模块会在 `$ONE_DIR/enabled/` 目录下创建软链接。
-  - 使用 `one enabled` 可以查询启用的模块。
-  - 使用 `one backup` 备份启动的模块。
-- 使用 `one help <mod_type>` 显示使用方法。
-- `one <mod_type> enable` 来启用模块。
-- `one <mod_type> disable` 来禁用模块。
-- `one <mod_type> list` 列出所有模块。
-
-[one.share][] 提供了许多模块、配置、ONE_SUB 命令，以及 bin 命令。
-
-推荐你把 shell 代码移到模块里管理。
-
-详见[模块文档](./docs/advanced-usage/module.md)。
-
-## One Repo
-
-one.bash 只是一个管理框架。它不包含任何配置文件。
-推荐使用官方的 REPO [one.share][] 和 [one-bash-it][] ，它们提供了很多配置来增强 shell 体验。
-
-你可以创建你自己的 ONE REPO。阅读 [Create Repo](./docs/advanced-usage/repo.md#create-repo) 了解详情。
-
-- 列出所有本地 repo: `one repo list`
-- 下载并启用 repo:
-  - `one repo add https://github.com/one-bash/one.share`
-  - `one repo add git@github.com:one-bash/one.share.git`
-  - `one repo add /local/directory`
-- 启用 repo: `one repo enable one.share`
-- 禁用 repo: `one repo disable one.share`
-- 更新 repo: `one repo update one.share`
-- 删除 repo: `one repo remove one.share`
-- 创建 repo: You can create your own repo. Read the [document](./docs/advanced-usage/repo.md#create-repo) for details.
-
-调用 `one repo l` 来列出当前使用的所有 REPO（根据 `ONE_CONF` 配置）。
-
-## ONE_SUB 命令
-
-放在每个 [REPO](./docs/advanced-usage/repo.md) 的 `sub/` 目录下的可执行文件，都可以使用 `one sub run <cmd>` 或 `a <cmd>` 调用。（`$ONE_SUB <cmd>`, `ONE_SUB` 默认值为 `a`，详见 [`ONE_CONF`][one.config.default]）
-
-`sub/` 路径没有包含在 `$PATH`，所有你无法直接调用 ONE_SUB 命令。
-
-详见[文档](./docs/advanced-usage/one-sub-cmd.md)。
-
 ## [文档](./docs)
 
+- [模块][one-sub]
+- [One Repo][one-repo]
+- [ONE_SUB 命令][one-sub]
 - [Bashrc Initialization Proces](./docs/entry.md)
 - [Project File Structure](./docs/file-structure.md)
 - [Advanced Usages](./docs/advanced-usage/README.md)
@@ -324,3 +276,6 @@ Read the [NOTICE][] file distributed with this work for additional information r
 [bash-it]: https://github.com/Bash-it/bash-it
 [bash-completion]: https://github.com/scop/bash-completion
 [sub]: https://github.com/basecamp/sub
+[one-repo]: ./docs/advanced-usage/repo.zh.md
+[one-module]: ./docs/advanced-usage/module.zh.md
+[one-sub]: ./docs/advanced-usage/one-sub-cmd.zh.md

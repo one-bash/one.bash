@@ -49,7 +49,7 @@ declare -A opts_def=(
 l.parse_args opts_def "$@"
 
 main() {
-	local word=${args[0]} scope repo_name mod_type mod_name
+	local word=${args[0]} scope
 
 	if [[ ${opts[a]} == true ]]; then
 		scope=data
@@ -57,65 +57,13 @@ main() {
 		scope=enabled
 	fi
 
-	declare -A MOD_TYPE_COLOR=(
-		[completion]=$GREEN
-		[plugin]=$BLUE
-		[alias]=$PURPLE
-		[bin]=$WHITE
-		[sub]=$YELLOW
-	)
-
 	printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
 
 	shopt -s nullglob
 
-	local filepath t
-
+	local filepath
 	for filepath in "${ONE_DIR}/$scope"/repo/*/{alias,bin,completion,plugin,sub}/*"${word}"*; do
-		local -a prints=()
-		local format='' about=''
-
-		if [[ $filepath =~ \/${scope}\/repo\/([^\/]+)\/([^\/]+)\/([^\/]+) ]]; then
-			repo_name="${BASH_REMATCH[1]}"
-			t="${BASH_REMATCH[2]}"
-			mod_name="${BASH_REMATCH[3]}"
-			mod_name=${mod_name##*/}
-
-			if [[ $mod_name == *.opt.bash ]]; then
-				mod_name=${mod_name%.opt.bash}
-				# shellcheck disable=1090,2153
-				about="$(. "$filepath" && echo "${ABOUT:-}")"
-				priority=$(get_priority_from_mod "$filepath")
-			else
-				mod_name=${mod_name%.bash}
-				about=$(metafor about-plugin <"$filepath")
-				priority=$(get_priority "$filepath")
-			fi
-
-			# load-priority
-			format="$format%b%-4s"
-			prints+=("$YELLOW" "$priority")
-
-			# mod type
-			format="$format %b%-4s"
-			mod_type=${t^}
-			prints+=("${MOD_TYPE_COLOR[${t}]}" "${mod_type:0:4}")
-
-			# mod_name repo_name
-			format="$format %b%-18s %b%-18s"
-
-			prints+=(
-				"$CYAN" "${mod_name:0:18}"
-				"$BLUE" "${repo_name:0:18}"
-			)
-
-			# About
-			format="$format %b%s"
-			prints+=("$WHITE" "${about//$'\n'/ }")
-
-			# shellcheck disable=2059
-			printf "$format\n" "${prints[@]}"
-		fi
+		print_mod_props "$filepath"
 	done
 }
 main "$@"

@@ -6,7 +6,8 @@ Desc: List enabled $t
 Options:
   -a, --all           List all available $t in each repo
   --only-name         Only list module names
-  -r <repo>           List $t in the repo
+	--compact           List $t in compact format
+  -r <repo>           List $t in the repo. Only works with "--all" or "--compact"
 EOF
 	# editorconfig-checker-enable
 }
@@ -34,6 +35,7 @@ completion() {
 declare -A opts_def=(
 	['-a --all']='bool'
 	['--only-name']=bool
+	['--compact']=bool
 )
 
 list_mods() {
@@ -46,7 +48,7 @@ list_mods() {
 
 		if [[ $name == *.opt.bash ]]; then
 			name=${name%.opt.bash}
-			priority=$(get_priority_from_mod "$path")
+			priority=$(get_priority_from_mod "$path" "$t")
 		else
 			name=${name%.bash}
 			priority=$(get_priority "$path")
@@ -64,9 +66,13 @@ list_mods() {
 	printf '\n'
 }
 
+print_head() {
+	printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
+}
+
 main() {
 	local repo_name=${opts[r]:-}
-	local repo
+	local repo filepath
 
 	. "$ONE_DIR/one-cmds/mod.bash"
 
@@ -74,6 +80,22 @@ main() {
 
 	if [[ ${opts[a]} == true ]]; then
 		# list all available mods
+		print_head
+		if [[ -z $repo_name ]]; then
+			# shellcheck disable=2153
+			for filepath in "${ONE_DIR}"/enabled/repo/*/"$t"/*; do
+				print_mod_props "$filepath"
+			done
+		else
+			for filepath in "${ONE_DIR}/enabled/repo/$repo_name/$t"/*; do
+				print_mod_props "$filepath"
+			done
+		fi
+	elif [[ ${opts['only-name']} == true ]]; then
+		# list only mod names
+		list_enabled "$t" | tr '\n' ' '
+		printf '\n'
+	elif [[ ${opts['compact']} == true ]]; then
 		if [[ -z $repo_name ]]; then
 			# shellcheck disable=2153
 			for repo in "${ONE_DIR}"/enabled/repo/*; do
@@ -89,13 +111,9 @@ main() {
 		fi
 	else
 		# list all enabled mods
-		if [[ ${opts['only-name']} == true ]]; then
-			# list only mod names
-			list_enabled "$t" | tr '\n' ' '
-			printf '\n'
-		else
-			printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
-			find "$ENABLED_DIR" -maxdepth 1 -name "*---*@$t.bash" | print_mod_props "$repo_name" | sort
-		fi
+		print_head
+		for filepath in "$ONE_DIR/enabled/"*---*"@$t.bash"; do
+			print_enabled_mod_props "$filepath" "$repo_name"
+		done | sort
 	fi
 }

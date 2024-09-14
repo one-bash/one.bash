@@ -1,7 +1,7 @@
 usage() {
 	cat <<EOF
 Usage: one repo list
-Desc:  List available repos
+Desc:  List all downloaded repos
 EOF
 }
 

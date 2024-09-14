@@ -71,7 +71,7 @@ backup_content() {
 	cat <<EOF
 #!/usr/bin/env bash
 
-set -euE -o pipefail
+set -o errexit -o nounset -o pipefail -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
 one a disable --all

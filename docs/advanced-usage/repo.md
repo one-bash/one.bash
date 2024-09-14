@@ -16,10 +16,12 @@ The official repo [one.share][] and [one-bash-it][] provides them.
 - Disable repo: `one repo disable one.share`
 - Update repo: `one repo update one.share`
 - Remove repo: `one repo remove one.share`
-- Create repo: You can create your own repo. Read the [Create Repo](#create-repo) for details.
-- Execute command in each repo: `one repo exec ls`
+- Create repo: `one repo init`. Read the [Create Repo](#create-repo) for details.
+- Execute command in each enabled repo: `one repo exec ls`
+- Show the informations of downloaded repo: `one repo info one.share`
+- Search repos (topic: one-bash-repo) in Github: `one repo search`
 
-`one help repo` for detailed usage.
+`one repo` for detailed usage.
 
 ## Create Repo
 
@@ -38,7 +40,7 @@ A ONE Repo's file structure should be that.
 ├── completion/
 │   └── cmp.bash
 ├── config/
-│   └── config
+│   └── config-file
 ├── plugin/
 │   └── plugin.bash
 ├── sub/
@@ -51,8 +53,8 @@ A ONE Repo's file structure should be that.
 - `plugin/` stores plugin modules.
 - `completion/` stores completion modules.
 - `config/` stores dotfile, rcfile and config files.
-- `bin/` stores user commands. Just like `/usr/local/bin/`. They must be executable. The path of bin has been added to `$PATH`.
-- `sub/` stores ONE_SUB commands. User can invoke it be `$ONE_SUB <cmd>` and `one sub run <cmd>`. They must be executable.
+- `bin/` stores commands. Just like `/usr/local/bin/`. They must be executable.
+- `sub/` stores ONE_SUB commands. They must be executable. User can invoke it be `$ONE_SUB <cmd>` and `one sub run <cmd>`. 
 
 ### one.repo.bash
 

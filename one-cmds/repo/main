@@ -43,13 +43,13 @@ Usage:  one repo [-h|--help] <ACTION>
 Desc:   Manage one.bash repos
 
 Action:
-  l, list              List available repos
+  l, list              List all downloaded repos
   a, add               Download and enable a repo
   r, remove            Remove a repo
   u, update            Update a repo
   e, enable            Enable a repo
   d, disable           Disable a repo
-  i, info              Show the informations of repo
+  i, info              Show the informations of downloaded repo
   init [<PATH>]        Scaffolding a repo in <PATH> (Defaults to \$PWD)
   exec <CMD>           Execute command in each enabled repo
   s, search [<WORD>]   Search repos (topic: one-bash-repo) in Github

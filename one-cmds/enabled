@@ -60,19 +60,6 @@ fi
 # shellcheck source=../one-cmds/mod.bash
 . "$ONE_DIR/one-cmds/mod.bash"
 
-declare -A opts=()
-declare -a args=()
-declare -A opts_def=(
-	[opts]=opts
-	[args]=args
-)
-l.parse_args opts_def "$@"
-
-repo_filter=${opts[r]:-}
-
-printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
-find "$ONE_DIR/enabled" -maxdepth 1 -name "*---*.bash" | print_mod_props "$repo_filter" | sort
-
 trim_str() {
 	local str=$1 len=$2 n
 	n=$((len - 2))
@@ -124,6 +111,22 @@ list() {
 		printf '\n'
 	done
 }
+
+declare -A opts=()
+declare -a args=()
+declare -A opts_def=(
+	[opts]=opts
+	[args]=args
+)
+l.parse_args opts_def "$@"
+
+repo_filter=${opts[r]:-}
+
+printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
+
+for filepath in "$ONE_DIR/enabled/"*---*.bash; do
+	print_enabled_mod_props "$filepath" "$repo_filter"
+done | sort
 
 list bin "$WHITE"
 list sub "$YELLOW"
