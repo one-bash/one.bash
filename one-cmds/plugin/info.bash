@@ -31,7 +31,7 @@ info_mod() {
 				repo=$(get_enabled_repo_name "$filepath")
 			fi
 
-			link_to=$(get_enabled_link_to "$name" "$repo")
+			link_to=$(get_enabled_link_to "$name" "$repo" "$t")
 
 			PRINT_INFO_KEY_WIDTH=12
 
@@ -54,7 +54,7 @@ info_mod() {
 				)
 			else
 				ABOUT=$(metafor about-plugin <"$filepath")
-				PRIORITY=$(get_priority "$filepath")
+				PRIORITY=$(get_priority "$filepath" "$t")
 				DEPS=$(metafor one-bash:mod:deps <"$filepath")
 
 				print_info_item About "${ABOUT//$'\n'/ }"

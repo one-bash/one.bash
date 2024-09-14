@@ -51,7 +51,7 @@ list_mods() {
 			priority=$(get_priority_from_mod "$path" "$t")
 		else
 			name=${name%.bash}
-			priority=$(get_priority "$path")
+			priority=$(get_priority "$path" "$t")
 		fi
 
 		link="$ONE_DIR/enabled/${priority}---$name@$repo_name@$t.bash"
@@ -66,10 +66,6 @@ list_mods() {
 	printf '\n'
 }
 
-print_head() {
-	printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
-}
-
 main() {
 	local repo_name=${opts[r]:-}
 	local repo filepath
@@ -80,7 +76,7 @@ main() {
 
 	if [[ ${opts[a]} == true ]]; then
 		# list all available mods
-		print_head
+		printf 'Prio Type %-6s %-18s %-18s %s\n' "Enabled" "Name" "Repo" "About"
 		if [[ -z $repo_name ]]; then
 			# shellcheck disable=2153
 			for filepath in "${ONE_DIR}"/enabled/repo/*/"$t"/*; do
@@ -111,7 +107,7 @@ main() {
 		fi
 	else
 		# list all enabled mods
-		print_head
+		printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
 		for filepath in "$ONE_DIR/enabled/"*---*"@$t.bash"; do
 			print_enabled_mod_props "$filepath" "$repo_name"
 		done | sort

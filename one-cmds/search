@@ -57,7 +57,7 @@ main() {
 		scope=enabled
 	fi
 
-	printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
+	printf 'Prio Type %-6s %-18s %-18s %s\n' "Enabled" "Name" "Repo" "About"
 
 	shopt -s nullglob
 

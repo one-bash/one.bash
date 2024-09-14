@@ -56,13 +56,13 @@ list_enabled_for_backup() {
 }
 
 list_enabled_bins() {
-	find "$ENABLED_DIR/bin" -maxdepth 1 -type l -exec basename {} \; |
+	find "$ONE_DIR/enabled/bin" -maxdepth 1 -type l -exec basename {} \; |
 		sort | tr '\n' ' '
 	printf '\n'
 }
 
 list_enabled_subs() {
-	find "$ENABLED_DIR/sub" -maxdepth 1 -type l -exec basename {} \; |
+	find "$ONE_DIR/enabled/sub" -maxdepth 1 -type l -exec basename {} \; |
 		sort | tr '\n' ' '
 	printf '\n'
 }
