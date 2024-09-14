@@ -16,9 +16,9 @@ Any comments and suggestions are always welcome.
 ## Useful Documentations
 
 - [Contributing Guidelines in General](https://gcg.adoyle.me/CONTRIBUTING/)
-- [How to test](./test.md)
-- [Project File Structure](./file-structure.md)
-- [Bashrc Initialization Process](./entry.md)
+- [How to test](./develop/test.md)
+- [Project File Structure](./develop/project-structure.md)
+- [Bashrc Initialization Process](./develop/entry.md)
 - [Advanced Usages](./advanced-usage/README.md)
 
 

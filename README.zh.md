@@ -79,6 +79,27 @@ one dep status
 
 ## 快速上手
 
+```bash
+# Add a repo
+one repo add one-bash/one.share
+one repo add Bash-it/bash-it
+
+# List available plugins/completions/aliases/bins/subs
+one plugin list -a
+one completion list -a
+one alias list -a
+one bin list -a
+one sub list -a
+
+# Enable modules on demand
+# one plugin enable <name>
+# one completion enable <name>
+
+# Restart your shell
+```
+
+如果 shell 遇到任何严重问题并无法启动，尝试使用 `ONE_RC=<path-to-your-rcfile>` 来更改 bashrc 进行恢复。
+
 ## 配置
 
 ### ONE_CONF
@@ -230,9 +251,9 @@ Arguments:
 - [模块][one-sub]
 - [One Repo][one-repo]
 - [ONE_SUB 命令][one-sub]
-- [Bashrc Initialization Proces](./docs/entry.md)
-- [Project File Structure](./docs/file-structure.md)
-- [Advanced Usages](./docs/advanced-usage/README.md)
+- [Bashrc 初始化过程](./docs/entry.zh.md)
+- [项目文件结构](./docs/develop/project-structure.md)
+- [高级用法](./docs/advanced-usage/README.zh.md)
   - [ONE Dependencies](./docs/advanced-usage/dep.md)
   - [ONE Functions](./docs/advanced-usage/one-functions.md)
   - [ONE_SUB Command](./docs/advanced-usage/one-sub-cmd.md)

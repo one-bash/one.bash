@@ -100,9 +100,9 @@ one.bash will auto execute below steps.
 2. download files
 3. run `AFTER_DOWNLOAD` if defined
 4. copy `INSERT` if defined
-5. run `RUN_AND_INSERT` if defined
+5. run and copy the stdout of `RUN_AND_INSERT` if defined
 6. copy `APPEND` if defined
-7. run `RUN_AND_APPEND` if defined
+7. run and copy the stdout of `RUN_AND_APPEND` if defined
 
 ### Download file via curl
 

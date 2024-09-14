@@ -99,9 +99,9 @@ one.bash 会自动执行下面的步骤。
 2. 下载文件
 3. 如果定义了 `AFTER_DOWNLOAD`，运行该函数
 4. 如果定义了 `INSERT`，复制其内容
-5. 如果定义了 `RUN_AND_INSERT`，运行该函数
+5. 如果定义了 `RUN_AND_INSERT`，运行该函数，并复制其输出
 6. 如果定义了 `APPEND`，复制其内容
-7. 如果定义了 `RUN_AND_APPEND`，运行该函数
+7. 如果定义了 `RUN_AND_APPEND`，运行该函数，并复制其输出
 
 ### 通过 curl 下载文件
 

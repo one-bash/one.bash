@@ -63,7 +63,7 @@ one.repo.bash 文件内容:
 ```sh
 ABOUT='the description of repo'
 
-# If defined, this function will be executed in the process of bashrc initialization. See ../entry.md
+# If defined, this function will be executed in the process of bashrc initialization. See docs/develop/entry.md
 # repo_onload() {
 # }
 

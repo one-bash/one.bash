@@ -291,23 +291,23 @@ print_mod_props() {
 			priority=$(get_priority "$filepath" "$mod_type")
 		fi
 
+		# mod status
+		format="%b%s"
+		link_to=$(get_enabled_link_to "$mod_name" "$repo_name" "$mod_type")
+		if [[ -n $link_to ]]; then
+			prints+=("$GREEN" "[x]")
+		else
+			prints+=("$GREY" "[ ]")
+		fi
+
 		# load-priority
-		format="$format%b%-4s"
+		format="$format %b%-4s"
 		prints+=("$YELLOW" "$priority")
 
 		# mod type
 		format="$format %b%-4s"
 		local mod_type_str=${mod_type^}
 		prints+=("${MOD_TYPE_COLOR[$mod_type]}" "${mod_type_str:0:4}")
-
-		# mod status
-		format="$format %b%-8s"
-		link_to=$(get_enabled_link_to "$mod_name" "$repo_name" "$mod_type")
-		if [[ -n $link_to ]]; then
-			prints+=("$GREEN" "enabled")
-		else
-			prints+=("$GREY" "disabled")
-		fi
 
 		# mod_name repo_name
 		format="$format %b%-18s %b%-18s"

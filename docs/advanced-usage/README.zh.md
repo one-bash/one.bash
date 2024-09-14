@@ -2,7 +2,7 @@
 
 ## ONE_RC
 
-If one.bash has any critical issue and failed to start up, you can set `ONE_RC=<path-to-your-rcfile>` for rescue.
+If shell has any critical issue and failed to start up, try `ONE_RC=<path-to-your-rcfile>` to change bashrc for rescue.
 
 ## ONE_DEBUG
 

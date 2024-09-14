@@ -98,7 +98,7 @@ one sub list -a
 # Restart your shell
 ```
 
-If shell broken after restart, you can try 
+If shell has any critical issue and failed to start up, try `ONE_RC=<path-to-your-rcfile>` to change bashrc for rescue.
 
 ## Configuration
 
@@ -249,8 +249,8 @@ Arguments:
 - [Module][one-module]
 - [One Repo]()
 - [ONE_SUB Commands](./docs/advanced-usage/one-sub-cmd.md)
-- [Bashrc Initialization Proces](./docs/entry.md)
-- [Project File Structure](./docs/file-structure.md)
+- [Bashrc Initialization Proces](./docs/develop/entry.md)
+- [Project File Structure](./docs/develop/project-structure.md)
 - [Advanced Usages](./docs/advanced-usage/README.md)
   - [ONE Dependencies](./docs/advanced-usage/dep.md)
   - [ONE Functions](./docs/advanced-usage/one-functions.md)

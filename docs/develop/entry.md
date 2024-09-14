@@ -1,4 +1,4 @@
-# entry.bash
+# one.bash entry.bash
 
 ## Bashrc Initialization Process
 

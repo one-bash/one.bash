@@ -76,7 +76,7 @@ main() {
 
 	if [[ ${opts[a]} == true ]]; then
 		# list all available mods
-		printf 'Prio Type %-6s %-18s %-18s %s\n' "Enabled" "Name" "Repo" "About"
+		printf 'ACT Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
 		if [[ -z $repo_name ]]; then
 			# shellcheck disable=2153
 			for filepath in "${ONE_DIR}"/enabled/repo/*/"$t"/*; do
