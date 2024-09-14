@@ -43,7 +43,8 @@ info_mod() {
 				(
 					# shellcheck disable=1090
 					source "$filepath"
-					print_info_item About "${ABOUT:-}"
+					ABOUT=${ABOUT:-}
+					print_info_item About "${ABOUT//$'\n'/ }"
 					print_info_item Priority "${PRIORITY:-}"
 					print_info_item DEPS "${DEPS:-}"
 					print_info_item GITHUB_REPO "${GITHUB_REPO:-}"
@@ -56,9 +57,9 @@ info_mod() {
 				PRIORITY=$(get_priority "$filepath")
 				DEPS=$(metafor one-bash:mod:deps <"$filepath")
 
-				print_info_item About "${ABOUT:-}"
-				print_info_item Priority "${PRIORITY:-}"
-				print_info_item DEPS "${DEPS:-}"
+				print_info_item About "${ABOUT//$'\n'/ }"
+				print_info_item Priority "${PRIORITY}"
+				print_info_item DEPS "${DEPS}"
 			fi
 
 			print_info_item Path "$link_to"

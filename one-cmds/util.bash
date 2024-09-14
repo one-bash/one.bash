@@ -41,10 +41,10 @@ _parse_help() {
 			action=$(_get_action "$1")
 			# shellcheck disable=1090
 			. "$ONE_DIR/one-cmds/$cmd/$action.bash"
-			if [[ -n ${last_param_no_help:-} ]]; then return; fi
+			if [[ -n ${last_param_no_help:-} ]]; then return 0; fi
 			_show_usage
 		else
-			if [[ -n ${last_param_no_help:-} ]]; then return; fi
+			if [[ -n ${last_param_no_help:-} ]]; then return 0; fi
 			_show_usage
 		fi
 		exit 0
@@ -55,7 +55,7 @@ _parse_help() {
 # @param actions
 # @param $@
 _parse_completion() {
-	if [[ ${3:-} != --complete ]]; then return; fi
+	if [[ ${3:-} != --complete ]]; then return 0; fi
 
 	local cmd=$1
 	local -n _actions=$2

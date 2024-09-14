@@ -72,7 +72,7 @@ one_prompt_append() {
 		fi
 
 		if [[ ${PROMPT_COMMAND:-} =~ $prompt_re ]]; then
-			return
+			return 0
 		elif [[ -z ${PROMPT_COMMAND:-} ]]; then
 			PROMPT_COMMAND="${1}"
 		else

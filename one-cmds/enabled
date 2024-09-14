@@ -71,7 +71,7 @@ l.parse_args opts_def "$@"
 repo_filter=${opts[r]:-}
 
 printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
-find "$ONE_DIR/enabled" -maxdepth 1 -name "*---*.bash" | print_list_item "$repo_filter" | sort
+find "$ONE_DIR/enabled" -maxdepth 1 -name "*---*.bash" | print_mod_props "$repo_filter" | sort
 
 trim_str() {
 	local str=$1 len=$2 n
@@ -86,13 +86,14 @@ trim_str() {
 
 list() {
 	local type=$1 type_color=$2
-	local path repo name link repo_name
+	local path repo name link repo_name ABOUT
 	local priority='---'
 
 	shopt -s nullglob
 	for path in "$ONE_DIR/enabled/$type"/*; do
 		link=$(readlink "$path")
-		repo="$(dirname "$(dirname "$link")")"
+		repo=${link%/*}
+		repo=${repo%/*}
 		repo_name="${repo##*/}"
 
 		if [[ -n $repo_filter ]] && [[ $repo_filter != "$repo_name" ]]; then
@@ -110,10 +111,12 @@ list() {
 			(
 				# shellcheck disable=1090
 				source "$repo/$type/$name.opt.bash"
-				printf '%b%s' "$WHITE" "${ABOUT:-}"
+				ABOUT=${ABOUT:-}
+				printf '%b%s' "$WHITE" "${ABOUT//$'\n'/ }"
 			)
 		elif [[ -f $repo/$type/$name ]]; then
-			printf '%b%s' "$WHITE" "$(metafor about-plugin <"$repo/$type/$name")"
+			ABOUT=$(metafor about-plugin <"$repo/$type/$name")
+			printf '%b%s' "$WHITE" "${ABOUT//$'\n'/ }"
 		else
 			printf '%b%s' "$GREY" '<ERROR>'
 		fi

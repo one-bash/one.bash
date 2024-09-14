@@ -114,7 +114,7 @@ _ask_update_mod_data() {
 
 download_github_release_files() {
 	if [[ -z ${GITHUB_REPO:-} ]] || [[ ! -v GITHUB_RELEASE_FILES ]]; then
-		return
+		return 0
 	fi
 
 	local version="${GITHUB_RELEASE_VERSION:-latest}"
@@ -173,14 +173,14 @@ download_mod_data() {
 
 		if [[ $isEmpty == no ]]; then
 			local prompt
-			prompt=$(printf '%b[Mod=%s] %s%b' "$YELLOW" "$name" "Found existed data which may be outdated. Update it to latest? (y/[n])" "$RESET_ALL")
-			read -r -p "$prompt" answer
+			prompt=$(printf '%b[Mod=%s] %s%b' "$YELLOW" "$name" "Found existed data which may be outdated. Update it to latest?" "$RESET_ALL")
+			answer=$(l.ask "$prompt" N)
 
-			if [[ ${answer:-n} == y ]]; then
+			if [[ $answer == YES ]]; then
 				rm -rf "$MOD_DATA_DIR"
 				mkdir "$MOD_DATA_DIR"
 			else
-				return
+				return 0
 			fi
 		fi
 
@@ -261,7 +261,7 @@ mod_check_dep_cmds() {
 	done
 }
 
-print_list_item() {
+print_mod_props() {
 	local repo_filter=${1:-}
 	local line type mod_type mod_name repo_name priority
 
@@ -269,8 +269,8 @@ print_list_item() {
 		['completion']=$GREEN
 		['plugin']=$BLUE
 		['alias']=$PURPLE
-		[bin]=$WHITE
-		[sub]=$YELLOW
+		['bin']=$WHITE
+		['sub']=$YELLOW
 	)
 
 	while read -r line; do
@@ -281,15 +281,9 @@ print_list_item() {
 		type=${list[3]}
 
 		local -a prints=()
-		local format='' mod_real_path about=''
+		local format='' about
 
-		mod_real_path="$(readlink "$line")"
-		if [[ $mod_real_path == $ONE_DIR/data/$type/* ]]; then
-			about="$(. "$(dirname "$mod_real_path")/meta.bash" && echo "$about")"
-		elif [[ $mod_real_path =~ .+\/$repo_name\/$type\/ ]]; then
-			# if mod_real_path matches ../(alias|plugin|completion)/..
-			about=$(metafor about-plugin <"$mod_real_path")
-		fi
+		about=$(metafor about-plugin <"$line")
 
 		if [[ -n $repo_filter ]] && [[ $repo_filter != "$repo_name" ]]; then
 			continue
@@ -314,7 +308,7 @@ print_list_item() {
 
 		# About
 		format="$format %b%s"
-		prints+=("$WHITE" "$about")
+		prints+=("$WHITE" "${about//$'\n'/ }")
 
 		# shellcheck disable=2059
 		printf "$format\n" "${prints[@]}"

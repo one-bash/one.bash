@@ -22,7 +22,7 @@ create_symlink() {
 		local answer
 		printf 'Found existed enabled file: %s -> %s\n' "$name" "$(readlink "$ONE_DIR/enabled/$t/$name")" >&2
 		answer=$(l.ask "Do you want to override it?")
-		if [[ $answer != YES ]]; then return; fi
+		if [[ $answer != YES ]]; then return 0; fi
 	fi
 
 	ln -fs "$target" "$ONE_DIR/enabled/$t/$name"

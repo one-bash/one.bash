@@ -14,6 +14,7 @@ EOF
 # Create completion mod file
 create_mod() {
 	local name=$1 opt_path=$2
+	local -n output=$3
 	local MOD_DATA_ROOT="$ONE_DIR/data/$t"
 	local MOD_DATA_DIR="$MOD_DATA_ROOT/${name}"
 	local MOD_FILE="$MOD_DATA_DIR/mod.bash"
@@ -44,14 +45,15 @@ create_mod() {
 	echo "$mod_annotation" >"$MOD_FILE"
 
 	(
+		# shellcheck disable=1090
 		source "$opt_path"
-
-		if [[ -n ${ABOUT:-} ]]; then
-			echo "# About: $ABOUT" >>"$MOD_FILE"
-		fi
 
 		if [[ -n ${PRIORITY:-} ]]; then
 			echo "# ONE_LOAD_PRIORITY: $PRIORITY" >>"$MOD_FILE"
+		fi
+
+		if [[ -n ${ABOUT:-} ]]; then
+			echo "about-plugin '$ABOUT'" >>"$MOD_FILE"
 		fi
 
 		if [[ -n ${DEPS:-} ]]; then
@@ -99,7 +101,8 @@ create_mod() {
 		fi
 	)
 
-	echo "$MOD_FILE"
+	# echo "$MOD_FILE"
+	output=$MOD_FILE
 }
 
 enable_file() {
@@ -130,8 +133,15 @@ enable_mod() {
 				# Disable first, prevent duplicated module enabled with different priority
 				disable_mod "$name"
 				download_mod_data "$name" "$filepath"
-				filepath=$(create_mod "$name" "$filepath")
-				[[ -z $filepath ]] && return
+
+				local mod_path
+				create_mod "$name" "$filepath" mod_path
+				if [[ -n ${mod_path:-} ]]; then
+					filepath=$mod_path
+				else
+					echo "No mod file created" >&2
+					return 0
+				fi
 			else
 				mod_check_dep_cmds "$filepath"
 				# Disable first, prevent duplicated module enabled with different priority

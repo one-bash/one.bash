@@ -111,7 +111,7 @@ main() {
 
 			# About
 			format="$format %b%s"
-			prints+=("$WHITE" "$about")
+			prints+=("$WHITE" "${about//$'\n'/ }")
 
 			# shellcheck disable=2059
 			printf "$format\n" "${prints[@]}"

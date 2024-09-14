@@ -30,5 +30,6 @@ print_info_item() {
 metafor() {
 	local keyword=$1
 	# Copy from composure.sh
-	sed -n "/$keyword / s/['\";]*\$//;s/^[      ]*\(: _\)*$keyword ['\"]*\([^([].*\)*\$/\2/p"
+	# grep keyword # strip trailing '|"|; # ignore thru keyword and leading '|"
+	sed -n "/$keyword / s/['\";]*\$//;s/^[ 	]*\(: _\)*$keyword ['\"]*\([^([].*\)*\$/\2/p"
 }

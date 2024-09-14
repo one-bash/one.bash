@@ -24,11 +24,11 @@ completion() {
 main() {
 	local name=$1
 	local path="$ONE_DIR/data/repo/$name"
-	if [[ ! -d $path ]]; then return; fi
+	if [[ ! -d $path ]]; then return 0; fi
 
 	local answer
 	answer=$(l.ask "Do you want to remove repo '$name'?")
-	if [[ $answer != YES ]]; then return; fi
+	if [[ $answer != YES ]]; then return 0; fi
 
 	if [[ -L $ONE_DIR/enabled/repo/$name ]]; then
 		unlink "$ONE_DIR/enabled/repo/$name"

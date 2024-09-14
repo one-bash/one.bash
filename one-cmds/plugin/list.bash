@@ -84,7 +84,7 @@ main() {
 			done
 		else
 			repo="${ONE_DIR}/enabled/repo/$repo_name"
-			if [[ ! -d "$repo/$t" ]]; then return; fi
+			if [[ ! -d "$repo/$t" ]]; then return 0; fi
 			list_mods
 		fi
 	else
@@ -95,7 +95,7 @@ main() {
 			printf '\n'
 		else
 			printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
-			find "$ENABLED_DIR" -maxdepth 1 -name "*---*@$t.bash" | print_list_item "$repo_name" | sort
+			find "$ENABLED_DIR" -maxdepth 1 -name "*---*@$t.bash" | print_mod_props "$repo_name" | sort
 		fi
 	fi
 }

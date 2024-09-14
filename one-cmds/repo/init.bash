@@ -12,7 +12,7 @@ EOF
 }
 
 completion() {
-	if (($# > 1)); then return; fi
+	if (($# > 1)); then return 0; fi
 	compgen -f -- "${1:-}"
 }
 

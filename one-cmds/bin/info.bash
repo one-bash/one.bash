@@ -16,6 +16,7 @@ EOF
 
 print_info() {
 	local path=$1 name=$2
+	local ABOUT
 
 	print_info_item Name "$name"
 	print_info_item Repo "$(get_enabled_repo_name "$path")"
@@ -25,11 +26,13 @@ print_info() {
 		(
 			# shellcheck disable=1090
 			source "$path"
-			print_info_item About "${ABOUT:-}"
+			ABOUT=${ABOUT:-}
+			print_info_item About "${ABOUT//$'\n'/ }"
 			print_info_item SCRIPT "${SCRIPT:-}"
 		)
 	else
-		print_info_item About "$(metafor about-plugin <"$path")"
+		ABOUT=$(metafor about-plugin <"$path")
+		print_info_item About "${ABOUT//$'\n'/ }"
 	fi
 }
 
