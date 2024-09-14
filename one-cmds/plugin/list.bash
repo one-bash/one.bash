@@ -6,8 +6,10 @@ Desc: List enabled $t
 Options:
   -a, --all           List all available $t in each repo
   --only-name         Only list module names
-	--compact           List $t in compact format
+  --compact           List $t in compact format
   -r <repo>           List $t in the repo. Only works with "--all" or "--compact"
+  --pager <pager>     List with pager. Default to try user's passed, "fzf" and "less". If none of them found, print without pager.
+                      If <pager> is false, print without pager.
 EOF
 	# editorconfig-checker-enable
 }
@@ -29,14 +31,8 @@ completion() {
 		return
 	fi
 
-	printf -- '--all\n-r\n--only-name\n--help\n'
+	printf -- '--all\n-r\n--only-name\n--pager\n--help\n'
 }
-
-declare -A opts_def=(
-	['-a --all']='bool'
-	['--only-name']=bool
-	['--compact']=bool
-)
 
 list_mods() {
 	local path name priority link
@@ -66,12 +62,7 @@ list_mods() {
 	printf '\n'
 }
 
-main() {
-	local repo_name=${opts[r]:-}
-	local repo filepath
-
-	. "$ONE_DIR/one-cmds/mod.bash"
-
+list() {
 	shopt -s nullglob
 
 	if [[ ${opts[a]} == true ]]; then
@@ -112,4 +103,22 @@ main() {
 			print_enabled_mod_props "$filepath" "$repo_name"
 		done | sort
 	fi
+}
+
+declare -A opts=()
+declare -a args=()
+declare -A opts_def=(
+	['-a --all']='bool'
+	['--only-name']=bool
+	['--compact']=bool
+)
+
+main() {
+	local repo_name=${opts[r]:-}
+	local repo filepath
+
+	. "$ONE_DIR/one-cmds/mod.bash"
+	. "$ONE_DIR/one-cmds/pager.bash"
+
+	with_pager list
 }

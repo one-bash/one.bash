@@ -2,15 +2,15 @@
 # Command: lobash-gen -c ../one_l.conf one_l.bash
 # Author: ADoyle <adoyle.h@gmail.com>
 # License: Apache License Version 2.0
-# Version: 0.7.0 (7ac03387f41cb7e5792c11ff06d8d58d9ac285b0)
+# Version: 0.7.0 (cfdeb7265922ed63934156a1651c715f7574a438)
 # Prefix: one_l.
 # Bash Minimum Version: 4.4
-# UNIQ_KEY: 0_7_0_164825828_12785
+# UNIQ_KEY: 0_7_0_164954799_10642
 # Included Modules: array_include has has_not is_array var_attrs is_function start_with str_include ask join str_replace trim trim_start trim_end detect_os
 
 ######################## Lobash Internals ########################
 
-_lobash.0_7_0_164825828_12785_detect_os() {
+_lobash.0_7_0_164954799_10642_detect_os() {
   local kernel_name
   kernel_name="$(uname -s)"
 
@@ -31,59 +31,59 @@ _lobash.0_7_0_164825828_12785_detect_os() {
 
 
 
-[[ -n ${_LOBASH_0_7_0_164825828_12785_INTERNAL_FUNC_PREFIX:-} ]] && return
+[[ -n ${_LOBASH_0_7_0_164954799_10642_INTERNAL_FUNC_PREFIX:-} ]] && return
 
-readonly _LOBASH_0_7_0_164825828_12785_INTERNAL_FUNC_PREFIX=_lobash.
-readonly _LOBASH_0_7_0_164825828_12785_INTERNAL_CONST_PREFIX=_LOBASH_
-readonly _LOBASH_0_7_0_164825828_12785_PRIVATE_FUNC_PREFIX=_l.
-readonly _LOBASH_0_7_0_164825828_12785_PRIVATE_CONST_PREFIX=_L_
-readonly _LOBASH_0_7_0_164825828_12785_PUBLIC_FUNC_PREFIX=one_l.
-readonly _LOBASH_0_7_0_164825828_12785_PUBLIC_CONST_PREFIX=ONE_L_
+readonly _LOBASH_0_7_0_164954799_10642_INTERNAL_FUNC_PREFIX=_lobash.
+readonly _LOBASH_0_7_0_164954799_10642_INTERNAL_CONST_PREFIX=_LOBASH_
+readonly _LOBASH_0_7_0_164954799_10642_PRIVATE_FUNC_PREFIX=_l.
+readonly _LOBASH_0_7_0_164954799_10642_PRIVATE_CONST_PREFIX=_L_
+readonly _LOBASH_0_7_0_164954799_10642_PUBLIC_FUNC_PREFIX=one_l.
+readonly _LOBASH_0_7_0_164954799_10642_PUBLIC_CONST_PREFIX=ONE_L_
 
-readonly _LOBASH_0_7_0_164825828_12785_PREFIX=one_l.
-_LOBASH_0_7_0_164825828_12785_PUBLIC_DEPTH=1  # NOTE: _LOBASH_0_7_0_164825828_12785_PUBLIC_DEPTH should not be readonly
-readonly _LOBASH_0_7_0_164825828_12785_MIN_BASHVER=4.4
+readonly _LOBASH_0_7_0_164954799_10642_PREFIX=one_l.
+_LOBASH_0_7_0_164954799_10642_PUBLIC_DEPTH=1  # NOTE: _LOBASH_0_7_0_164954799_10642_PUBLIC_DEPTH should not be readonly
+readonly _LOBASH_0_7_0_164954799_10642_MIN_BASHVER=4.4
 
-_LOBASH_0_7_0_164825828_12785_OS=$(_lobash.0_7_0_164825828_12785_detect_os)
-readonly _LOBASH_0_7_0_164825828_12785_OS
+_LOBASH_0_7_0_164954799_10642_OS=$(_lobash.0_7_0_164954799_10642_detect_os)
+readonly _LOBASH_0_7_0_164954799_10642_OS
 
-_lobash.0_7_0_164825828_12785_is_bash() {
+_lobash.0_7_0_164954799_10642_is_bash() {
   [[ -n "${BASH_VERSION:-}" ]]
 }
 
-_lobash.0_7_0_164825828_12785_check_os() {
-  if [[ ! $_LOBASH_0_7_0_164825828_12785_OS =~ ^(Linux|MacOS|BSD)$ ]]; then
-    echo "Not support current system: $_LOBASH_0_7_0_164825828_12785_OS" >&2
+_lobash.0_7_0_164954799_10642_check_os() {
+  if [[ ! $_LOBASH_0_7_0_164954799_10642_OS =~ ^(Linux|MacOS|BSD)$ ]]; then
+    echo "Not support current system: $_LOBASH_0_7_0_164954799_10642_OS" >&2
     return 5
   fi
 }
 
-_lobash.0_7_0_164825828_12785_check_shell() {
-  if ! _lobash.0_7_0_164825828_12785_is_bash; then
+_lobash.0_7_0_164954799_10642_check_shell() {
+  if ! _lobash.0_7_0_164954799_10642_is_bash; then
     echo 'Lobash only work in Bash.' >&2
     return 6
   fi
 }
 
-_lobash.0_7_0_164825828_12785_check_supported_bash_version() {
+_lobash.0_7_0_164954799_10642_check_supported_bash_version() {
   local info
-  read -r -d '.' -a info <<< "$_LOBASH_0_7_0_164825828_12785_MIN_BASHVER"
+  read -r -d '.' -a info <<< "$_LOBASH_0_7_0_164954799_10642_MIN_BASHVER"
   if (( BASH_VERSINFO[0] < info[0] )) \
     || ( (( BASH_VERSINFO[0] == info[0] )) && (( BASH_VERSINFO[1] < info[1] )) ); then
-    echo "Bash $BASH_VERSION is not supported. Upgrade your Bash to $_LOBASH_0_7_0_164825828_12785_MIN_BASHVER or higher version." >&2
+    echo "Bash $BASH_VERSION is not supported. Upgrade your Bash to $_LOBASH_0_7_0_164954799_10642_MIN_BASHVER or higher version." >&2
     return 7
   fi
 }
 
-_lobash.0_7_0_164825828_12785_check_support() {
-  _lobash.0_7_0_164825828_12785_check_os
-  _lobash.0_7_0_164825828_12785_check_shell
-  # _lobash.0_7_0_164825828_12785_check_supported_bash_version
+_lobash.0_7_0_164954799_10642_check_support() {
+  _lobash.0_7_0_164954799_10642_check_os
+  _lobash.0_7_0_164954799_10642_check_shell
+  # _lobash.0_7_0_164954799_10642_check_supported_bash_version
 }
 
-_lobash.0_7_0_164825828_12785_check_support
+_lobash.0_7_0_164954799_10642_check_support
 
-_lobash.0_7_0_164825828_12785_dirname() {
+_lobash.0_7_0_164954799_10642_dirname() {
   local str=${1:-}
   [[ $str == '/' ]] && echo '/' && return 0
   [[ $str =~ ^'../' ]] && echo '.' && return 0
@@ -92,17 +92,17 @@ _lobash.0_7_0_164825828_12785_dirname() {
   printf '%s\n' "${str%/*}"
 }
 
-_lobash.0_7_0_164825828_12785_with_IFS() {
+_lobash.0_7_0_164954799_10642_with_IFS() {
   local IFS=$1
   shift
   eval "$*"
 }
 
-_lobash.0_7_0_164825828_12785_is_tty_available() {
+_lobash.0_7_0_164954799_10642_is_tty_available() {
   { : >/dev/tty ; } &>/dev/null
 }
 
-_lobash.0_7_0_164825828_12785_is_gnu_sed() {
+_lobash.0_7_0_164954799_10642_is_gnu_sed() {
   local out
   out=$(${1:-sed} --version 2>/dev/null)
   [[ $out =~ 'GNU sed' ]]
@@ -201,7 +201,7 @@ one_l.str_include() {
   [[ "${1:-}" =~ "${2:-}" ]]
 }
 
-_l.0_7_0_164825828_12785_ask() {
+_l.0_7_0_164954799_10642_ask() {
   local msg=$1
   local default=$2
   local valid_values prompt
@@ -221,7 +221,7 @@ _l.0_7_0_164825828_12785_ask() {
   fi
 
   local answer result='' tty_available
-  tty_available=$(_lobash.0_7_0_164825828_12785_is_tty_available && echo true || echo false)
+  tty_available=$(_lobash.0_7_0_164954799_10642_is_tty_available && echo true || echo false)
   [[ $tty_available == true ]] && echo "$msg" >/dev/tty
 
   local loop_limit=10
@@ -260,7 +260,7 @@ _l.0_7_0_164825828_12785_ask() {
 
 one_l.ask() {
   local values=(yes no)
-  _l.0_7_0_164825828_12785_ask "$1" "${2:-}"
+  _l.0_7_0_164954799_10642_ask "$1" "${2:-}"
 }
 
 one_l.join() {
@@ -306,7 +306,7 @@ one_l.trim_end() {
 }
 
 one_l.detect_os() {
-  _lobash.0_7_0_164825828_12785_detect_os
+  _lobash.0_7_0_164954799_10642_detect_os
 }
 
 ######################## Skipped Modules ########################

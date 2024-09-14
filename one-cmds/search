@@ -2,21 +2,33 @@
 set -o errexit -o nounset -o pipefail -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
-# one.bash:usage
-if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+usage() {
 	# editorconfig-checker-disable
 	cat <<EOF
-Usage: one search [-a] <WORD>
+Usage: one search [OPTIONS] <WORD>
 
 Desc: Search alias/bin/completion/plugin of each enabled repo.
 
 Arguments:
-  <WORD>         Any words without spaces.
+  <WORD>              Any words without spaces.
 
 Options:
-  -a             Search with all added repos.
+  -a, --all           Search with all downloaded repos.
+  --pager <pager>     List with pager. Default to try user's passed, "fzf" and "less". If none of them found, print without pager.
+                      If <pager> is false, print without pager.
 EOF
 	# editorconfig-checker-enable
+}
+
+# one.bash:usage
+if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+	usage
+	exit 0
+fi
+
+# one.bash:completion
+if [[ ${1:-} == --complete ]]; then
+	printf -- '--help\n--all\n--pager\n'
 	exit 0
 fi
 
@@ -39,16 +51,19 @@ fi
 # shellcheck source=./util.bash
 . "$ONE_DIR/one-cmds/util.bash"
 
+# shellcheck source=./pager.bash
+. "$ONE_DIR/one-cmds/pager.bash"
+
 declare -A opts=()
 declare -a args=()
 declare -A opts_def=(
 	[opts]=opts
 	[args]=args
-	['-a --all']=bool
+	[-a --all]=bool
 )
 l.parse_args opts_def "$@"
 
-main() {
+search()  {
 	local word=${args[0]} scope
 
 	if [[ ${opts[a]} == true ]]; then
@@ -65,5 +80,14 @@ main() {
 	for filepath in "${ONE_DIR}/$scope"/repo/*/{alias,bin,completion,plugin,sub}/*"${word}"*; do
 		print_mod_props "$filepath"
 	done
+}
+
+main() {
+	if ((${#args[*]} == 0)); then
+		usage
+		return "$ONE_EX_OK"
+	fi
+
+	with_pager search
 }
 main "$@"
