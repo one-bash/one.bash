@@ -1,7 +1,7 @@
-export PATH=''  # reset PATH
+export PATH='' # reset PATH
 
 for path in "${ONE_PATHS[@]}"; do
-  PATH=${PATH}:$path
+	PATH=${PATH}:$path
 done
 
 PATH="${PATH:1}" # remove first colon

@@ -1,51 +1,97 @@
-usage_info() {
-  cat <<EOF
-Usage: one bin info <NAME>
-Desc:  Show the information of matched bin files
+usage() {
+	# editorconfig-checker-disable
+	cat <<EOF
+Usage: one $t info [<OPTIONS>] <NAME>
+Desc:  Show the information of matched $t files
 Arguments:
-  <name>  bin name
+  <NAME>              ${t^} name
+Options:
+  -r <repo>           List $t files in the repo
 EOF
+	# editorconfig-checker-enable
 }
 
-complete_info() {
-  shopt -s nullglob
-  local path
+# TODO FIX the bin file should be executable. [[ -x $path ]]
+. "$ONE_DIR/one-cmds/plugin/action-completion.bash"
 
-  for path in "${ONE_DIR}"/data/repos/*/bins/"${@: -1}"*; do
-    basename "$path" .opt.bash
-  done
+print_info() {
+	local path=$1 name=$2
+	local ABOUT
+
+	print_info_item Name "$name"
+	print_info_item Repo "$(get_enabled_repo_name "$path")"
+	print_info_item Path "$path"
+
+	if [[ $path == *.opt.bash ]]; then
+		(
+			# shellcheck disable=1090
+			source "$path"
+			ABOUT=${ABOUT:-}
+			print_info_item About "${ABOUT//$'\n'/ }"
+			print_info_item SCRIPT "${SCRIPT:-}"
+		)
+	else
+		ABOUT=$(metafor about-plugin <"$path")
+		print_info_item About "${ABOUT//$'\n'/ }"
+	fi
 }
 
-info_bin() {
-  local name=${1:-} path
+declare -A opts=()
+declare -a args=()
 
-  if [[ -z $name ]]; then
-    usage_info
-    return 0
-  fi
+main() {
+	if ((${#args[*]} == 0)); then
+		usage
+		return "$ONE_EX_OK"
+	fi
 
-  # shellcheck disable=2034
-  PRINT_INFO_KEY_WIDTH=-6
+	shopt -s nullglob
+	local name path filepaths
 
-  shopt -s nullglob
-  for path in "$ONE_DIR"/data/repos/*/bins/"$name"{,.opt.bash}; do
-    print_info_item Name "$name"
+	# shellcheck source=../../one-cmds/mod.bash
+	. "$ONE_DIR/one-cmds/mod.bash"
 
-    if [[ $path =~ \/data\/repos\/([^\/]+)\/ ]]; then
-      print_info_item Repo "${BASH_REMATCH[1]}"
-    fi
+	local repo=${opts[r]:-}
 
-    print_info_item Path "$path"
+	# shellcheck disable=2034
+	PRINT_INFO_KEY_WIDTH=6
 
-    if [[ $path == *.opt.bash ]]; then
-      (
-        # shellcheck disable=1090
-        source "$path"
-        print_info_item "About" "${ABOUT:-}"
-        print_info_item "URL" "${URL:-}"
-      )
-    else
-      print_info_item "About" "$(metafor about-plugin <"$path")"
-    fi
-  done
+	for name in "${args[@]}"; do
+
+		filepaths=()
+
+		if [[ -z $repo ]]; then
+			for path in "${ONE_DIR}"/enabled/repo/*/"$t/$name"{,.bash,.sh,.opt.bash}; do
+				filepaths+=("$path")
+			done
+		else
+			for path in "${ONE_DIR}/enabled/repo/$repo/$t/$name"{,.bash,.sh,.opt.bash}; do
+				filepaths+=("$path")
+			done
+		fi
+
+		case ${#filepaths[@]} in
+			1)
+				print_info "${filepaths[0]}" "$name"
+				;;
+
+			0)
+				print_err "No matched $t '$name'"
+				return "$ONE_EX_DATAERR"
+				;;
+
+			*)
+				print_err "Matched multi $t for '$name'. You should use '-r' option for specified repo:"
+				local repo
+				for filepath in "${filepaths[@]}"; do
+					repo=$(get_enabled_repo_name "$filepath")
+					echo "   one $t info $name -r $repo" >&2
+				done
+				return "$ONE_EX_USAGE"
+
+				;;
+		esac
+
+	done
+
 }

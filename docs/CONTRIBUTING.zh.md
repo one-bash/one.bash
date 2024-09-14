@@ -16,9 +16,9 @@
 ## 有用的文档
 
 - [贡献指南（通用）](https://gcg.adoyle.me/CONTRIBUTING.zh/)
-- [如何测试](./test.md)
-- [项目文件结构](./file-structure.md)
-- [Bashrc 初始化流程](./entry.md)
+- [如何测试](./develop/test.md)
+- [项目文件结构](./develop/project-structure.md)
+- [Bashrc 初始化流程](./develop/entry.zh.md)
 - [高级用法](./advanced-usage/README.md)
 
 

@@ -2,6 +2,7 @@
 
 # Exit statuses fall between 0 and 255
 # https://www.gnu.org/software/bash/manual/bash.html#Exit-Status
+# https://man.freebsd.org/cgi/man.cgi?sysexits(3)
 # When a command terminates on a fatal signal whose number is N, Bash uses the value 128+N as the exit status.
 # All builtins return an exit status of 2 to indicate incorrect usage, generally invalid options or missing arguments.
 

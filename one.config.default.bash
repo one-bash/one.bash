@@ -10,8 +10,6 @@ ONE_RC=${ONE_RC:-}
 ONE_DEBUG=${ONE_DEBUG:-false}
 # If loaded time greater ONE_DEBUG_SLOW_LOAD (in millisecond), highlight the loaded time.
 ONE_DEBUG_SLOW_LOAD=${ONE_DEBUG_SLOW_LOAD:-100}
-# If true, enable Fig. (you should install it before enable) https://github.com/withfig/fig
-ONE_FIG=${ONE_FIG:-false}
 # If true, all one.bash modules will not be loaded
 ONE_NO_MODS=${ONE_NO_MODS:-false}
 # If fault error occurred, use the ONE_BASHRC_FO instead of
@@ -47,4 +45,4 @@ one_l.is_array ONE_SKIP_COMPS || ONE_SKIP_COMPS=()
 
 # User should print the path of one.bash env file
 # @param os type
-one_l.is_function ONE_LINKS_CONF || ONE_LINKS_CONF() { true; }
+one_l.is_function ONE_LINKS_CONF || ONE_LINKS_CONF="${ONE_LINKS_CONF:-$ONE_CONF_DIR/one.links.yaml}"

@@ -1,5 +1,6 @@
-usage_remove() {
-  cat <<EOF
+usage() {
+	# editorconfig-checker-disable
+	cat <<EOF
 Usage: one repo remove <NAME>...
 
 Desc: Remove a repo
@@ -7,37 +8,32 @@ Desc: Remove a repo
 Arguments:
   <NAME>      Repo name
 EOF
+	# editorconfig-checker-enable
 }
 
-complete_remove() {
-  shopt -s nullglob
-  local path
-  for path in "$ONE_DIR/data/repos/${@: -1}"*; do
-    if [[ -d $path ]] && [[ -f $path/one.repo.bash ]]; then
-      # shellcheck disable=1091
-      . "$path/one.repo.bash"
-      echo "${name:-}"
-    fi
-  done
+completion() {
+	shopt -s nullglob
+	local path
+	for path in "$ONE_DIR/data/repo/${@: -1}"*; do
+		if [[ -d $path ]]; then
+			echo "${path##*/}"
+		fi
+	done
 }
 
-remove_repo() {
-  local name=$1
-  local path="$ONE_DIR/data/repos/$name"
-  if [[ ! -d $path ]]; then return; fi
+main() {
+	local name=$1
+	local path="$ONE_DIR/data/repo/$name"
+	if [[ ! -d $path ]]; then return 0; fi
 
-  local answer
-  answer=$(one_l.ask "Do you want to remove repo '$name'?")
-  if [[ $answer != YES ]]; then return; fi
+	local answer
+	answer=$(l.ask "Do you want to remove repo '$name'?")
+	if [[ $answer != YES ]]; then return 0; fi
 
-  if [[ -f $path/one.repo.bash ]]; then
-    # shellcheck disable=1091
-    name=$( . "$path/one.repo.bash" && echo "${name:-}" )
-    if [[ -n ${name} ]] && [[ -e $ONE_DIR/enabled/repos/$name ]]; then
-      unlink "$ONE_DIR/enabled/repos/$name"
-    fi
-  fi
+	if [[ -L $ONE_DIR/enabled/repo/$name ]]; then
+		unlink "$ONE_DIR/enabled/repo/$name"
+	fi
 
-  rm -rf "$path"
-  print_success "Removed repo: $name"
+	rm -rf "$path"
+	print_success "Removed repo: $name"
 }

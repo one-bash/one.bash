@@ -38,3 +38,7 @@ changelog:
 
 init:
 	git submodule update --recursive --init
+
+.PHONY: format
+format:
+	shfmt -s -w -ln=auto -i 0 -ci --apply-ignore ./bash/ ./bin/ ./one-cmds/ ./one.config.default.bash ./test/ ./tools/

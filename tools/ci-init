@@ -14,12 +14,12 @@ export ONE_CONF=$DOTFILES_DIR/one.config.bash
 mkdir -p "$(dirname "$ONE_CONF")"
 
 cat <<-EOF >"$ONE_CONF"
-DOTFILES_DIR="$DOTFILES_DIR"
+	DOTFILES_DIR="$DOTFILES_DIR"
 
-ONE_DEBUG=false
-ONE_LINKS_CONF() {
-  case "\$1" in
-    *) echo "$DOTFILES_DIR"/one.links.yaml ;;
-  esac
-}
+	ONE_DEBUG=false
+	ONE_LINKS_CONF() {
+	  case "\$1" in
+	    *) echo "$DOTFILES_DIR"/one.links.yaml ;;
+	  esac
+	}
 EOF

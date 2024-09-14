@@ -1,5 +1,6 @@
-usage_disable() {
-  cat <<EOF
+usage() {
+	# editorconfig-checker-disable
+	cat <<EOF
 Usage: one repo disable <NAME>...
 
 Desc: Disable repo
@@ -7,29 +8,38 @@ Desc: Disable repo
 Arguments:
   <NAME>      Repo name
 EOF
+	# editorconfig-checker-enable
 }
 
-complete_disable() {
-  shopt -s nullglob
-  local path
-  for path in "$ONE_DIR/enabled/repos/${@: -1}"*; do
-    if [[ -d $path ]]; then
-      basename "$path"
-    fi
-  done
+completion() {
+	shopt -s nullglob
+	local path
+	for path in "$ONE_DIR/enabled/repo/${@: -1}"*; do
+		if [[ -d $path ]]; then
+			echo "${path##*/}"
+		fi
+	done
 }
 
-disable_repo() {
-  local name filepath
+declare -A opts=()
+declare -a args=()
 
-  for name in "$@"; do
-    filepath="$ONE_DIR/enabled/repos/$name"
+main() {
+	if ((${#args[@]} == 0)); then
+		usage
+		return "$ONE_EX_OK"
+	fi
 
-    if [[ -h $filepath ]]; then
-      unlink "$filepath"
-      print_success "Disabled repo: $name"
-    else
-      print_error "No matched repo: $name"
-    fi
-  done
+	local name filepath
+
+	for name in "${args[@]}"; do
+		filepath="$ONE_DIR/enabled/repo/$name"
+
+		if [[ -L $filepath ]]; then
+			unlink "$filepath"
+			print_success "Disabled repo: $name"
+		else
+			print_err "No matched repo: $name"
+		fi
+	done
 }

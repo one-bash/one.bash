@@ -4,88 +4,86 @@ set -o errexit -o nounset -o pipefail -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
 # one.bash:usage:-h
-if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
-  cat <<EOF
+if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+	# editorconfig-checker-disable
+	cat <<EOF
 Usage: one help [<CMD>]
        one help -a
 
 Desc:
   Print the usage of One Command.
-  Enter "one -h" to see all command usages.
+  Enter "one" to see all command usages.
 
 Arguments:
   <CMD>  The sub command of one
 
 Options:
-  -a     If set, print usages of all commands.
+  -a, --all     If set, print all command usages.
 EOF
-  exit 0
+	exit 0
+	# editorconfig-checker-enable
 fi
 
 if [[ -z ${ONE_DIR:-} ]]; then
-  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-  readonly SCRIPT_DIR
-  ONE_DIR=$SCRIPT_DIR/..
+	ONE_DIR=$(realpath "$0")
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	declare -rx ONE_DIR
 fi
 
 # one.bash:completion
 if [[ $1 == '--complete' ]]; then
-  if (( $# == 2 )); then
-    "$ONE_DIR"/one-cmds/commands
-  fi
-  exit
+	if (($# == 2)); then
+		for path in "$ONE_DIR"/one-cmds/*; do
+			if [[ -x $path/main ]] || [[ -x $path ]]; then
+				echo "${path##"$ONE_DIR/one-cmds/"}"
+			fi
+		done
+	fi
+	exit 0
 fi
 
 print_help() {
-  local cmd="$1"
-  local file="$ONE_DIR/one-cmds/$cmd"
-  local label arg
+	local cmd="$1"
+	local file="$ONE_DIR/one-cmds/$cmd"
+	local label arg
 
-  if [[ -x $ONE_DIR/one-cmds/$cmd/main ]]; then
-    file="$ONE_DIR/one-cmds/$cmd/main"
-  elif [[ ! -x "${file}" ]]; then
-    printf '%bNot found command "%s".%b\n' "$YELLOW" "$cmd" "$RESET_ALL" >&2
-    return "$ONE_EX_USAGE"
-  fi
+	if [[ -f $ONE_DIR/one-cmds/$cmd/main ]]; then
+		file="$ONE_DIR/one-cmds/$cmd/main"
+	fi
 
-  label=$( grep -i '^# one.bash:usage' "$file" 2>/dev/null || true )
+	if [[ ! -x $file ]]; then
+		print_warn "Not found command '$cmd'"
+		return "$ONE_EX_USAGE"
+	fi
 
-  if [[ -z "$label" ]]; then
-    printf '%bThe command "%s" has not usage document.%b\n' "$YELLOW" "$cmd" "$RESET_ALL" >&2
-    return "$ONE_EX_UNAVAILABLE"
-  fi
+	label=$(grep -i '^# one.bash:usage' "$file" 2>/dev/null || true)
 
-  arg=$( sed -E 's/^# one.bash:usage(:?.*)/\1/i' <<<"$label" || true )
+	if [[ -z $label ]]; then
+		print_warn "The command '$cmd' has not usage document."
+		return "$ONE_EX_UNAVAILABLE"
+	fi
 
-  if [[ -z ${arg#:} ]]; then
-    arg='--help'
-  else
-    arg=${arg#:}
-  fi
+	arg=$(sed -E 's/^# one.bash:usage(:?.*)/\1/i' <<<"$label" || true)
 
-  "$file" "$arg"
-}
+	if [[ -z ${arg#:} ]]; then
+		arg='--help'
+	else
+		arg=${arg#:}
+	fi
 
-print_all_helps() {
-  local cmd
-  for cmd in $(one commands); do
-    print_help "$cmd" || true
-    printf '%b--------------------------------------------------%b\n' "${GREY}" "${RESET_ALL}"
-  done
+	"$file" "$arg"
 }
 
 main() {
-  # shellcheck source=../deps/colors.bash
-  . "$ONE_DIR/deps/colors.bash"
+	# shellcheck source=./base-scripts.bash
+	. "$ONE_DIR/one-cmds/base-scripts.bash"
 
-  # shellcheck source=../bash/exit-codes.bash
-  . "$ONE_DIR/bash/exit-codes.bash"
-
-  if [[ $1 == -a ]]; then
-    print_all_helps
-  else
-    print_help "$1"
-  fi
+	if [[ $1 == -a ]] || [[ $1 == --all ]]; then
+		one -h
+	else
+		print_help "$1"
+	fi
 }
 
 main "$@"

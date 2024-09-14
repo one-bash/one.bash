@@ -1,69 +1,86 @@
-usage_add() {
-  cat <<EOF
+usage() {
+	# editorconfig-checker-disable
+	cat <<EOF
 Usage: one repo add <URL>
 
-Desc: Add a repo and enable it
+Desc: Download and enable a repo
 
 Arguments:
-  <URL>          Support http, git, local file
+  <URL>          Support http/https, git, local directory.
+                 Local directory must be absolute path. one.bash will create a symlink to the directory.
+
+Examples:
+  one repo add one-bash/one.share
+  one repo add https://github.com/one-bash/one.share
+  one repo add https://github.com/one-bash/one.share.git
+  one repo add /home/adoyle/any/folder
 EOF
+	# editorconfig-checker-enable
 }
 
-get_repo_name() {
-  local dir=$1
-  local name
+download() {
+	local src=$1
 
-  if [[ ! -f "$dir/one.repo.bash" ]]; then
-    print_error "'one.repo.bash' file not existed in directory: $dir"
-    return 4
-  fi
+	if [[ $NO_DOWNLOAD != false ]]; then
+		return
+	fi
 
-  # shellcheck disable=1091
-  name=$( . "$dir/one.repo.bash" && echo "${name:-}" )
-  if [[ -z $name ]]; then
-    print_error "The repo name should not be empty in one.repo.bash"
-    return 5
-  fi
-
-  echo "$name"
+	if [[ $src == *.git || $src == http?(s)://* ]]; then
+		print_verb "[REPO: $name] to download via git"
+		git -C "$ONE_DIR/data/repo/" clone --single-branch --progress "$src"
+	elif [[ $src =~ ^[^/]+/[^/]+$ ]]; then
+		print_verb "[REPO: $name] to download via git"
+		git -C "$ONE_DIR/data/repo/" clone --single-branch --progress "https://github.com/$src.git"
+	elif [[ $src == /* ]]; then
+		print_verb "[REPO: $name] to download via local path"
+		ln -s "$src" "$ONE_DIR/data/repo/$name"
+	else
+		print_err "Invalid url: $src"
+		return "$ONE_EX_USAGE"
+	fi
 }
 
-add_repo() {
-  local src=$1
-  local name
+main() {
+	local src=$1
+	local name="${src##*/}"
+	name=${name%.git}
+	local NO_DOWNLOAD=false
+	local repo_file=$ONE_DIR/data/repo/$name/one.repo.bash
 
-  . "$ONE_DIR/bash/repo.bash"
+	if [[ -e "$ONE_DIR/data/repo/$name" ]]; then
+		answer=$(l.ask "The repo '$name' has been downloaded. Re-download it?" N)
+		if [[ $answer == YES ]]; then
+			rm -rf "$ONE_DIR/data/repo/$name"
+		else
+			NO_DOWNLOAD=true
+		fi
+	fi
 
-  case $src in
-    http*|git*)
-      git -C "$ONE_DIR/data/repos/" clone --single-branch --progress "$src"
-      name=$(get_repo_name "$(basename "$src" .git)")
-      ;;
-    /*)
-      # shellcheck disable=1091
-      name=$(get_repo_name "$src")
+	(
+		cd "$ONE_DIR/data/repo/$name" || return 20
+		# shellcheck disable=1090
+		if [[ -f $repo_file ]]; then source "$repo_file"; fi
 
-      if [[ -e "$ONE_DIR/data/repos/$name" ]]; then
-        print_error "Repo '$name' existed"
-        return 3
-      fi
-      ln -s "$src" "$ONE_DIR/data/repos/$name"
-      ;;
-    *)
-      print_error "Invalid url: $src"
-      return 2
-      ;;
-  esac
+		if type -t repo_add_pre &>/dev/null; then
+			print_verb "[REPO: $name] To execute repo_add_pre()"
+			repo_add_post
+			print_verb "[REPO: $name] repo_add_pre() success done"
+		fi
+	)
 
-  (
-    cd "$ONE_DIR/data/repos/$name" || return 20
-    # shellcheck disable=1090
-    . "$ONE_DIR/data/repos/$name/one.repo.bash"
-    if type -t repo_add_post >/dev/null; then
-      print_verb "To execute repo_add_post()"
-      repo_add_post
-    fi
-  )
+	download "$src"
 
-  one repo enable "$name"
+	(
+		cd "$ONE_DIR/data/repo/$name" || return 20
+		# shellcheck disable=1090
+		if [[ -f $repo_file ]]; then source "$repo_file"; fi
+
+		if type -t repo_add_post &>/dev/null; then
+			print_verb "[REPO: $name] To execute repo_add_post()"
+			repo_add_post
+			print_verb "[REPO: $name] repo_add_post() success done"
+		fi
+	)
+
+	one repo enable "$name"
 }

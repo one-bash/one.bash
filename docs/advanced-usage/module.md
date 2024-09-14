@@ -4,11 +4,11 @@ one.bash uses modules to manage shell scripts.
 
 User can use `one` commands to manage modules. Enable/Disable modules on your demand.
 
-The modules have three types: `alias`, `completion`, `plugin`.
+The modules types: `alias`, `completion`, `plugin`, `bin`, `sub`.
 
-- All plugins are put in `plugins/` of each repo.
-- All completions are put in `completions/` of each repo.
-- All aliases are put in `aliases/` of each repo.
+- All plugins are put in `plugin/` of each repo.
+- All completions are put in `completion/` of each repo.
+- All aliases are put in `alias/` of each repo.
 - All enabled modules are symbol linked in `$ONE_DIR/enabled/` directory.
   - `one enabled` to view enabled modules.
   - `one backup` to backup enabled modules to a file.
@@ -21,83 +21,7 @@ The modules have three types: `alias`, `completion`, `plugin`.
 
 It's suggested to move your shell codes to modules.
 
-## Write a module
-
-All modules must be put in one of aliases/completions/plugins folders. And its filename must be suffixed with `.bash` or `.opt.bash`.
-
-### Template of module.bash
-
-```sh
-about-plugin 'Module Description'
-
-# put your shellscript codes here
-```
-
-Invoke `one <mod_type> enable <name>` and restart shell to enable the module.
-
-### Template of module.opt.bash
-
-For plugin,
-
-```sh
-ABOUT='Description of module'
-
-PRIORITY=400
-
-# URL can be a git protocal or http(s) resource url
-URL='https://github.com/akinomyoga/ble.sh.git'
-
-# To run command when `one <mod> enable`
-RUN='make -C "$MOD_DATA_DIR/git" install PREFIX="$MOD_DATA_DIR/dist"'
-
-# After "RUN" finish, then execute APPEND. The stdout will append to module content.
-APPEND='cat <<EOF
-. $MOD_DATA_DIR/dist/share/blesh/ble.sh &> "\$(tty)"
-EOF'
-
-# Execute INSERT before "RUN" start. The stdout will insert to module content.
-# INSERT=""
-
-# To check commands in host when `one <mod> enable`.
-# The DEP_CMDS is a string which includes one or more command names separated with spaces.
-DEP_CMDS='gawk'
-
-# If URL is omit, you may set an install() function to download the module requirements.
-# Download files to MOD_DATA_DIR directory.
-# install() {
-#   curl -o "$MOD_DATA_DIR"/file "http://..."
-# }
-```
-
-or
-
-```sh
-IFS='' # for multi-line string
-ABOUT='Tab completion using fzf. https://github.com/lincheney/fzf-tab-completion'
-URL=https://github.com/lincheney/fzf-tab-completion.git
-# The `git/` means the downloaded git repo from `URL`.
-SCRIPT=git/bash/fzf-bash-completion.sh
-PRIORITY=801 # aliases.completion (LOAD_PRIORITY: 800) will reset completion function
-APPEND="cat <<EOF
-bind -x '\"\\t\": fzf_bash_completion'
-_fzf_bash_completion_loading_msg() {
-  printf '%b%s \\n' \"\\\${PS1@P}\" \"\\\${READLINE_LINE}\"  | tail -n 1
-}
-FZF_TAB_OPTS=''
-FZF_TAB_TMUX_OPTS='-h ~50% -w ~80%'
-EOF"
-```
-
-For completion,
-
-```sh
-# The URL to download a completion script
-URL='https://raw.githubusercontent.com/ziglang/shell-completions/master/_zig.bash'
-```
-
-For alias, same to plugin.
-
-### PRIORITY
+## PRIORITY
 
 The modules are loaded by one.bash in order (from lower to higher based on PRIORITY).
 
@@ -105,16 +29,105 @@ This property is optional, each module has default priority.
 
 The value of priority range of each module type:
 
-- `plugin`: 300~499, default 400.
-- `completion`: 500~699, default 600.
-- `alias`: 700~799, default 750.
+- `plugin`: 300~499, defaults to `400`.
+- `completion`: 500~699, defaults to `600`.
+- `alias`: 700~799, defaults to `750`.
 
-For `.bash` file, put `# ONE_LOAD_PRIORITY: <PRIORITY>` at the head of script to set loading priority.
+## Write a module
 
-For `.opt.bash` file, put `PRIORITY=<PRIORITY>` in file.
+All modules must be put in one of alias/completion/plugin/bin/sub folders.
 
-`# ONE_LOAD_PRIORITY: 400` or `PRIORITY=400` means the load priority of module is `400`.
+### Specifications of module.bash
 
+The file content of module.bash:
+
+```sh
+about-plugin 'Module Description'
+# ONE_LOAD_PRIORITY: 400
+
+# Write your shellscript here
+```
+
+- `about-plugin 'Description'`: Description of module. It is optional
+- `one-bash:mod:deps DEPS`: To check commands in system when `one <mod> enable` and loading one.bash.
+  - The `DEPS` is a string which includes one or more command names separated with spaces.
+- `# ONE_LOAD_PRIORITY: <PRIORITY>`: Setting the loading priority. Put this line at the head of script.
+
+See the examples in https://github.com/one-bash/one.share
+
+### Specifications of module.opt.bash
+
+If a module need download files from remote. It's recommended to use module.opt.bash.
+
+When `one <mod> enable` find the module.opt.bash, it will create a mod.bash file.
+And create a symbol-link pointed to mod.bash.
+
+The final module will be: `$ONE_DIR/enabled/priority---name@repo@type.bash` -> `$ONE_DIR/data/type/name/mod.bash`
+
+- `ABOUT=''`: Description of module. It is optional
+- `PRIORITY=400`: Priority of module. It is optional
+- `GIT_REPO='https://github.com/user/repo.git'`: Git clone this repo. It is optional
+- `SCRIPT='https://raw.githubusercontent.com/...'`: curl this file. It is optional
+- `DEPS='awk sed'`: To check commands in system when `one <mod> enable`. The DEPS is a string which includes one or more command names separated with spaces.
+
+- hooks used in `one <mod> enable`. They are all optional.
+  - `AFTER_DOWNLOAD() {}`: This function will be executed after files downloaded. User may use it to download the other requirements, compile and other things.
+  - `INSERT() {}`: The function content will be inserted before module sciprt (`source $SCRIPT`).
+  - `RUN_AND_INSERT() {}`: The function will be executed. And its stdout will be inserted before module sciprt (`source $SCRIPT`).
+  - `APPEND() {}`: The function content will be inserted after module sciprt (`source $SCRIPT`).
+  - `RUN_AND_APPEND() {}`: The function will be executed. And its stdout will be inserted after module sciprt (`source $SCRIPT`).
+
+See the examples in https://github.com/one-bash/one.share
+
+### The content of generated mod.bash
+
+```sh
+# This file is generated by one.bash. Do not modify the file content.
+# ABOUT: $ABOUT
+one-bash:mod:deps $DEPS
+$INSERT
+$RUN_AND_INSERT()
+source $SCRIPT
+$APPEND
+$RUN_AND_APPEND()
+```
+
+### The steps when generating mod.bash
+
+one.bash will auto execute below steps.
+
+1. check dependencies if `DEPS` or `one-bash:mod:deps` defined
+2. download files
+3. run `AFTER_DOWNLOAD` if defined
+4. copy `INSERT` if defined
+5. run and copy the stdout of `RUN_AND_INSERT` if defined
+6. copy `APPEND` if defined
+7. run and copy the stdout of `RUN_AND_APPEND` if defined
+
+### Download file via curl
+
+```sh
+SCRIPT=https://raw.githubusercontent.com/cheat/cheat/master/scripts/cheat.bash
+```
+
+The script will be downloaded to `$ONE_DIR/data/type/name/script.bash`.
+
+### Download GITHUB repo codes
+
+```sh
+GITHUB_REPO=https://github.com/lincheney/fzf-tab-completion
+SCRIPT=bash/fzf-bash-completion.sh
+```
+
+### Download GITHUB release files
+
+```sh
+GITHUB_REPO=https://github.com/so-fancy/diff-so-fancy
+GITHUB_RELEASE_VERSION=latest
+GITHUB_RELEASE_FILES=(diff-so-fancy)
+```
+
+- `GITHUB_RELEASE_VERSION`: It's optional. Defaults to `latest`.
 
 <!-- links -->
 

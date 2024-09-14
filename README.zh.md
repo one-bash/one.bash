@@ -10,40 +10,33 @@
 ## 功能
 
 - 集中管理一系列配置文件。使用 YAML 文件通过 [dotbot][] 来管理软链接。
-- 通过[模块](#模块)管理 shell 脚本、补语、别名。支持自定义模块。
-- 通过 [repo](#one-repo) 轻松分享和重用可执行文件、子命令、配置和模块。支持自定义 repo 和多个 repo。
-- 可以在一个作用域下管理自己的命令。如 `a <cmd>` 来调用命令，避免在 `PATH` 中重复命令。请阅读 [ONE_SUB Commands](./docs/advanced-usage/one-sub-cmd.md)。
+- 通过[模块][one-module]管理 shell 脚本、补语、别名。支持自定义模块。
+- 通过 [repo][one-repo] 轻松分享和重用可执行文件、子命令、配置和模块。支持自定义 repo 和多个 repo。
+- 可以在一个作用域下管理自己的命令。如 `a <cmd>` 来调用命令，避免在 `PATH` 中重复命令。请阅读 [ONE_SUB Commands][one-sub]。
 - 可配置的 one.bash。请阅读 [ONE_CONF](#oneconf)。
 - 支持 [bash-it][]。使用 [one-bash-it][] 即可。你可以使用 one 命令来管理 bash-it 的 aliases/completions/plugins。请阅读 [bash-it.md](./docs/advanced-usage/bash-it.md)。
-- 支持 [Fig][]。请阅读 [docs/advanced-usage/fig.md](./docs/advanced-usage/fig.md)。
 
 ## 环境
 
 - ✅ iTerm2
 - ✅ Terminal.app
-- ✅ MacOS Intel Arch
-- ✅ MacOS ARM Arch
-- ✅ Linux/Unix system
-- 🚫 Windows system
-- 🚫 Zsh. 本项目针对 Bash 用户开发. Zsh 用户请使用 [Oh My Zsh](https://github.com/robbyrussell/oh-my-zsh)。
-
-## CI 状态
-
-- [develop 分支](https://github.com/one-bash/one.bash/tree/develop): [![CI 状态](https://github.com/one-bash/one.bash/actions/workflows/ci.yaml/badge.svg?branch=develop)](https://github.com/one-bash/one.bash/actions/workflows/ci.yaml?query=branch%3Adevelop)
+- ✅ MacOS 13 及以上版本 (Intel/ARM 架构)
+- ✅ Linux/Unix 系统
+- 🚫 Windows 系统
+- 🚫 Zsh。本项目针对 Bash 用户开发. Zsh 用户请使用 [Oh My Zsh](https://github.com/robbyrussell/oh-my-zsh)。
 
 ## 版本
 
-详见 [tags][]。
+详见 [releases][]。
 版本命名遵守 [SemVer 2.0.0](http://semver.org/)。
 
-## 依赖
-
-### 必要的依赖
+## 必要的依赖
 
 - GNU Bash 4.4 or 5.0+
 - [python3](https://www.python.org/)
 - [perl 5](https://github.com/Perl/perl5)
 - [git](https://github.com/git/git)
+- sed, awk, grep, find
 
 ## 灵感来源
 
@@ -75,6 +68,38 @@ echo '' >> ~/.bashrc
 one --bashrc >> ~/.bashrc
 ```
 
+## 更新
+
+```sh
+# 更新 one.bash 以及相关依赖到最新版本
+one upgrade
+# 检查依赖状态
+one dep status
+```
+
+## 快速上手
+
+```bash
+# Add a repo
+one repo add one-bash/one.share
+one repo add Bash-it/bash-it
+
+# List available plugins/completions/aliases/bins/subs
+one plugin list -a
+one completion list -a
+one alias list -a
+one bin list -a
+one sub list -a
+
+# Enable modules on demand
+# one plugin enable <name>
+# one completion enable <name>
+
+# Restart your shell
+```
+
+如果 shell 遇到任何严重问题并无法启动，尝试使用 `ONE_RC=<path-to-your-rcfile>` 来更改 bashrc 进行恢复。
+
 ## 配置
 
 ### ONE_CONF
@@ -82,7 +107,7 @@ one --bashrc >> ~/.bashrc
 `ONE_CONF` 存放 one.bash 配置的文件路径。
 这个文件不是必须的，one.bash 有[默认配置](./one.config.default.bash)。
 
-```sh
+```bash
 ONE_CONF=${XDG_CONFIG_HOME:-$HOME/.config}/one.bash/one.config.bash
 mkdir -p "$(dirname "$ONE_CONF")"
 
@@ -110,48 +135,73 @@ EOF
 
 还可以用`one config <key>` 来查询选项。
 
+### ONE_DIR
+
+`ONE_DIR` 是 one.bash 所在目录。这个是常量，无需配置。
+
+### ONE_CONF_DIR
+
+`ONE_CONF_DIR` 是 ONE_CONF 文件所在目录。这个是常量，无需配置。
+
 ### ONE_LINKS_CONF
 
-`ONE_LINKS_CONF` 是一个 Bash 函数，它返回 [dotbot][] 配置的文件路径。默认为空。
+`ONE_LINKS_CONF` 可以是字符串，字符串数组，以及函数。默认值是 `$ONE_CONF_DIR/one.links.yaml`。
 
-该函数接收两个参数：OS (`uname -s`) 和 Arch (`uname -m`)。
-它可以用来管理不同系统下的不同 [dotbot][] 配置（比如 MacOS 和 Linux）。
+`one link` 以及 `one unlink` 命令读取 `ONE_LINKS_CONF` 指向的文件内容，来管理软链接。
+**注意: 不要用 sudo 调用 `one link` 和 `one unlink`。**
+
+`ONE_LINKS_CONF` 文件内容采用 [dotbot 配置](https://github.com/anishathalye/dotbot#configuration)。
+
+这有一份提供了 dotbot 配置模板 [one.links.example.yaml][]。你可以拷贝内容到 `one.links.yaml`。
+
+<!-- 你可以使用 [dotbot 插件](https://github.com/anishathalye/dotbot#plugins) 来获得更多指令。 -->
+<!-- 详见 https://github.com/anishathalye/dotbot/wiki/Plugins -->
+
+#### ONE_LINKS_CONF 数组
+
+它可以用来管理多个 ONE_LINKS_CONF 文件，以便拆分和复用。
 
 ```sh
-# User should print the path of ONE_LINKS_CONF file
+ONE_LINKS_CONF=("/a/one.links.yaml" "/b/one.lins.yaml")
+```
+
+#### ONE_LINKS_CONF 函数
+
+`ONE_LINKS_CONF` 也可以是 Bash 函数，其返回值表示 [dotbot][] 配置的文件路径。
+
+该函数接收两个参数：OS (`uname -s`) 和 Arch (`uname -m`)。必须用 `echo` 返回 ONE_LINKS_CONF 路径。
+
+它可以用来管理不同系统下的不同 [dotbot][] 配置（比如 MacOS 和 Linux）。
+
+```bash
+# User should print the filepath of ONE_LINKS_CONF
+# User can print multiple filepaths
 # @param os   $(uname -s)
 # @param arch $(uname -m)
 ONE_LINKS_CONF() {
   local os=$1
   local arch=$2
   case "$os_$arch" in
-    Darwin_arm64) echo "$DOTFILES_DIR"/links/macos_arm.yaml ;;
-    Darwin_amd64) echo "$DOTFILES_DIR"/links/macos_intel.yaml ;;
+    Darwin_arm64)
+      echo "$DOTFILES_DIR"/links/macos_common.yaml
+      echo "$DOTFILES_DIR"/links/macos_arm.yaml
+      ;;
+    Darwin_amd64)
+      echo "$DOTFILES_DIR"/links/macos_common.yaml
+      echo "$DOTFILES_DIR"/links/macos_intel.yaml
+      ;;
     Linux*) echo "$DOTFILES_DIR"/links/linux.yaml ;;
   esac
 }
 ```
 
-[dotbot][] 是一个通过软链接管理配置文件（或者任何文件）的工具。
-你可以用它来创建软链接，指向任何文件。
-
-[one.share][] 提供了 dotbot 配置模板 [one.links.example.yaml][]。你可以拷贝内容到 `one.links.yaml`。
-
-调用 `one link` 会根据 ONE_LINKS_CONF 创建软链接。
-**注意: 不要用 sudo 调用 `one link`。**
-
-调用 `one unlink` 会根据 ONE_LINKS_CONF 移除软链接文件。
-
-你可以使用 [dotbot 插件](https://github.com/anishathalye/dotbot#plugins) 来获得更多指令。
-详见 https://github.com/anishathalye/dotbot/wiki/Plugins
-
 ## 用法
 
 ## ONE 命令
 
-`one` 命令用来管理 one.bash 模块、配置以及依赖。
+`one` 命令用来管理 one.bash [仓库][one-repo]和[模块][one-module]、配置以及依赖。
 
-```
+```bash
 # 调用 `one` 会显示用法。
 $ one
 Usage:
@@ -162,28 +212,30 @@ Usage:
     one r
     one repo                    Manage one.bash repos
     one a
-    one alias                   Manage aliases in ONE_REPO/aliases/
+    one alias                   Manage aliases in ONE_REPO/alias/
     one b
-    one bin                     Manage executable files in ONE_REPO/bins/
+    one bin                     Manage executable files in ONE_REPO/bin/
     one c
-    one completion              Manage completions in ONE_REPO/completions/
+    one completion              Manage completions in ONE_REPO/completion/
     one p
-    one plugin                  Manage plugins in ONE_REPO/plugins/
+    one plugin                  Manage plugins in ONE_REPO/plugin/
 
     one enabled                 Manage enabled modules (alias/completion/plugin)
     one disable-all             Disable all modules (alias/completion/plugin)
 
     one backup                  Output backup scripts for current enabled modules
-    one commands                List one commands
     one config                  Manage user's ONE_CONF
     one debug                   Toggle debug mode on one.bash
     one dep                     Manage one.bash deps
     one link                    Create symlink files based on LINKS_CONF file
     one unlink                  remove all symbol links based on LINKS_CONF file
+    one upgrade                 Upgrade one.bash and its dependencies to latest version
     one log                     Tail the logs of one.bash
     one search                  Search alias/bin/completion/plugin of each enabled repo.
     one sub [<SUB_CMD>]         Run ONE_SUB command
-    one [--bashrc]              Print one.bash entry codes for bashrc
+    one status                  Print one.bash status
+    one version                 Print current version of one.bash
+    one --bashrc                Print one.bash entry codes for bashrc
 
 Desc:
     An elegant framework to manage commands, completions, dotfiles for terminal players.
@@ -194,68 +246,17 @@ Arguments:
     <SUB_CMD>                   The ONE_SUB command
 ```
 
-## 模块
-
-one.bash 使用模块来管理脚本。
-
-用户可以使用 `one` 命令来管理模块。按需启用或禁用模块。
-
-模块有三种类型：`alias`, `completion`, `plugin`。
-
-- 所有 plugins 放在每个 repo 的 `plugins/` 目录。
-- 所有 completions 放在每个 repo 的 `completions/` 目录。
-- 所有 aliases 放在每个 repo 的 `aliases/` 目录。
-- 所有启用的模块会在 `$ONE_DIR/enabled/` 目录下创建软链接。
-  - 使用 `one enabled` 可以查询启用的模块。
-  - 使用 `one backup` 备份启动的模块。
-- 使用 `one help <mod_type>` 显示使用方法。
-- `one <mod_type> enable` 来启用模块。
-- `one <mod_type> disable` 来禁用模块。
-- `one <mod_type> list` 列出所有模块。
-
-[one.share][] 提供了许多模块、配置、ONE_SUB 命令，以及 bin 命令。
-
-推荐你把 shell 代码移到模块里管理。
-
-详见[模块文档](./docs/advanced-usage/module.md)。
-
-## One Repo
-
-one.bash 只是一个管理框架。它不包含任何配置文件。
-推荐使用官方的 REPO [one.share][] 和 [one-bash-it][] ，它们提供了很多配置来增强 shell 体验。
-
-你可以创建你自己的 ONE REPO。阅读 [Create Repo](./docs/advanced-usage/repo.md#create-repo) 了解详情。
-
-- 列出所有本地 repo: `one repo list`
-- 下载并启用 repo:
-  - `one repo add https://github.com/one-bash/one.share`
-  - `one repo add git@github.com:one-bash/one.share.git`
-  - `one repo add /local/directory`
-- 启用 repo: `one repo enable one.share`
-- 禁用 repo: `one repo disable one.share`
-- 更新 repo: `one repo update one.share`
-- 删除 repo: `one repo remove one.share`
-- 创建 repo: You can create your own repo. Read the [document](./docs/advanced-usage/repo.md#create-repo) for details.
-
-调用 `one repo l` 来列出当前使用的所有 REPO（根据 `ONE_CONF` 配置）。
-
-## ONE_SUB 命令
-
-放在每个 [REPO](./docs/advanced-usage/repo.md) 的 `sub/` 目录下的可执行文件，都可以使用 `one sub run <cmd>` 或 `a <cmd>` 调用。（`$ONE_SUB <cmd>`, `ONE_SUB` 默认值为 `a`，详见 [`ONE_CONF`][one.config.default]）
-
-`sub/` 路径没有包含在 `$PATH`，所有你无法直接调用 ONE_SUB 命令。
-
-详见[文档](./docs/advanced-usage/one-sub-cmd.md)。
-
 ## [文档](./docs)
 
-- [Bashrc Initialization Proces](./docs/entry.md)
-- [Project File Structure](./docs/file-structure.md)
-- [Advanced Usages](./docs/advanced-usage/README.md)
+- [模块][one-sub]
+- [One Repo][one-repo]
+- [ONE_SUB 命令][one-sub]
+- [Bashrc 初始化过程](./docs/entry.zh.md)
+- [项目文件结构](./docs/develop/project-structure.md)
+- [高级用法](./docs/advanced-usage/README.zh.md)
   - [ONE Dependencies](./docs/advanced-usage/dep.md)
   - [ONE Functions](./docs/advanced-usage/one-functions.md)
   - [ONE_SUB Command](./docs/advanced-usage/one-sub-cmd.md)
-  - [Fig](./docs/advanced-usage/fig.md)
   - [Bash-it](./docs/advanced-usage/bash-it.md)
 
 ## 提建议，修 Bug，做贡献
@@ -266,7 +267,7 @@ one.bash 只是一个管理框架。它不包含任何配置文件。
 
 ## 版权声明
 
-Copyright 2022-2023 ADoyle (adoyle.h@gmail.com). Some Rights Reserved.
+Copyright 2022-2024 ADoyle (adoyle.h@gmail.com). Some Rights Reserved.
 The project is licensed under the **Apache License Version 2.0**.
 
 Read the [LICENSE][] file for the specific language governing permissions and limitations under the License.
@@ -283,7 +284,7 @@ Read the [NOTICE][] file distributed with this work for additional information r
 
 [LICENSE]: ./LICENSE
 [NOTICE]: ./NOTICE
-[tags]: https://github.com/one-bash/one.bash/tags
+[releases]: https://github.com/one-bash/one.bash/releases
 
 <!-- links -->
 
@@ -295,5 +296,7 @@ Read the [NOTICE][] file distributed with this work for additional information r
 [dotbot]: https://github.com/anishathalye/dotbot/
 [bash-it]: https://github.com/Bash-it/bash-it
 [bash-completion]: https://github.com/scop/bash-completion
-[Fig]: https://github.com/withfig/fig
 [sub]: https://github.com/basecamp/sub
+[one-repo]: ./docs/advanced-usage/repo.zh.md
+[one-module]: ./docs/advanced-usage/module.zh.md
+[one-sub]: ./docs/advanced-usage/one-sub-cmd.zh.md

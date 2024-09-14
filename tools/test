@@ -7,26 +7,26 @@ set -o errexit -o nounset -o pipefail -o errtrace
 SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 readonly SCRIPT_DIR
 
-export ROOT_DIR=$SCRIPT_DIR/..
+export ROOT_DIR=$(realpath "$SCRIPT_DIR"/..)
 export TEST_DIR=$ROOT_DIR/test
 
 setup_fixture() {
-  # shellcheck source=./tests/fixture/setup.bash
-  source "$TEST_DIR"/fixture/setup.bash
+	# shellcheck source=./tests/fixture/setup.bash
+	source "$TEST_DIR"/fixture/setup.bash
 }
 export -f setup_fixture
 
-if [[ -z "${1:-}" ]]; then
-  test_dirs=( "$TEST_DIR"/{,bin} )
+if [[ -z ${1:-} ]]; then
+	test_dirs=("$TEST_DIR"/bin/**)
 else
-  test_dirs=( "$1" )
+	test_dirs=("$1")
 fi
 
 export PATH="$TEST_DIR/fixture/bats/bin:${PATH}"
 
 bats_opts=(
-  ${CI:+--tap}
-  ${BATS_TAGS:+--filter-tags $BATS_TAGS}
+	${CI:+--tap}
+	${BATS_TAGS:+--filter-tags $BATS_TAGS}
 )
 
 exec bats "${bats_opts[@]}" "${test_dirs[@]}"

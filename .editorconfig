@@ -8,8 +8,25 @@ end_of_line = lf
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[*.{bats,bash,sh}]
-indent_size = 2
+[test/fixture/{assert,bats,bats-file,support}/**]
+ignore = true
+
+[{**/*.{bats,bash,sh},bin/*,one-cmds/**,tools/**}]
+indent_style = tab
+
+################################################################################
+# Below are shfmt options.                                                     #
+# See https://github.com/mvdan/sh/blob/master/cmd/shfmt/shfmt.1.scd#examples   #
+################################################################################
+# --language-variant
+shell_variant      = auto
+binary_next_line   = false
+# --case-indent
+switch_case_indent = true
+space_redirects    = false
+keep_padding       = false
+# --func-next-line
+function_next_line = false
 
 [configs/gitconfig]
 indent_size = 4

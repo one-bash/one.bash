@@ -1,106 +1,175 @@
-usage_enable() {
-  cat <<EOF
-Usage: one bin enable [-a|--all] <NAME>...
-Desc:  Enable matched bin files
+usage() {
+	# editorconfig-checker-disable
+	cat <<EOF
+Usage: one $t enable [OPTIONS] <NAME>...
+Desc:  Enable matched $t files
 Arguments:
-  <name>       bin name
+  <NAME>              $t name
 Options:
-  -a, --all    Enable all bin files
+  -a, --all           Enable all $t files
+	-r <repo>           Enable $t files in the repo
 EOF
+	# editorconfig-checker-enable
 }
 
-complete_enable() {
-  shopt -s nullglob
-  local path
-
-  for path in "${ONE_DIR}"/data/repos/*/bins/"${@: -1}"*; do
-    basename "$path" .opt.bash
-  done
-}
+# TODO FIX the bin file should be executable. [[ -x $path ]]
+. "$ONE_DIR/one-cmds/plugin/action-completion.bash"
 
 create_symlink() {
-  local name=$1
-  local path=$2
-  ln -fs "$path" "$ONE_DIR/enabled/bin/$name"
-  printf "Enabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$path"
+	local name=$1 target=$2 answer
+
+	if [[ -L "$ONE_DIR/enabled/$t/$name" ]]; then
+		local answer
+		printf 'Found existed enabled file: %s -> %s\n' "$name" "$(readlink "$ONE_DIR/enabled/$t/$name")" >&2
+		answer=$(l.ask "Do you want to override it?")
+		if [[ $answer != YES ]]; then return 0; fi
+	fi
+
+	ln -fs "$target" "$ONE_DIR/enabled/$t/$name"
+	printf "Enabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$target"
+}
+
+set_exports() {
+	if [[ ! -v EXPORTS ]]; then
+		return
+	fi
+
+	local name=$1
+
+	local file
+	for file in "${EXPORTS[@]}"; do
+		if [[ -f "$ONE_DIR/data/$t/${name}/$file" ]]; then
+			chmod +x "$ONE_DIR/data/$t/${name}/$file"
+		else
+			print_err "Not found file \"$file\" to export"
+		fi
+	done
 }
 
 enable() {
-  local path=$1
-  local name=$2
+	local path=$1
+	local name=$2
 
-  if [[ -x "$path" ]]; then
-    create_symlink "$name" "$path"
-  elif [[ $path == *.opt.bash ]]; then
-    local t=bin ts=bins
-    check_opt_mod_dep_cmds "$path"
-    # Disable first, prevent duplicated module enabled with different priority
-    disable_mod "$name" true
-    download_mod_data "$name" "$path"
+	if [[ -x $path ]]; then
+		mod_check_dep_cmds "$path"
+		create_symlink "$name" "$path"
+	elif [[ $path == *.opt.bash ]]; then
+		mod_check_dep_cmds "$path"
+		# Disable first, prevent duplicated module enabled with different priority
+		disable_mod "$name"
+		download_mod_data "$name" "$path"
 
-    local url bin_name
+		local SCRIPT exports bin_name
 
-    # shellcheck disable=1090
-    url=$(. "$path" && echo "${URL:-}")
-    if [[ -n $url ]]; then
-      chmod +x "$ONE_DIR/data/bins/$name/script.bash"
+		# shellcheck disable=1090
+		SCRIPT=$(. "$path" && echo "${SCRIPT:-}")
+		if [[ -n $SCRIPT ]]; then
+			local script_file=$ONE_DIR/data/$t/$name/script.bash
+			if [[ ! -f $script_file ]]; then
+				print_err "The script file not exist: $script_file"
+				return 4
+			fi
 
-      # shellcheck disable=1090
-      while read -r bin_name; do
-        create_symlink "$bin_name" "$ONE_DIR/data/bins/$name/script.bash"
-      done < <(. "$path" && echo "${EXPORTS[@]}")
-    else
-      # shellcheck disable=1090
-      while read -r bin_name; do
-        create_symlink "$bin_name" "$ONE_DIR/data/bins/$name/$bin_name"
-      done < <(. "$path" && echo "${EXPORTS[@]}")
-    fi
-  else
-    echo "The file is not executable: $path" >&2
-    return "$ONE_EX_DATAERR"
-  fi
+			chmod +x "$script_file"
+
+			# shellcheck disable=1090
+			read -ra exports < <(. "$path" && echo "${EXPORTS[@]}")
+			for bin_name in "${exports[@]}"; do
+				create_symlink "$bin_name" "$script_file"
+			done
+		else
+			(
+				# shellcheck disable=1090
+				. "$path"
+				set_exports "$name"
+
+				# shellcheck disable=1090
+				read -ra exports < <(. "$path" && echo "${EXPORTS[@]}")
+				for bin_name in "${exports[@]}"; do
+					create_symlink "$bin_name" "$ONE_DIR/data/$t/$name/$bin_name"
+				done
+			)
+		fi
+	else
+		print_err "The file is not executable: $path"
+		return "$ONE_EX_DATAERR"
+	fi
 }
 
-enable_bin() {
-  shopt -s nullglob
-  local name path
+declare -A opts=()
+declare -a args=()
+# shellcheck disable=2034
+declare -A opts_def=(
+	['-a --all']='bool'
+)
 
-  # shellcheck source=../../bash/mod.bash
-  . "$ONE_DIR/bash/mod.bash"
-  # shellcheck source=../../deps/lobash.bash
-  . "$ONE_DIR/deps/lobash.bash"
+main() {
+	if ((${#args[*]} == 0)); then
+		usage
+		return "$ONE_EX_OK"
+	fi
 
-  if [[ ${1:-} == -a ]] || [[ ${1:-} == --all ]]; then
-    for path in "${ONE_DIR}"/enabled/repos/*/bins/*; do
-      name=$(basename "$path" .opt.bash)
-      enable "$path" "$name" || true
-    done
-  else
-    local repo_name paths
+	shopt -s nullglob
+	local name path filepaths
 
-    for name in "$@"; do
-      {
-        paths=()
+	# shellcheck source=../../one-cmds/mod.bash
+	. "$ONE_DIR/one-cmds/mod.bash"
 
-        for path in "${ONE_DIR}/enabled/repos/"*"/bins/$name"{,.opt.bash}; do
-          paths+=("$path")
-        done
+	local repo=${opts[r]:-}
 
-        case ${#paths[@]} in
-          1)
-            enable "${paths[0]}" "$name"
-            ;;
+	if [[ ${opts[a]} == true ]]; then
+		if [[ -z $repo ]]; then
+			for path in "${ONE_DIR}"/enabled/repo/*/"$t"/*; do
+				name=${path##*/}
+				name=${name%.opt.bash}
+				name=${name%.bash}
+				name="${name%.sh}"
+				enable "$path" "$name"
+			done
+		else
+			for path in "${ONE_DIR}/enabled/repo/$repo/$t/"*; do
+				name=${path##*/}
+				name=${name%.opt.bash}
+				name=${name%.bash}
+				name="${name%.sh}"
+				enable "$path" "$name"
+			done
+		fi
+	else
+		for name in "${args[@]}"; do
+			filepaths=()
 
-          0)
-            print_error "No matched file '$name'"
-            ;;
+			if [[ -z $repo ]]; then
+				for path in "${ONE_DIR}"/enabled/repo/*/"$t/$name"{,.bash,.sh,.opt.bash}; do
+					filepaths+=("$path")
+				done
+			else
+				for path in "${ONE_DIR}/enabled/repo/$repo/$t/$name"{,.bash,.sh,.opt.bash}; do
+					filepaths+=("$path")
+				done
+			fi
 
-          *)
-            print_error "Matched multi files for '$name':"
-            printf '  %s\n' "${paths[@]}" >&2
-            ;;
-        esac
-      } || true
-    done
-  fi
+			case ${#filepaths[@]} in
+				1)
+					enable "${filepaths[0]}" "$name"
+					;;
+
+				0)
+					print_err "No matched $t '$name'"
+					return "$ONE_EX_DATAERR"
+					;;
+
+				*)
+					print_err "Matched multi $t for '$name'. You should use '-r' option for specified repo:"
+					local repo
+					for filepath in "${filepaths[@]}"; do
+						repo=$(get_enabled_repo_name "$filepath")
+						echo "   one $t enable $name -r $repo" >&2
+					done
+					return "$ONE_EX_USAGE"
+
+					;;
+			esac
+		done
+	fi
 }

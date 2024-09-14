@@ -1,52 +1,52 @@
-usage_info() {
-  cat <<EOF
+usage() {
+	cat <<EOF
 Usage: one repo info <NAME>
-Desc:  Show the informations of repo
+Desc:  Show the informations of downloaded repo
 EOF
 }
 
-complete_info() {
-  shopt -s nullglob
-  local path
-  for path in "$ONE_DIR/data/repos/${@: -1}"*; do
-    if [[ -d $path ]] && [[ -f $path/one.repo.bash ]]; then
-      # shellcheck disable=1091
-      . "$path/one.repo.bash"
-      echo "${name:-}"
-    fi
-  done
+completion() {
+	shopt -s nullglob
+	local path
+	for path in "$ONE_DIR/data/repo/${@: -1}"*; do
+		if [[ -d $path ]]; then
+			echo "${path##*/}"
+		fi
+	done
 }
 
-search_repos() {
-  local repo_name=$1
-  grep -l -E "name=['\"]?${repo_name}['\"]?" "$ONE_DIR"/data/repos/*/one.repo.bash
-}
+declare -A opts=()
+declare -a args=()
 
-info_repo() {
-  local repo_name=${1:-}
-  local repo_path path
+main() {
+	if ((${#args[@]} == 0)); then
+		usage
+		return "$ONE_EX_OK"
+	fi
 
-  if [[ -z $repo_name ]]; then
-    usage_info
-    return 0
-  fi
+	local repo_name=${args[0]}
+	local repo_path=$ONE_DIR/data/repo/$repo_name
 
-  while read -r path; do
-    repo_path=$(dirname "$path")
-    print_info_item name "$repo_name"
-    print_info_item path "$repo_path"
+	if [[ ! -d $repo_path ]]; then
+		print_warn "No matched repo '$repo_name'"
+		return "$ONE_EX_OK"
+	fi
 
-    (
-      # shellcheck disable=1090
-      . "$path"
-      declare -f repo_add_post || true
-      declare -f repo_update || true
-      declare -f repo_onload || true
-    )
-  done < <(search_repos "$1")
+	print_info_item name "$repo_name"
+	print_info_item path "$repo_path"
 
-  if [[ -z "${repo_path:-}" ]]; then
-    print_error "No matched repo '$repo_name'"
-    return 2
-  fi
+	local repo_file=$repo_path/one.repo.bash
+	if [[ -f $repo_file ]]; then
+		(
+			# shellcheck disable=1090
+			. "$repo_file"
+
+			print_info_item about "${ABOUT:-}"
+			printf '\n'
+			declare -f repo_add_post || true
+			declare -f repo_update_pre || true
+			declare -f repo_update_post || true
+			declare -f repo_onload || true
+		)
+	fi
 }

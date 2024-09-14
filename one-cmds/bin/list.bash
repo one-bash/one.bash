@@ -1,41 +1,51 @@
-usage_list() {
-  cat <<EOF
-Usage: one bin list
-Desc:  List executable filenames in each REPO/bin
+usage() {
+	# editorconfig-checker-disable
+	cat <<EOF
+Usage: one $t list [<OPTIONS>]
+Desc:  List available $t files in each repo
+Options:
+  -r <repo>           List $t files in the repo
 EOF
+	# editorconfig-checker-enable
 }
 
 list() {
-  local path repo
+	local path repo
 
-  # shellcheck disable=2153
-  for path in "${ONE_DIR}"/enabled/bin/*; do
-    printf '%b%20s%b -> %b%s\n' \
-      "$GREEN" "$(basename "$path")" "$GREY"\
-      "$WHITE" "$(readlink "$path")"
-  done
+	# shellcheck disable=2153
+	for path in "${ONE_DIR}/enabled/$t"/*; do
+		printf '%b%20s%b -> %b%s\n' \
+			"$GREEN" "${path##*/}" "$GREY" \
+			"$WHITE" "$(readlink "$path")"
+	done
 }
 
-list_bin() {
-  shopt -s nullglob
-  local path repo name link repo_name
+declare -A opts=()
+declare -a args=()
 
-  for repo in "${ONE_DIR}"/enabled/repos/* ; do
-    repo_name=$(basename "$repo")
-    printf '%b[%s]%b ' "$BLUE" "$repo_name" "$RESET_ALL"
+main() {
+	shopt -s nullglob
+	local path repo name link repo_name
 
-    for path in "$repo/bins"/* ; do
-      name=$(basename "$path" '.opt.bash')
-      link=${ONE_DIR}/enabled/bin/$name
+	for repo in "${ONE_DIR}"/enabled/repo/*; do
+		repo_name="${repo##*/}"
+		printf '%b[%s]%b ' "$BLUE" "$repo_name" "$RESET_ALL"
 
-      if [[ -h "$link" ]] && [[ $(readlink "$link") == "$path" ]]; then
-        printf '%b%s%b ' "$BOLD_GREEN" "$name" "$RESET_ALL"
-      else
-        printf '%s ' "$name"
-      fi
-    done
-    printf '\n'
-  done
+		for path in "$repo/$t"/*; do
+			name=${path##*/}
+			name=${name%.opt.bash}
+			name=${name%.bash}
+			name=${name%.sh}
+			link=${ONE_DIR}/enabled/$t/$name
 
-  printf "\n### The %bGREEN%b items are enabled. The WHITE items are available. ###\n" "$BOLD_GREEN" "$RESET_ALL"
+			if [[ -L $link ]] && [[ $(readlink "$link") == "$path" ]]; then
+				printf '%b%s%b ' "$BOLD_GREEN" "$name" "$RESET_ALL"
+			else
+				printf '%s ' "$name"
+			fi
+		done
+		printf '\n'
+	done
+
+	printf "\n### The %bGREEN%b items are enabled. The WHITE items are available. ###\n" "$BOLD_GREEN" "$RESET_ALL"
 }

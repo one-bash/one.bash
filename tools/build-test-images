@@ -10,9 +10,9 @@ readonly SCRIPT_DIR
 source "$SCRIPT_DIR/test-image-versions"
 
 main() {
-  for version in "${TEST_IMAGE_VERIONS[@]}"; do
-    IN_CHINA=${IN_CHINA:-} BASHVER=$version "$SCRIPT_DIR/build-test-image" "$@"
-  done
+	for version in "${TEST_IMAGE_VERIONS[@]}"; do
+		IN_CHINA=${IN_CHINA:-} BASHVER=$version "$SCRIPT_DIR/build-test-image" "$@"
+	done
 }
 
 main "$@"

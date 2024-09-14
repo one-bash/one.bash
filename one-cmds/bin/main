@@ -3,25 +3,52 @@ set -o errexit -o nounset -o pipefail -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
 if [[ -z ${ONE_DIR:-} ]]; then
-  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-  readonly SCRIPT_DIR
-  export ONE_DIR=$SCRIPT_DIR/..
+	ONE_DIR=$(realpath "$0")
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	declare -rx ONE_DIR
 fi
 
-# shellcheck source=../../one-cmds/util.bash
-. "$ONE_DIR/one-cmds/util.bash"
+# shellcheck source=../base-scripts.bash
+. "$ONE_DIR/one-cmds/base-scripts.bash"
 
-actions=(list info enable disable which)
+# shellcheck source=../mod-base.bash
+. "$ONE_DIR/one-cmds/mod-base.bash"
 
-declare -A alias_map=(
-  ['e']=enable
-  ['d']=disable
-  ['l']=list
-  ['i']=info
-  ['w']=which
+actions=(list info enable edit disable which help)
+
+declare -A action_aliases=(
+	['e']=enable
+	['d']=disable
+	['l']=list
+	['i']=info
+	['w']=which
+	['h']=help
 )
 
+# shellcheck disable=2034
+readonly t=bin
+
 # one.bash:completion
-parse_completion bin actions "$@"
 # one.bash:usage
+usage() {
+	# editorconfig-checker-disable
+	cat <<EOF
+Usage:  one bin [-h|--help] <ACTION>
+        one bin [-h|--help]
+
+Desc:   Manage executable files in ONE_REPO/$t/
+
+Action:
+  e, enable           Enable matched $t files
+  d, disable          Disable matched $t files
+  l, list             List available $t files in each repo
+  i, info             Show the information of matched $t files
+  edit <NAME>         Edit matched $t file
+  h, help             Print the usage of $t files
+EOF
+	# editorconfig-checker-enable
+}
+
 parse_cmd bin "$@"

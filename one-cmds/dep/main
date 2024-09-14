@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -o errexit -o nounset -o pipefail -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+if [[ -z ${ONE_DIR:-} ]]; then
+	ONE_DIR=$(realpath "$0")
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	declare -rx ONE_DIR
+fi
+
+# shellcheck source=./base-scripts.bash
+. "$ONE_DIR/one-cmds/base-scripts.bash"
+
+# shellcheck source=../bash/load-config.bash
+. "$ONE_DIR/bash/load-config.bash"
+
+actions=(install update status)
+
+declare -A action_aliases=(
+	['i']=install
+	['u']=update
+	['s']=status
+)
+
+# one.bash:completion
+# one.bash:usage
+usage() {
+	# editorconfig-checker-disable
+	cat <<EOF
+Usage: one dep [<ACTION>]
+
+Desc: Manage one.bash deps
+
+Action:
+  i, install          Install all deps.
+  u, update [<DEP>]   Update dep. If <DEP> is omit, update all deps.
+  s, status [<DEP>]   Show status of each dep. If <DEP> is omit, show all deps' status.
+EOF
+	# editorconfig-checker-enable
+}
+
+parse_cmd dep "$@"

@@ -3,26 +3,53 @@ set -o errexit -o nounset -o pipefail -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
 if [[ -z ${ONE_DIR:-} ]]; then
-  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-  readonly SCRIPT_DIR
-  export ONE_DIR=$SCRIPT_DIR/..
+	ONE_DIR=$(realpath "$0")
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	declare -rx ONE_DIR
 fi
 
-# shellcheck source=../../one-cmds/util.bash
-. "$ONE_DIR/one-cmds/util.bash"
+# shellcheck source=../base-scripts.bash
+. "$ONE_DIR/one-cmds/base-scripts.bash"
 
-actions=(list info enable disable which run help)
+# shellcheck source=../mod-base.bash
+. "$ONE_DIR/one-cmds/mod-base.bash"
 
-declare -A alias_map=(
-  ['e']=enable
-  ['d']=disable
-  ['l']=list
-  ['i']=info
-  ['w']=which
-  ['r']=run
+actions=(list info enable edit disable which run help)
+
+declare -A action_aliases=(
+	['e']=enable
+	['d']=disable
+	['l']=list
+	['i']=info
+	['w']=which
+	['r']=run
+	['h']=help
 )
 
+readonly t=sub
+
 # one.bash:completion
-parse_completion sub actions "$@"
 # one.bash:usage
+usage() {
+	# editorconfig-checker-disable
+	cat <<EOF
+Usage: one sub [-h|--help] <ACTION>
+
+Desc:  Manage ONE_SUB commands
+
+Action:
+  e, enable <NAME>...        Enable matched sub commands
+  d, disable <NAME>...       Disable matched sub commands
+  l, list                    List sub commands in each repo
+  i, info <NAME>             Show information of matched sub commands
+  w, which <NAME>            Show realpath of sub command
+  edit <NAME>                Edit matched sub file
+  r, run <NAME> [<ARGS>...]  Run sub command
+  h, help                    Print the usage of ONE_SUB command
+EOF
+	# editorconfig-checker-enable
+}
+
 parse_cmd sub "$@"

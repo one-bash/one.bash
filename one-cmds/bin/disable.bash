@@ -1,51 +1,69 @@
-usage_disable() {
-  cat <<EOF
-Usage: one bin disable [-a|--all] <NAME>...
-Desc:  Disable matched bin files
+usage() {
+	# editorconfig-checker-disable
+	cat <<EOF
+Usage: one $t disable [OPTIONS] <NAME>...
+Desc:  Disable matched $t files
 Arguments:
-  <name>       bin name
+  <NAME>               ${t^} name
 Options:
-  -a, --all    Disable all bin files
+  -a, --all            Disable all $t files
 EOF
+	# editorconfig-checker-enable
 }
 
-complete_disable() {
-  shopt -s nullglob
-  local path
+completion() {
+	shopt -s nullglob
+	local path
 
-  for path in "$ONE_DIR/enabled/bin/${@: -1}"*; do
-    if [[ -h $path ]]; then
-      basename "$path"
-    fi
-  done
+	for path in "$ONE_DIR/enabled/$t/${@: -1}"*; do
+		if [[ -L $path ]]; then
+			echo "${path##*/}"
+		fi
+	done
 }
 
 disable_it() {
-  local name=$1
-  local path="${2:-$ONE_DIR/enabled/bin/$name}"
-  local src
+	local name=$1
+	local path="${2:-$ONE_DIR/enabled/$t/$name}"
+	local target
 
-  if [[ -h $path ]]; then
-    src=$(readlink "$path")
-    unlink "$path"
-    printf "Disabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$src"
-  else
-    print_error "No matched file '$name'"
-    return 4
-  fi
+	if [[ -L $path ]]; then
+		target="$(readlink "$path")"
+		unlink "$path"
+		printf "Disabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$target"
+	else
+		print_err "No matched file '$name'"
+		return "$ONE_EX_DATAERR"
+	fi
 }
 
-disable_bin() {
-  local name path
+declare -A opts=()
+declare -a args=()
+# shellcheck disable=2034
+declare -A opts_def=(
+	['-a --all']='bool'
+)
 
-  if [[ ${1:-} == -a ]] || [[ ${1:-} == --all ]]; then
-    for path in "${ONE_DIR}"/enabled/bin/*; do
-      name=$(basename "$path")
-      disable_it "$name" "$path" || true
-    done
-  else
-    for name in "$@"; do
-      disable_it "$name" || true
-    done
-  fi
+main() {
+	# NOTE: should use $#, not ${#args[@]}
+	if (($# == 0)); then
+		usage
+		return "$ONE_EX_OK"
+	fi
+
+	local name path
+
+	if [[ ${opts[a]} == true ]]; then
+		shopt -s nullglob
+		for path in "${ONE_DIR}/enabled/$t"/*; do
+			if [[ -L $path ]]; then
+				name="${path##*/}"
+				disable_it "$name" "$path"
+			fi
+		done
+	else
+		for name in "${args[@]}"; do
+			disable_it "$name"
+		done
+	fi
 }

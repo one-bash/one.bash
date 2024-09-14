@@ -3,27 +3,58 @@ set -o errexit -o nounset -o pipefail -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
 if [[ -z ${ONE_DIR:-} ]]; then
-  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-  readonly SCRIPT_DIR
-  export ONE_DIR=$SCRIPT_DIR/..
+	ONE_DIR=$(realpath "$0")
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	declare -rx ONE_DIR
 fi
 
-# shellcheck source=../../one-cmds/util.bash
-. "$ONE_DIR/one-cmds/util.bash"
+# shellcheck source=../base-scripts.bash
+. "$ONE_DIR/one-cmds/base-scripts.bash"
 
-actions=(init list add remove update info enable disable)
+# shellcheck source=../mod-base.bash
+. "$ONE_DIR/one-cmds/mod-base.bash"
 
-declare -A alias_map=(
-  ['l']=list
-  ['a']=add
-  ['r']=remove
-  ['u']=update
-  ['e']=enable
-  ['d']=disable
-  ['i']=info
+# shellcheck source=../../bash/load-config.bash
+. "$ONE_DIR/bash/load-config.bash"
+
+actions=(init list add remove update info enable disable exec search)
+
+declare -A action_aliases=(
+	['l']=list
+	['a']=add
+	['r']=remove
+	['u']=update
+	['e']=enable
+	['d']=disable
+	['i']=info
+	['s']=search
 )
 
 # one.bash:completion
-parse_completion repo actions "$@"
 # one.bash:usage
+usage() {
+	# editorconfig-checker-disable
+	cat <<EOF
+Usage:  one repo [-h|--help] <ACTION>
+        one repo [-h|--help]
+
+Desc:   Manage one.bash repos
+
+Action:
+  l, list              List all downloaded repos
+  a, add               Download and enable a repo
+  r, remove            Remove a repo
+  u, update            Update a repo
+  e, enable            Enable a repo
+  d, disable           Disable a repo
+  i, info              Show the informations of downloaded repo
+  init [<PATH>]        Scaffolding a repo in <PATH> (Defaults to \$PWD)
+  exec <CMD>           Execute command in each enabled repo
+  s, search [<WORD>]   Search repos (topic: one-bash-repo) in Github
+EOF
+	# editorconfig-checker-enable
+}
+
 parse_cmd repo "$@"

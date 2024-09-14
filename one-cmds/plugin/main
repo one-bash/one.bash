@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+set -o errexit -o nounset -o pipefail -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+if [[ -z ${ONE_DIR:-} ]]; then
+	ONE_DIR=$(realpath "$0")
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	declare -rx ONE_DIR
+fi
+
+# shellcheck source=../base-scripts.bash
+. "$ONE_DIR/one-cmds/base-scripts.bash"
+
+# shellcheck source=../../deps/colors.bash
+. "$ONE_DIR/deps/colors.bash"
+
+actions=(list info enable disable which edit)
+
+declare -A action_aliases=(
+	['e']=enable
+	['d']=disable
+	['l']=list
+	['i']=info
+	['w']=which
+)
+
+t=$(basename "$(dirname "$0")")
+readonly t
+
+# one.bash:usage
+usage() {
+	# editorconfig-checker-disable
+	cat <<EOF
+Usage:  one $t <ACTION>
+        one $t [-h|--help]
+        one $t <-h|--help> <ACTION>
+
+Desc:   Manage $t in ONE_REPO/$t/
+
+Action:
+  e, enable <NAME>...            Enable matched $t
+  d, disable <NAME>...           Disable matched $t
+  l, list                        List enabled $t
+  i, info <NAME>                 Show the information of matched $t
+  w, which <NAME>                Show realpath of $t
+  edit <NAME>                    Edit matched $t file
+EOF
+	# editorconfig-checker-enable
+}
+
+# one.bash:completion
+# completion() {
+# 	if [[ "${1:-}" == "--complete" ]]; then
+# 		if ((COMP_CWORD < 3)); then
+# 			words=("${actions[@]}" -h --help)
+# 			printf '%s\n' "${words[@]}"
+# 		elif [[ $2 == -h ]] || [[ $2 == --help ]]; then
+# 			printf '%s\n' "${actions[@]}"
+# 		fi
+# 		exit 0
+# 	fi
+# }
+
+parse_cmd plugin "$@"

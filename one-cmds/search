@@ -2,77 +2,92 @@
 set -o errexit -o nounset -o pipefail -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
-# one.bash:usage
-if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
-  cat <<EOF
-Usage: one $(basename "$0") [-a] <WORD>
+usage() {
+	# editorconfig-checker-disable
+	cat <<EOF
+Usage: one search [OPTIONS] <WORD>
 
 Desc: Search alias/bin/completion/plugin of each enabled repo.
 
 Arguments:
-  <WORD>         Any words without spaces.
+  <WORD>              Any words without spaces.
 
 Options:
-  -a             Search with all added repos.
+  -a, --all           Search with all downloaded repos.
+  --pager <pager>     List with pager. Default to try user's passed, "fzf" and "less". If none of them found, print without pager.
+                      If <pager> is false, print without pager.
 EOF
-  exit 0
+	# editorconfig-checker-enable
+}
+
+# one.bash:usage
+if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+	usage
+	exit 0
+fi
+
+# one.bash:completion
+if [[ ${1:-} == --complete ]]; then
+	printf -- '--help\n--all\n--pager\n'
+	exit 0
 fi
 
 if [[ -z ${ONE_DIR:-} ]]; then
-  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-  readonly SCRIPT_DIR
-  export ONE_DIR=$SCRIPT_DIR/..
+	ONE_DIR=$(realpath "$0")
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	declare -rx ONE_DIR
 fi
 
-# shellcheck source=../deps/colors.bash
-. "$ONE_DIR/deps/colors.bash"
+# shellcheck source=./base-scripts.bash
+. "$ONE_DIR/one-cmds/base-scripts.bash"
 
-# shellcheck source=../one-cmds/util.bash
+# shellcheck source=./mod-base.bash
+. "$ONE_DIR/one-cmds/mod-base.bash"
+
+# shellcheck source=./mod.bash
+. "$ONE_DIR/one-cmds/mod.bash"
+
+# shellcheck source=./util.bash
 . "$ONE_DIR/one-cmds/util.bash"
 
-search() {
-  shopt -s nullglob
-  local word scope repo type mod
-  local -A type_map=(
-    [bins]=B
-    [aliases]=A
-    [completions]=C
-    [plugins]=P
-  )
+# shellcheck source=./pager.bash
+. "$ONE_DIR/one-cmds/pager.bash"
 
-  if (( $# > 1 )); then
-    scope=data
-    if [[ $1 == '-a' ]]; then
-      word=$2
-    elif [[ $2 == '-a' ]]; then
-      word=$1
-    else
-      print_error 'Invalid arguments'
-      return 5
-    fi
-  else
-    word=$1
-    scope=enabled
-  fi
+declare -A opts=()
+declare -a args=()
+declare -A opts_def=(
+	[opts]=opts
+	[args]=args
+	[-a --all]=bool
+)
+l.parse_args opts_def "$@"
 
-  printf '%-5s %-20s %-20s\n' "Type" "Repo" "Mod"
+search()  {
+	local word=${args[0]} scope
 
-  for path in "${ONE_DIR}"/${scope}/repos/*/{aliases,bins,completions,plugins}/*"${word}"*; do
-    if [[ $path =~ \/${scope}\/repos\/([^\/]+)\/([^\/]+)\/([^\/]+) ]]; then
-      repo="${BASH_REMATCH[1]}"
-      type="${BASH_REMATCH[2]}"
-      mod="${BASH_REMATCH[3]}"
+	if [[ ${opts[a]} == true ]]; then
+		scope=data
+	else
+		scope=enabled
+	fi
 
-      type=${type_map[$type]}
+	printf 'ACT Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
 
-      if [[ $mod == *.opt.bash ]]; then
-        mod=$(basename "$mod" .opt.bash)
-      else
-        mod=$(basename "$mod" .bash)
-      fi
+	shopt -s nullglob
 
-      printf '%-5s %-20s %-20s\n' "$type" "$repo" "$mod"
-    fi
-  done
+	local filepath
+	for filepath in "${ONE_DIR}/$scope"/repo/*/{alias,bin,completion,plugin,sub}/*"${word}"*; do
+		print_mod_props "$filepath"
+	done
 }
-search "$@"
+
+main() {
+	if ((${#args[*]} == 0)); then
+		usage
+		return "$ONE_EX_OK"
+	fi
+
+	with_pager search
+}
+main "$@"

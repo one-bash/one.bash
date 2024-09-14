@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -o errexit -o nounset -o pipefail -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+# one.bash:usage:-h
+if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
+	cat <<EOF
+Usage: one status
+Desc:  Print one.bash status
+EOF
+	exit 0
+fi
+
+if [[ -z ${ONE_DIR:-} ]]; then
+	ONE_DIR=$(realpath "$0")
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	declare -rx ONE_DIR
+fi
+
+main() {
+	printf 'one.bash: %s\n' \
+		"$(git -C "$ONE_DIR" describe --tags --abbrev=8 | sed -E 's/-([0-9]+)-g(.*)/ (commit \2, \1 commits ahead)/')"
+
+	echo "ONE_DIR: $ONE_DIR"
+
+	printf "\nDependencies:\n"
+	one dep status
+}
+
+main "$@"

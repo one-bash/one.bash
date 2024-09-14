@@ -4,55 +4,129 @@ set -o errexit -o nounset -o pipefail -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
 # one.bash:completion
-if [[ "${1:-}" == --complete ]]; then
-  words=(-h --help --type --priority)
-  printf '%s\n' "${words[@]}"
-  exit 0
+if [[ ${1:-} == --complete ]]; then
+	if [[ ${*: -1:1} == -r ]]; then
+		echo ' '
+		exit 0
+	fi
+
+	if [[ ${*: -2:1} == -r ]]; then
+		for repo in "${ONE_DIR}/enabled/repo"/*; do
+			echo "${repo##*/}"
+		done
+
+		exit 0
+	fi
+
+	words=(-r -h --help --type --priority)
+	printf '%s\n' "${words[@]}"
+	exit 0
 fi
 
 usage() {
-  local cmd; cmd=$(basename "$0");
-  cat <<EOF
-Usage: one $cmd [OPTIONS]
+	# editorconfig-checker-disable
+	cat <<EOF
+Usage: one enabled [OPTIONS]
 Desc:  List enabled modules
 Options:
-  -h, --help                          Show usage
-  --type=true|false
-  --priority=true|false
+  -h, --help                   Show usage
+	-r <repo>										 Repo name
 EOF
+	# editorconfig-checker-enable
 }
 
 # one.bash:usage
 if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
-  usage
-  exit 0
+	usage
+	exit 0
 fi
 
 if [[ -z ${ONE_DIR:-} ]]; then
-  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-  ONE_DIR=$SCRIPT_DIR/..
+	ONE_DIR=$(realpath "$0")
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	declare -rx ONE_DIR
 fi
 
-# shellcheck source=../../bash/load-config.bash
+# shellcheck source=./base-scripts.bash
+. "$ONE_DIR/one-cmds/base-scripts.bash"
+
+# shellcheck source=../bash/load-config.bash
 . "$ONE_DIR/bash/load-config.bash"
 
-# shellcheck source=../../deps/colors.bash
-. "$ONE_DIR/deps/colors.bash"
-
-# shellcheck source=../../bash/log.bash
+# shellcheck source=../bash/log.bash
 . "$ONE_DIR/bash/log.bash"
 
-# shellcheck source=../../bash/mod.bash
-. "$ONE_DIR/bash/mod.bash"
+# shellcheck source=../one-cmds/mod.bash
+. "$ONE_DIR/one-cmds/mod.bash"
 
-# shellcheck source=../../deps/lobash.bash
-. "$ONE_DIR/deps/lobash.bash"
+trim_str() {
+	local str=$1 len=$2 n
+	n=$((len - 2))
+
+	if ((${#str} > len)); then
+		printf '%s..' "${str:0:n}"
+	else
+		printf '%s' "${str}"
+	fi
+}
+
+list() {
+	local type=$1 type_color=$2
+	local path repo name link repo_name ABOUT
+	local priority='---'
+
+	shopt -s nullglob
+	for path in "$ONE_DIR/enabled/$type"/*; do
+		link=$(readlink "$path")
+		repo=${link%/*}
+		repo=${repo%/*}
+		repo_name="${repo##*/}"
+
+		if [[ -n $repo_filter ]] && [[ $repo_filter != "$repo_name" ]]; then
+			continue
+		fi
+
+		name="${path##*/}"
+		printf '%b%-4s %b%-4s %b%-18s %b%-18s' \
+			"$YELLOW" "$priority" \
+			"$type_color" "${type^}" \
+			"$CYAN" "$(trim_str "$name" 18)" \
+			"$BLUE" "$(trim_str "$repo_name" 18)"
+
+		if [[ -f $repo/$type/$name.opt.bash ]]; then
+			(
+				# shellcheck disable=1090
+				source "$repo/$type/$name.opt.bash"
+				ABOUT=${ABOUT:-}
+				printf '%b%s' "$WHITE" "${ABOUT//$'\n'/ }"
+			)
+		elif [[ -f $repo/$type/$name ]]; then
+			ABOUT=$(metafor about-plugin <"$repo/$type/$name")
+			printf '%b%s' "$WHITE" "${ABOUT//$'\n'/ }"
+		else
+			printf '%b%s' "$GREY" '<ERROR>'
+		fi
+
+		printf '\n'
+	done
+}
 
 declare -A opts=()
 declare -a args=()
-l.parse_params opts args "$@"
+declare -A opts_def=(
+	[opts]=opts
+	[args]=args
+)
+l.parse_args opts_def "$@"
 
-list() {
-  find "$ONE_DIR/enabled" -maxdepth 1 -name "*---*.bash" | print_list_item | sort
-}
-list
+repo_filter=${opts[r]:-}
+
+printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
+
+for filepath in "$ONE_DIR/enabled/"*---*.bash; do
+	print_enabled_mod_props "$filepath" "$repo_filter"
+done | sort
+
+list bin "$WHITE"
+list sub "$YELLOW"

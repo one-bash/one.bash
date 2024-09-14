@@ -3,6 +3,9 @@
 set -o errexit -o nounset -o pipefail -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
-one plugin disable --all
-one alias disable --all
-one completion disable --all
+one a disable --all
+one b disable --all
+one c disable --all
+one d disable --all
+one s disable --all
+one p disable --all

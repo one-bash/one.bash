@@ -4,17 +4,19 @@ set -o errexit -o nounset -o pipefail -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
 
 # one.bash:completion
-if [[ "${1:-}" == --complete ]]; then
-  if (( COMP_CWORD < 3 )); then
-    printf -- '-a\n-f\n-n\n-e\n--help\n'
-  fi
+if [[ ${1:-} == --complete ]]; then
+	if ((COMP_CWORD < 3)); then
+		printf -- '-a\n-f\n-n\n-e\n--help\n'
+	fi
 
-  exit 0
+	exit 0
 fi
 
 if [[ -z ${ONE_DIR:-} ]]; then
-  SCRIPT_DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-  ONE_DIR=$SCRIPT_DIR/..
+	ONE_DIR=$(realpath "$0")
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	declare -rx ONE_DIR
 fi
 
 # shellcheck source=../../bash/load-config.bash
@@ -22,9 +24,10 @@ fi
 
 # one.bash:usage
 if [[ ${1:-} == -h ]] || [[ ${1:-} == --help ]]; then
-  cat <<EOF
-Usage: one $(basename "$0") [OPTIONS]
-Desc: Tail the logs of one.bash
+	# editorconfig-checker-disable
+	cat <<EOF
+Usage: one log [OPTIONS]
+Desc: Print the logs of one.bash
 
 Options:
   -n [NUMBER=20]    tail -n \$NUMBER
@@ -35,31 +38,48 @@ Options:
 
 ONE_LOG_FILE: $ONE_LOG_FILE
 EOF
-  exit 0
+	# editorconfig-checker-enable
+	exit 0
 fi
 
+# shellcheck source=../deps/lobash.bash
+. "$ONE_DIR/deps/lobash.bash"
+
+declare -A opts=()
+declare -a args=()
+declare -A opts_def=(
+	[opts]=opts
+	[args]=args
+	[-f]=bool
+	[-a]=bool
+	[-n]='default:20'
+)
+l.parse_args opts_def "$@"
+
+limit=${opts[n]}
+
 case ${1:-} in
-  -e )
-    "${2:-$EDITOR}" "$ONE_LOG_FILE"
-    ;;
+	-e)
+		"${2:-$EDITOR}" "$ONE_LOG_FILE"
+		;;
 
-  -a )
-    if one_l.has command bat; then
-      bat "$ONE_LOG_FILE"
-    else
-      cat "$ONE_LOG_FILE"
-    fi
-    ;;
+	-a)
+		if one_l.has command bat; then
+			bat "$ONE_LOG_FILE"
+		else
+			cat "$ONE_LOG_FILE"
+		fi
+		;;
 
-  -n )
-    tail -n "$2" "$ONE_LOG_FILE"
-    ;;
+	-n)
+		tail -n "$2" "$ONE_LOG_FILE"
+		;;
 
-  -f )
-    tail -f -n 20 "$ONE_LOG_FILE"
-    ;;
+	-f)
+		tail -f -n "$limit" "$ONE_LOG_FILE"
+		;;
 
-  * )
-    tail -n 20 "$ONE_LOG_FILE"
-    ;;
+	*)
+		tail -n "$limit" "$ONE_LOG_FILE"
+		;;
 esac

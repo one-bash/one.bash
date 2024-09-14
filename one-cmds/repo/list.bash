@@ -1,36 +1,37 @@
-usage_list() {
-  cat <<EOF
+usage() {
+	cat <<EOF
 Usage: one repo list
-Desc:  List available repos
+Desc:  List all downloaded repos
 EOF
 }
 
-list_repo() {
-  shopt -s nullglob
-  local repo name repo_status
+main() {
+	local repo_path repo_name repo_status repo_status_color ABOUT=''
 
-  for repo in "$ONE_DIR"/data/repos/*; do
-    if [[ ! -d "$repo" ]]; then continue; fi
-    name=''
+	printf '%-8s %-20s\t%b%s\n' "Status" "Name" "$RESET_ALL" "About"
 
-    if [[ -f "$repo/one.repo.bash" ]]; then
-      # shellcheck disable=1091
-      name=$( . "$repo/one.repo.bash" && echo "${name:-}" )
-    fi
+	shopt -s nullglob
+	for repo_path in "$ONE_DIR"/data/repo/*; do
+		if [[ ! -d $repo_path ]]; then continue; fi
+		repo_name="${repo_path##*/}"
+		name_str=$(printf '%b%s' "$BLUE" "$repo_name")
 
-    if [[ -n $name ]]; then
-      name_str=$(printf '%b%s' "$BLUE" "$name")
+		if [[ -e "$ONE_DIR/enabled/repo/$repo_name" ]]; then
+			repo_status_color="$GREEN"
+			repo_status=Enabled
+		else
+			repo_status_color="$GREY"
+			repo_status=Disabled
+		fi
 
-      if [[ -e "$ONE_DIR/enabled/repos/$name" ]]; then
-        repo_status=$(printf '%bEnabled ' "$GREEN")
-      else
-        repo_status=$(printf '%bDisabled' "$GREY")
-      fi
-    else
-      name_str=$(printf '%b%s' "$GREY" "<unknown>")
-      repo_status=$(printf '%bInvalid ' "$YELLOW")
-    fi
-
-    printf '%s %-20s\t%b%s\n' "$repo_status" "$name_str"  "$RESET_ALL" "$repo"
-  done
+		local repo_file=$repo_path/one.repo.bash
+		if [[ -f $repo_file ]]; then
+			# shellcheck disable=1090
+			ABOUT=$(
+				. "$repo_file"
+				echo "${ABOUT:-}"
+			)
+		fi
+		printf '%b%-8s %-20s\t%b%s\n' "$repo_status_color" "$repo_status" "$name_str" "$RESET_ALL" "$ABOUT"
+	done
 }

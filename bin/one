@@ -5,166 +5,137 @@ set -o errexit -o nounset -o pipefail -o errtrace
 
 # If ONE_DIR environment variable not defined, search the path of ONE_DIR and export it
 if [[ -z ${ONE_DIR:-} ]]; then
-  # Copy from https://github.com/ko1nksm/readlinkf
-  readlinkf() {
-    [ "${1:-}" ] || return 1
-    max_symlinks=40
-    CDPATH='' # to avoid changing to an unexpected directory
-
-    target=$1
-    [ -e "${target%/}" ] || target=${1%"${1##*[!/]}"} # trim trailing slashes
-    [ -d "${target:-/}" ] && target="$target/"
-
-    cd -P . 2>/dev/null || return 1
-    while [ "$max_symlinks" -ge 0 ] && max_symlinks=$((max_symlinks - 1)); do
-      if [ ! "$target" = "${target%/*}" ]; then
-        case $target in
-          /*) cd -P "${target%/*}/" 2>/dev/null || break ;;
-          *) cd -P "./${target%/*}" 2>/dev/null || break ;;
-        esac
-        target=${target##*/}
-      fi
-
-      if [ ! -L "$target" ]; then
-        target="${PWD%/}${target:+/}${target}"
-        printf '%s\n' "${target:-/}"
-        return 0
-      fi
-
-      target=$(readlink -- "$target" 2>/dev/null) || break
-    done
-    return 1
-  }
-
-  ONE_DIR=$(dirname "$(readlinkf "$0")")
-  ONE_DIR=$(dirname "$ONE_DIR")
-  export ONE_DIR
+	ONE_DIR=$(realpath "$0")
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	declare -rx ONE_DIR
 fi
 
 # one.bash:usage
-if (( $# == 0 )) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
-  name=$(basename "$0")
-  cat <<EOF
+if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+	name=$(basename "$0")
+	# editorconfig-checker-disable
+	cat <<EOF
 Usage:
     $name help [<CMD>]            Show the usage of one command
     $name [<CMD>] [-h|--help]     Show the usage of one command
-    $name help-sub [<SUB_CMD>]    Show the usage of ONE_SUB command
 
-    $name r
-    $name repo                    Manage one.bash repos
-    $name a
-    $name alias                   Manage aliases in ONE_REPO/aliases/
-    $name b
-    $name bin                     Manage executable files in ONE_REPO/bins/
-    $name c
-    $name completion              Manage completions in ONE_REPO/completions/
-    $name p
-    $name plugin                  Manage plugins in ONE_REPO/plugins/
+    $name (a|alias)               Manage aliases in ONE_REPO/alias/
+    $name (b|bin)                 Manage executable files in ONE_REPO/bin/
+    $name (c|completion)          Manage completions in ONE_REPO/completion/
+    $name (d|dep)                 Manage one.bash deps
+    $name (p|plugin)              Manage plugins in ONE_REPO/plugin/
+    $name (r|repo)                Manage one.bash repos
+    $name (s|sub)                 Manage ONE_SUB command
 
-    $name enabled                 Manage enabled modules (alias/completion/plugin)
-    $name disable-all             Disable all modules (alias/completion/plugin)
+    $name enabled                 Manage enabled modules (alias/completion/plugin/bin/sub)
+    $name disable-all             Disable all modules (alias/completion/plugin/bin/sub)
 
     $name backup                  Output backup scripts for current enabled modules
-    $name commands                List one commands
     $name config                  Manage user's ONE_CONF
     $name debug                   Toggle debug mode on one.bash
-    $name dep                     Manage one.bash deps
     $name link                    Create symlink files based on LINKS_CONF file
-    $name unlink                  remove all symbol links based on LINKS_CONF file
-    $name log                     Tail the logs of one.bash
-    $name search                  Search alias/bin/completion/plugin of each enabled repo.
-    $name sub [<SUB_CMD>]         Run ONE_SUB command
-    $name [--bashrc]              Print one.bash entry codes for bashrc
+    $name log                     Print the logs of one.bash
+    $name search                  Search alias/bin/completion/plugin/sub of each enabled repo.
+    $name status                  Print one.bash status
+    $name unlink                  Remove all symbol links based on LINKS_CONF file
+    $name upgrade                 Upgrade one.bash and its dependencies to latest version
+    $name version                 Print current version of one.bash
+    $name --bashrc                Print one.bash entry codes for bashrc
 
-Desc:
-    An elegant framework to manage commands, completions, dotfiles for terminal players.
-    Source code: https://github.com/one-bash/one.bash
+Desc: A framework to manage commands, completions, dotfiles for terminal users.
+
+Source Code: https://github.com/one-bash/one.bash
 
 Arguments:
     <CMD>                       The one command
     <SUB_CMD>                   The ONE_SUB command
 EOF
-  exit 0
+	# editorconfig-checker-enable
+	exit 0
 fi
 
+# TODO: This function may be useless, to remove it
 one_sub_cmd() {
-  if (( $# > 0 )); then
-    local sub_cmd=$1
-    local cmd_path
-    local repo
+	if (($# > 0)); then
+		local sub_cmd=$1
+		local cmd_path
+		local repo
 
-    # shellcheck source=./bash/load-config.bash
-    . "$ONE_DIR/bash/load-config.bash"
+		# shellcheck source=./bash/load-config.bash
+		. "$ONE_DIR/bash/load-config.bash"
 
-    if [[ $sub_cmd == help ]]; then
-      cmd_path="$ONE_DIR/one-cmds/help-sub"
-    else
-      # shellcheck disable=2153
-      for repo in "${ONE_DIR}"/enabled/repos/*; do
-        if [[ ! -d $repo/sub ]]; then continue; fi
+		if [[ $sub_cmd == help ]]; then
+			cmd_path="$ONE_DIR/one-cmds/help-sub"
+		else
+			# shellcheck disable=2153
+			for repo in "${ONE_DIR}"/enabled/repo/*; do
+				if [[ ! -d $repo/sub ]]; then continue; fi
 
-        if [[ -x "$repo/sub/$sub_cmd" ]]; then
-          cmd_path="$repo/sub/$sub_cmd"
-          break
-        fi
-      done
+				if [[ -x "$repo/sub/$sub_cmd" ]]; then
+					cmd_path="$repo/sub/$sub_cmd"
+					break
+				fi
+			done
 
-      if [[ -z "${cmd_path:-}" ]]; then
-        echo "Not found sub command '$sub_cmd'" >&2
-        return "$ONE_EX_USAGE"
-      fi
-    fi
+			if [[ -z ${cmd_path:-} ]]; then
+				print_err "Not found sub command %s" "$sub_cmd"
+				return "$ONE_EX_USAGE"
+			fi
+		fi
 
-    shift
-    exec "$cmd_path" "$@"
-  else
-    exec one sub list
-  fi
+		shift
+		exec "$cmd_path" "$@"
+	else
+		exec one sub list
+	fi
 }
 
 one_cmd() {
-  local cmd_path
+	local arg1=$1
+	shift
 
-  case $cmd in
-    r) cmd=repo;;
-    a) cmd='alias';;
-    b) cmd=bin;;
-    c) cmd=completion;;
-    p) cmd=plugin;;
-    s) cmd=sub;;
-  esac
+	local cmd_path cmd
 
-  if [[ -x $ONE_DIR/one-cmds/$cmd/main ]]; then
-    cmd_path="$ONE_DIR/one-cmds/$cmd/main"
-  elif [[ -x "$ONE_DIR/one-cmds/$cmd" ]]; then
-    cmd_path="$ONE_DIR/one-cmds/$cmd"
-  else
-    echo "No such command '$cmd'" >&2
-    return "$ONE_EX_USAGE"
-  fi
+	cmd=$(_one_get_command_name "$arg1")
 
-  exec "$cmd_path" "$@"
+	if [[ -x $ONE_DIR/one-cmds/$cmd/main ]]; then
+		cmd_path="$ONE_DIR/one-cmds/$cmd/main"
+	elif [[ -x "$ONE_DIR/one-cmds/$cmd" ]]; then
+		cmd_path="$ONE_DIR/one-cmds/$cmd"
+	else
+		print_err "No such command: $cmd"
+		return "$ONE_EX_USAGE"
+	fi
+
+	exec "$cmd_path" "$@"
 }
 
 bashrc() {
-  cat <<-EOF
-# Add below code to ~/.bashrc
-ONE_DIR=$ONE_DIR
-. "\$ONE_DIR/bash/entry.bash"
-EOF
+	cat <<-EOF
+		# Add below code to ~/.bashrc
+		ONE_DIR=$ONE_DIR
+		. "\$ONE_DIR/bash/entry.bash"
+	EOF
 }
 
 main() {
-  local cmd="${1:-}"
-  shift
+	# shellcheck source=../bash/exit-codes.bash
+	. "$ONE_DIR/bash/exit-codes.bash"
 
-  # shellcheck source=bash/exit-codes.bash
-  . "$ONE_DIR/bash/exit-codes.bash"
+	# shellcheck source=../deps/colors.bash
+	. "$ONE_DIR/deps/colors.bash"
 
-  case "$cmd" in
-    "--bashrc") bashrc ;;
-    * ) one_cmd "$@" ;;
-  esac
+	# shellcheck source=../one-cmds/util.bash
+	. "$ONE_DIR/one-cmds/util.bash"
+
+	# shellcheck source=../bash/get-command-name.bash
+	. "$ONE_DIR/bash/get-command-name.bash"
+
+	case "${1:-}" in
+		"--bashrc") bashrc ;;
+		*) one_cmd "$@" ;;
+	esac
 }
 
 main "$@"

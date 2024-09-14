@@ -4,7 +4,7 @@
   shallow = true
 [submodule "test/fixture/assert"]
 	path = test/fixture/assert
-	url = https://github.com/bats-core/bats-assert.git
+	url = git@github.com:adoyle-h/bats-assert.git
   shallow = true
 [submodule "test/fixture/bats-file"]
 	path = test/fixture/bats-file
