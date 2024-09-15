@@ -5,7 +5,8 @@ SEMVER_BIN ?= makefile-utils/semver
 # @hide @target makefile-utils/semver  Download semver tool
 ${SEMVER_BIN}:
 	@mkdir -p $$(dirname '$@')
-	@curl -sSLo '$@' https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
+	@echo '[makefile-utils] To download semver-tool'
+	@curl -Lo '$@' https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
 	@chmod +x '$@'
 
 .PHONY: GIT_VERSION
@@ -19,4 +20,4 @@ GIT_VERSION:
 # @target semver-patch  Print next patch version (z) based on current git tag
 .PHONY: $(addprefix semver-,major minor patch)
 $(addprefix semver-,major minor patch): ${SEMVER_BIN}
-	@${SEMVER_BIN} bump $(subst semver-,,$@) "$(shell $(MAKE) GIT_VERSION)"
+	@${SEMVER_BIN} bump $(subst semver-,,$@) "$(shell $(MAKE) -s GIT_VERSION)"
