@@ -8,7 +8,74 @@ The versions follow the rules of [Semantic Versioning 2.0.0](https://semver.org/
 
 ## [Unreleased]
 
-[Full Changes](https://github.com/one-bash/one.bash/compare/v0.1.0...HEAD)
+[Full Changes](https://github.com/one-bash/one.bash/compare/v0.2.0...HEAD)
+
+
+<a name="v0.2.0"></a>
+## v0.2.0 (2024-09-15 12:59:01 +08:00)
+
+[Full Changes](https://github.com/one-bash/one.bash/compare/v0.1.0...v0.2.0)
+
+### Breaking Changes
+
+**⚠️  NOTE: There are huge changes between v0.1 and v0.2.**
+
+Please run `one backup > ./one.backup.bash` before migrating to v0.2.
+
+Check the usage in README.md.
+
+1. `cd $ONE_DIR/enabled` and `rm -rf ./*` to remove all enabled files.
+2. Run `one repo add` to add one repos.
+3. Run `./one.backup.bash` to recover previous one.bash modules.
+
+### New Features
+
+- big change ([a6b3ce4](https://github.com/one-bash/one.bash/commit/a6b3ce4bd945ac14a1d31d63b50ed1baf54a60ae))
+- add "one search `<WORD>`" ([dfa12b9](https://github.com/one-bash/one.bash/commit/dfa12b93c34f75d16eabd6aafdeb551cf393ac4f))
+  > "one search -a <WORD>" to search with all added repos.
+- support "one bin" ([9b01c0b](https://github.com/one-bash/one.bash/commit/9b01c0bca878da5d0045a45e99055c47af5e48f6))
+  > Breaking Changes:
+  > 
+  > Remove "$ONE_REPO/bin" from PATH env variable. Add "$ONE_DIR/enabled/bin" to PATH.
+  > User should use "one bin enable NAME" to create symlinks at "$ONE_DIR/enabled/bin".
+- support "one repo" && ONE_BASH_* and ONE_SHARE_* config options are deprecated ([6990c83](https://github.com/one-bash/one.bash/commit/6990c83d3f139136c013bd5cad8fcd153d086eb7))
+  > - See the repo usage via "one repo help"
+  > - User can custom own repo. Add repo from local path or git host.
+  > 
+  > Breaking Changes:
+  > 
+  > - ONE_BASH_* and ONE_SHARE_* options are deprecated. User should remove them from your one.config.bash.
+  > - one.bash will not auto install one.share and bash-it.
+  >   - Use "one repo add https://github.com/one-bash/one.share" to add one.share repo.
+  >   - Use "one repo add https://github.com/one-bash/one-bash-it" to add bash-it repo.
+- support "one plugin edit" ([ce8b5c7](https://github.com/one-bash/one.bash/commit/ce8b5c704aa95ba8e12be5c04b414c5d6caa1d10))
+- add "one disable-all" ([0f9daea](https://github.com/one-bash/one.bash/commit/0f9daea3e763fc94b757fbe0e5511567192fd278))
+- add one_MANPATH_append and one_MANPATH_insert functions ([a2aa141](https://github.com/one-bash/one.bash/commit/a2aa1411c7690e41f5a98c86f0cab1b6b321a26c))
+- **one dep**: new command "one dep status" to show status of deps ([7852009](https://github.com/one-bash/one.bash/commit/7852009c3fab6bc4ed94f0e6aba00323b2de8b4d))
+
+### Bug Fixes
+
+- COLOR_ENABLED=yes when $TERM match *-color ([fffa3c8](https://github.com/one-bash/one.bash/commit/fffa3c8ee862fd21b3ca9bdeace2770d2e788dc4))
+- "one backup" should backup "bins" and "repos" ([a6b7a91](https://github.com/one-bash/one.bash/commit/a6b7a91f79f25b0910f9877dba32b581e403a624))
+- add color to logs ([3ec0acd](https://github.com/one-bash/one.bash/commit/3ec0acd7b1e24ca6741838b24cab9e239b4006ef))
+- add usages and completions and fix bugs for one-cmds ([7d9a44e](https://github.com/one-bash/one.bash/commit/7d9a44eeb060468ea1930e9a5739fc1e7a1c9f3a))
+- For mod.opt.bash, SCRIPT field can be omitted ([98655f2](https://github.com/one-bash/one.bash/commit/98655f2a2d9525455e30936391c583809fe2b5a1))
+-  colorful output and more details for list/info one mods and repos ([3d710de](https://github.com/one-bash/one.bash/commit/3d710deb8c4296a81e4e61e17f5cbc1582672580))
+- one help repo && remove colorful output ([b495519](https://github.com/one-bash/one.bash/commit/b4955192e21059e44a4d870b4fa7df9161bd739c))
+- log format ([1d29d02](https://github.com/one-bash/one.bash/commit/1d29d026169d60297904ba0313ed1cfe0721fa1e))
+- better "one bin" ([6c902ef](https://github.com/one-bash/one.bash/commit/6c902ef4d34bb95dd03d24cd0670f51ba56f3cbf))
+- "one sub" should be enabled/disabled by users ([d94d058](https://github.com/one-bash/one.bash/commit/d94d058b610c59d65dcc9e35eaa84257098e4771))
+- log_verb and log_info should print to stderr ([4228b11](https://github.com/one-bash/one.bash/commit/4228b11d87ff42b410e12e675a81e683603d4eb5))
+- syntax error near unexpected token 'then' ([9bf46e7](https://github.com/one-bash/one.bash/commit/9bf46e712b60ab4e600f018611b4a391701eba3e))
+- ⚠️  split "one enabled" command to "one backup" and "one enabled" ([1899e6f](https://github.com/one-bash/one.bash/commit/1899e6f4067a77780efd5483b8e8ef4f0bca6870))
+  > Breaking Change:
+  > 
+  > one enabled list -> one enabled
+  > one enabled backup -> one backup
+- ONE_LOAD_PRIORITY not work in Linux ([13ea0f2](https://github.com/one-bash/one.bash/commit/13ea0f2c1a2abb55a27bf86e0e92ee73946df231))
+- **enable**: if create_mod failed, do not continue ([56bc550](https://github.com/one-bash/one.bash/commit/56bc5504c34f8632217adfedb5a1bfed3d8cf17e))
+- **one link**: ONE_ variables not found ([2d8819c](https://github.com/one-bash/one.bash/commit/2d8819c2399d54974abcf81c336a1d152f20301e))
+- **one link**: ONE_CONF: unbound variable ([04e4b6e](https://github.com/one-bash/one.bash/commit/04e4b6eab937a785ddabf1e29bce8e89d890c0d8))
 
 
 <a name="v0.1.0"></a>
