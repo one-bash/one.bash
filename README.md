@@ -98,7 +98,57 @@ one sub list -a
 # Restart your shell
 ```
 
-If shell has any critical issue and failed to start up, try `ONE_RC=<path-to-your-rcfile>` to change bashrc for rescue.
+If shell has any critical issue and failed to start up, edit your [ONE_CONF](#oneconf) file via `one config --edit`.
+And set `ONE_RC=<path-to-your-rcfile>` to change bashrc for rescue.
+
+## Usage
+
+The `one` command is used to manage one.bash [repos][one-repo] and [modules][one-module], one.config, and dependencies.
+
+```bash
+# Enter "one" to show the usage.
+$ one
+Usage:
+    one help [<CMD>]            Show the usage of one command
+    one [<CMD>] [-h|--help]     Show the usage of one command
+    one help-sub [<SUB_CMD>]    Show the usage of ONE_SUB command
+
+    one r
+    one repo                    Manage one.bash repos
+    one a
+    one alias                   Manage aliases in ONE_REPO/alias/
+    one b
+    one bin                     Manage executable files in ONE_REPO/bin/
+    one c
+    one completion              Manage completions in ONE_REPO/completion/
+    one p
+    one plugin                  Manage plugins in ONE_REPO/plugin/
+
+    one enabled                 Manage enabled modules (alias/completion/plugin)
+    one disable-all             Disable all modules (alias/completion/plugin)
+
+    one backup                  Output backup scripts for current enabled modules
+    one config                  Manage user's ONE_CONF
+    one debug                   Toggle debug mode on one.bash
+    one dep                     Manage one.bash deps
+    one link                    Create symlink files based on LINKS_CONF file
+    one unlink                  remove all symbol links based on LINKS_CONF file
+    one upgrade                 Upgrade one.bash and its dependencies to latest version
+    one log                     Tail the logs of one.bash
+    one search                  Search alias/bin/completion/plugin of each enabled repo.
+    one sub [<SUB_CMD>]         Run ONE_SUB command
+    one status                  Print one.bash status
+    one version                 Print current version of one.bash
+    one --bashrc                Print one.bash entry codes for bashrc
+
+Desc:
+    An elegant framework to manage commands, completions, dotfiles for terminal players.
+    Source code: https://github.com/one-bash/one.bash
+
+Arguments:
+    <CMD>                       The one command
+    <SUB_CMD>                   The ONE_SUB command
+```
 
 ## Configuration
 
@@ -193,55 +243,6 @@ ONE_LINKS_CONF() {
     Linux*) echo "$DOTFILES_DIR"/links/linux.yaml ;;
   esac
 }
-```
-
-## Usage
-
-The `one` command is used to manage one.bash [repos][one-repo] and [modules][one-module], one.config, and dependencies.
-
-```bash
-# Enter "one" to show the usage.
-$ one
-Usage:
-    one help [<CMD>]            Show the usage of one command
-    one [<CMD>] [-h|--help]     Show the usage of one command
-    one help-sub [<SUB_CMD>]    Show the usage of ONE_SUB command
-
-    one r
-    one repo                    Manage one.bash repos
-    one a
-    one alias                   Manage aliases in ONE_REPO/alias/
-    one b
-    one bin                     Manage executable files in ONE_REPO/bin/
-    one c
-    one completion              Manage completions in ONE_REPO/completion/
-    one p
-    one plugin                  Manage plugins in ONE_REPO/plugin/
-
-    one enabled                 Manage enabled modules (alias/completion/plugin)
-    one disable-all             Disable all modules (alias/completion/plugin)
-
-    one backup                  Output backup scripts for current enabled modules
-    one config                  Manage user's ONE_CONF
-    one debug                   Toggle debug mode on one.bash
-    one dep                     Manage one.bash deps
-    one link                    Create symlink files based on LINKS_CONF file
-    one unlink                  remove all symbol links based on LINKS_CONF file
-    one upgrade                 Upgrade one.bash and its dependencies to latest version
-    one log                     Tail the logs of one.bash
-    one search                  Search alias/bin/completion/plugin of each enabled repo.
-    one sub [<SUB_CMD>]         Run ONE_SUB command
-    one status                  Print one.bash status
-    one version                 Print current version of one.bash
-    one --bashrc                Print one.bash entry codes for bashrc
-
-Desc:
-    An elegant framework to manage commands, completions, dotfiles for terminal players.
-    Source code: https://github.com/one-bash/one.bash
-
-Arguments:
-    <CMD>                       The one command
-    <SUB_CMD>                   The ONE_SUB command
 ```
 
 ## [Documents](./docs)
