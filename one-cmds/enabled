@@ -120,13 +120,19 @@ declare -A opts_def=(
 )
 l.parse_args opts_def "$@"
 
-repo_filter=${opts[r]:-}
+main() {
+	local repo_filter
+	repo_filter=${opts[r]:-}
 
-printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
+	printf 'Prio Type %-18s %-18s %s\n' "Name" "Repo" "About"
 
-for filepath in "$ONE_DIR/enabled/"*---*.bash; do
-	print_enabled_mod_props "$filepath" "$repo_filter"
-done | sort
+	for filepath in "$ONE_DIR/enabled/"*---*.bash; do
+		print_enabled_mod_props "$filepath" "$repo_filter"
+	done | sort
 
-list bin "$WHITE"
-list sub "$YELLOW"
+	list bin "$WHITE"
+	list sub "$YELLOW"
+}
+
+. "$ONE_DIR/one-cmds/pager.bash"
+with_pager main
