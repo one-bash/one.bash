@@ -6,6 +6,12 @@
 /configs/ranger/tagged
 /deps/*/
 /enabled/*
+!/enabled/repo
+/enabled/repo/*
+!/enabled/bin
+/enabled/bin/*
+!/enabled/sub
+/enabled/sub/*
 /one.config.bash
 /one.links.yaml
 /data/*/*
