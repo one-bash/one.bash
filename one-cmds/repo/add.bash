@@ -57,7 +57,7 @@ main() {
 	fi
 
 	(
-		cd "$ONE_DIR/data/repo/$name" || return 20
+		cd "$ONE_DIR/data/repo/$name" &>/dev/null || return 20
 		# shellcheck disable=1090
 		if [[ -f $repo_file ]]; then source "$repo_file"; fi
 
@@ -71,7 +71,7 @@ main() {
 	download "$src"
 
 	(
-		cd "$ONE_DIR/data/repo/$name" || return 20
+		cd "$ONE_DIR/data/repo/$name" &>/dev/null || return 20
 		# shellcheck disable=1090
 		if [[ -f $repo_file ]]; then source "$repo_file"; fi
 

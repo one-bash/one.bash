@@ -27,7 +27,7 @@ main() {
 	if [[ -n ${IN_CHINA:-} ]]; then
 		docker_args+=(
 			--build-arg 'APK_PROXY=mirrors.ustc.edu.cn'
-			--build-arg 'GH_PROXY=https://ghproxy.com/'
+			--build-arg 'GH_PROXY=https://ghp.ci/'
 		)
 	fi
 

@@ -52,7 +52,7 @@ main() {
 	local answer
 
 	mkdir -p "$repo_dir"
-	cd "$repo_dir" || return 20
+	cd "$repo_dir" &>/dev/null || return 20
 
 	touch one.repo.bash
 

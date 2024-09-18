@@ -18,7 +18,7 @@ main() {
 	fi
 
 	(
-		cd "$repo_dir" || return 23
+		cd "$repo_dir" &>/dev/null || return 23
 		# shellcheck disable=1091
 		if [[ -f "$repo_dir/one.repo.bash" ]]; then source "$repo_dir/one.repo.bash"; fi
 		if type -t repo_update_pre &>/dev/null; then repo_update_pre; fi
@@ -28,7 +28,7 @@ main() {
 	git -C "$repo_dir" pull
 
 	(
-		cd "$repo_dir" || return 23
+		cd "$repo_dir" &>/dev/null || return 23
 		# shellcheck disable=1091
 		if [[ -f "$repo_dir/one.repo.bash" ]]; then source "$repo_dir/one.repo.bash"; fi
 		if type -t repo_update_post &>/dev/null; then repo_update_post; fi

@@ -12,7 +12,7 @@ EOF
 }
 
 exec_cmd_in_repo() {
-	cd "$repo_path" || return 23
+	cd "$repo_path" &>/dev/null || return 23
 	printf '%b[%s] %b%s%b\n' "$BLUE" "${repo_path}" "$WHITE" "$*" "$RESET_ALL"
 	"$@" || printf '%b[exit code: %s]%b\n' "$RED" "$?" "$RESET_ALL"
 	printf '\n'
