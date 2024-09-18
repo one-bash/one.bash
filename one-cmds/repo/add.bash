@@ -32,6 +32,7 @@ download() {
 		print_verb "[REPO: $name] to download via git"
 		git -C "$ONE_DIR/data/repo/" clone --single-branch --progress "https://github.com/$src.git"
 	elif [[ $src == /* ]]; then
+		src=${src%/}
 		print_verb "[REPO: $name] to download via local path"
 		ln -s "$src" "$ONE_DIR/data/repo/$name"
 	else
