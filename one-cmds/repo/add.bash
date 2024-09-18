@@ -56,22 +56,10 @@ main() {
 		fi
 	fi
 
-	(
-		cd "$ONE_DIR/data/repo/$name" &>/dev/null || return 20
-		# shellcheck disable=1090
-		if [[ -f $repo_file ]]; then source "$repo_file"; fi
-
-		if type -t repo_add_pre &>/dev/null; then
-			print_verb "[REPO: $name] To execute repo_add_pre()"
-			repo_add_post
-			print_verb "[REPO: $name] repo_add_pre() success done"
-		fi
-	)
-
 	download "$src"
 
 	(
-		cd "$ONE_DIR/data/repo/$name" &>/dev/null || return 20
+		cd "$ONE_DIR/data/repo/$name" &>/dev/null || return 21
 		# shellcheck disable=1090
 		if [[ -f $repo_file ]]; then source "$repo_file"; fi
 

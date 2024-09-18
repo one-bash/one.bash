@@ -67,10 +67,6 @@ ABOUT='the description of repo'
 # repo_onload() {
 # }
 
-# If defined, this function will be executed before downloading for "one repo add".
-# repo_add_pre() {
-# }
-
 # If defined, this function will be executed after downloading for  "one repo add".
 # repo_add_post() {
 # }
