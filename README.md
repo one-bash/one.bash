@@ -82,7 +82,7 @@ one dep status
 ```bash
 # Add a repo
 one repo add one-bash/one.share
-one repo add Bash-it/bash-it
+one repo add one-bash/bash-it
 
 # List available plugins/completions/aliases/bins/subs
 one plugin list -a
