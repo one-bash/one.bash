@@ -36,8 +36,22 @@ $(BUMP_TARGETS):
 changelog:
 	$(MAKE) -s CHANGELOG NEXT_VERSION=$(shell cat VERSION)
 
-init:
-	git submodule update --recursive --init
+.PHONY: new-tag
+new-tag:
+	@git tag v$(shell cat VERSION)
+
+# @target release-major  release major version (x)
+# @target release-minor  release minor version (y)
+# @target release-patch  release patch version (z)
+RELEASE_TARGETS := $(addprefix release-,major minor patch)
+.PHONY: $(RELEASE_TARGETS)
+$(RELEASE_TARGETS):
+	@$(MAKE) -s $(subst release-,bump-,$@)
+	@$(MAKE) -s changelog
+	@git add .
+	@git commit -m "bump: $(subst release-,,$@) version"
+	@git rebase develop main
+	@$(MAKE) -s new-tag
 
 .PHONY: format
 format:
