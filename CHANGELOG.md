@@ -8,7 +8,27 @@ The versions follow the rules of [Semantic Versioning 2.0.0](https://semver.org/
 
 ## [Unreleased]
 
-[Full Changes](https://github.com/one-bash/one.bash/compare/v0.2.0...HEAD)
+[Full Changes](https://github.com/one-bash/one.bash/compare/v0.3.0...HEAD)
+
+
+<a name="v0.3.0"></a>
+## v0.3.0 (2024-09-19 15:45:40 +08:00)
+
+[Full Changes](https://github.com/one-bash/one.bash/compare/v0.2.0...v0.3.0)
+
+### New Features
+
+- one enabled show list with pager ([3fdc5c4](https://github.com/one-bash/one.bash/commit/3fdc5c4fffdf7af47ddf639e40e0fe9d635316f7))
+
+### Bug Fixes
+
+- missing enabled folders ([67d1f5a](https://github.com/one-bash/one.bash/commit/67d1f5a255a896b66946bf4e6fbf91099f770fa0))
+- remove useless repo_add_pre() function for one.repo.bash ([b8cbcaa](https://github.com/one-bash/one.bash/commit/b8cbcaaa7f77e9828ddfa94836948d79b45288f8))
+- cd should not print stderr ([fb225c0](https://github.com/one-bash/one.bash/commit/fb225c0f183a97f04fe596ad9f4fc9c2a812b9de))
+
+### Document Changes
+
+- fix ([655698e](https://github.com/one-bash/one.bash/commit/655698e598a4df020aee48f7b3e5b4f383f549dd))
 
 
 <a name="v0.2.0"></a>
