@@ -10,6 +10,7 @@ The official repo [one.share][] and [one-bash-it][] provides them.
 - List all local repos: `one repo list`
 - Download and enable repo:
   - `one repo add https://github.com/one-bash/one.share`
+  - `one repo add one-bash/one.share`
   - `one repo add git@github.com:one-bash/one.share.git`
   - `one repo add /local/directory`
 - Enable repo: `one repo enable one.share`
@@ -84,4 +85,3 @@ ABOUT='the description of repo'
 
 [one.share]: https://github.com/one-bash/one.share
 [one-bash-it]: https://github.com/one-bash/one-bash-it
-[bash-it]: https://github.com/Bash-it/bash-it

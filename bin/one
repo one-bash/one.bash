@@ -43,7 +43,7 @@ Usage:
     $name version                 Print current version of one.bash
     $name --bashrc                Print one.bash entry codes for bashrc
 
-Desc: A framework to manage commands, completions, dotfiles for terminal users.
+Desc: A modular framework that manages commands, completions, dotfiles for bash users.
 
 Source Code: https://github.com/one-bash/one.bash
 

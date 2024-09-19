@@ -10,6 +10,7 @@ one.bash 只是一个管理框架。它不包含任何配置文件。
 - 列出所有本地 repo: `one repo list`
 - 下载并启用 repo:
   - `one repo add https://github.com/one-bash/one.share`
+  - `one repo add one-bash/one.share`
   - `one repo add git@github.com:one-bash/one.share.git`
   - `one repo add /local/directory`
 - 启用 repo: `one repo enable one.share`
@@ -84,4 +85,3 @@ ABOUT='the description of repo'
 
 [one.share]: https://github.com/one-bash/one.share
 [one-bash-it]: https://github.com/one-bash/one-bash-it
-[bash-it]: https://github.com/Bash-it/bash-it

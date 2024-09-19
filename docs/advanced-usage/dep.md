@@ -1,15 +1,13 @@
 # ONE Dependencies
 
-`one dep install` will download below four dependencies into [deps/](../../deps).
+Dependencies:
 
-- [dotbot][]: To create symbol links and manage them with config.
-- [composure][]: Provides functions for modules
-- [one.share][]
-- [one-bash-it](https://github.com/one-bash/one-bash-it): wrapped [bash-it][].
+- [dotbot][]: Create symbol links and manage them with config.
+- [composure][]: Provide basic functions for modules.
 
 You can use `one dep` to manage these dependencies.
 
-- `one dep install` to install all dependencies.
+- `one dep install` to install all dependencies into [deps/](../../deps).
 - `one dep update` to update all dependencies.
 - `one dep update <dep>` to update a dependency.
 
@@ -18,5 +16,3 @@ You can use `one dep` to manage these dependencies.
 
 [composure]: https://github.com/adoyle-h/composure.git
 [dotbot]: https://github.com/anishathalye/dotbot/
-[bash-it]: https://github.com/Bash-it/bash-it
-[one.share]: https://github.com/one-bash/one.share
