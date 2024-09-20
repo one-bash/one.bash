@@ -33,7 +33,10 @@ create_mod() {
 		. "$opt_path"
 		if declare -F AFTER_DOWNLOAD &>/dev/null; then
 			log_verb "$log_tag" "To execute AFTER_DOWNLOAD fucntion"
-			(AFTER_DOWNLOAD 2>&1 | tee -a "$ONE_LOG_FILE" >&2) || {
+			(
+				cd "$MOD_DATA_DIR" || return 43
+				AFTER_DOWNLOAD 2>&1 | tee -a "$ONE_LOG_FILE" >&2
+			) || {
 				log_err "$log_tag" "Failed to execute AFTER_DOWNLOAD function"
 				return 7
 			}
@@ -73,10 +76,11 @@ create_mod() {
 
 		if declare -F RUN_AND_INSERT &>/dev/null; then
 			log_verb "$log_tag" "To execute RUN_AND_INSERT fucntion"
-			{
+			(
+				cd "$MOD_DATA_DIR" || return 44
 				printf -- '\n'
 				RUN_AND_INSERT
-			} >>"$MOD_FILE"
+			) >>"$MOD_FILE"
 		fi
 
 		if [[ -n ${GIT_REPO:-${GITHUB_REPO:-}} ]]; then
@@ -97,10 +101,11 @@ create_mod() {
 
 		if declare -F RUN_AND_APPEND &>/dev/null; then
 			log_verb "$log_tag" "To execute RUN_AND_APPEND fucntion"
-			{
+			(
+				cd "$MOD_DATA_DIR" || return 45
 				printf -- '\n'
 				RUN_AND_APPEND
-			} >>"$MOD_FILE"
+			) >>"$MOD_FILE"
 		fi
 	)
 
