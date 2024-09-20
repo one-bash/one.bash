@@ -123,8 +123,25 @@ _ask_update_mod_data() {
 }
 
 download_github_release_files() {
-	if [[ -z ${GIT_REPO:-${GITHUB_REPO:-}} ]] || [[ ! -v GITHUB_RELEASE_FILES ]]; then
-		return 0
+	local isEmpty=yes answer
+
+	shopt -s nullglob
+	for _ in "$MOD_DATA_DIR"/*; do
+		isEmpty=no
+		break
+	done
+
+	if [[ $isEmpty == no ]]; then
+		local prompt
+		prompt=$(printf '%b[Mod=%s] %s%b' "$YELLOW" "$name" "Found existed data which may be outdated. Update it to latest?" "$RESET_ALL")
+		answer=$(l.ask "$prompt" N)
+
+		if [[ $answer == YES ]]; then
+			rm -rf "$MOD_DATA_DIR"
+			mkdir "$MOD_DATA_DIR"
+		else
+			return 0
+		fi
 	fi
 
 	local version="${GITHUB_RELEASE_VERSION:-latest}"
@@ -150,67 +167,43 @@ download_mod_data() {
 	local MOD_DATA_DIR="$MOD_DATA_ROOT/${name}"
 	mkdir -p "$MOD_DATA_DIR"
 
-	SCRIPT=$(get_opt "$opt_path" SCRIPT)
-	GIT_REPO=$(get_opt "$opt_path" GIT_REPO)
-	if [[ -z $GIT_REPO ]]; then
-		GIT_REPO=$(get_opt "$opt_path" GITHUB_REPO)
-	fi
-	GIT_BRANCH=$(get_opt "$opt_path" GIT_BRANCH)
+	(
+		. "$opt_path"
 
-	if [[ -n $GIT_REPO ]]; then
-		local target="$MOD_DATA_DIR/git"
-		if _ask_update_mod_data "$target"; then
-			print_verb 'To git clone "%s" "%s"\n' "$GIT_REPO" "$target"
-			local -a clone_opts=(
-				--depth 1 --single-branch --recurse-submodules --shallow-submodules
-			)
-			if [[ -n $GIT_BRANCH ]]; then
-				clone_opts+=(--branch "$GIT_BRANCH")
-			fi
-			git clone "${clone_opts[@]}" "$GIT_REPO" "$target"
-		fi
-	elif [[ -n $SCRIPT ]]; then
-		local target="$MOD_DATA_DIR/script.bash"
-		if _ask_update_mod_data "$target"; then
-			if [[ $SCRIPT =~ ^https?:// ]] || [[ $SCRIPT =~ ^ftp:// ]]; then
-				print_verb 'To curl -fLo "%s" "%s"\n' "$target" "$SCRIPT"
-				curl -fLo "$target" "$SCRIPT"
-			elif [[ $SCRIPT =~ ^/ ]]; then
-				cp "$SCRIPT" "$target"
+		GIT_REPO=${GIT_REPO:-${GITHUB_REPO:-}}
+
+		if [[ -n $GIT_REPO ]]; then
+			local target="$MOD_DATA_DIR/git"
+
+			if [[ -n ${GITHUB_RELEASE_FILES:-} ]]; then
+				download_github_release_files
 			else
-				echo "Unsupported script value: $SCRIPT" >&2
-				return 33
+				if _ask_update_mod_data "$target"; then
+					print_verb 'To git clone "%s" "%s"\n' "$GIT_REPO" "$target"
+
+					local -a clone_opts=(
+						--depth 1 --single-branch --recurse-submodules --shallow-submodules
+					)
+					if [[ -n $GIT_BRANCH ]]; then clone_opts+=(--branch "$GIT_BRANCH"); fi
+
+					git clone "${clone_opts[@]}" "$GIT_REPO" "$target"
+				fi
+			fi
+		elif [[ -n $SCRIPT ]]; then
+			local target="$MOD_DATA_DIR/script.bash"
+			if _ask_update_mod_data "$target"; then
+				if [[ $SCRIPT =~ ^https?:// ]] || [[ $SCRIPT =~ ^ftp:// ]]; then
+					print_verb 'To curl -fLo "%s" "%s"\n' "$target" "$SCRIPT"
+					curl -fLo "$target" "$SCRIPT"
+				elif [[ $SCRIPT =~ ^/ ]]; then
+					cp "$SCRIPT" "$target"
+				else
+					echo "Unsupported script value: $SCRIPT" >&2
+					return 33
+				fi
 			fi
 		fi
-	else
-		local isEmpty=yes answer
-
-		shopt -s nullglob
-		for _ in "$MOD_DATA_DIR"/*; do
-			isEmpty=no
-			break
-		done
-
-		if [[ $isEmpty == no ]]; then
-			local prompt
-			prompt=$(printf '%b[Mod=%s] %s%b' "$YELLOW" "$name" "Found existed data which may be outdated. Update it to latest?" "$RESET_ALL")
-			answer=$(l.ask "$prompt" N)
-
-			if [[ $answer == YES ]]; then
-				rm -rf "$MOD_DATA_DIR"
-				mkdir "$MOD_DATA_DIR"
-			else
-				return 0
-			fi
-		fi
-
-		(
-			cd "$MOD_DATA_DIR" &>/dev/null || return 23
-			# shellcheck disable=1090
-			source "$opt_path"
-			download_github_release_files
-		)
-	fi
+	)
 }
 
 # @param $1 The filepath that stores options
