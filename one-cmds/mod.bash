@@ -155,12 +155,19 @@ download_mod_data() {
 	if [[ -z $GIT_REPO ]]; then
 		GIT_REPO=$(get_opt "$opt_path" GITHUB_REPO)
 	fi
+	GIT_BRANCH=$(get_opt "$opt_path" GIT_BRANCH)
 
 	if [[ -n $GIT_REPO ]]; then
 		local target="$MOD_DATA_DIR/git"
 		if _ask_update_mod_data "$target"; then
 			print_verb 'To git clone "%s" "%s"\n' "$GIT_REPO" "$target"
-			git clone --depth 1 --single-branch --recurse-submodules --shallow-submodules "$GIT_REPO" "$target"
+			local -a clone_opts=(
+				--depth 1 --single-branch --recurse-submodules --shallow-submodules
+			)
+			if [[ -n $GIT_BRANCH ]]; then
+				clone_opts+=(--branch "$GIT_BRANCH")
+			fi
+			git clone "${clone_opts[@]}" "$GIT_REPO" "$target"
 		fi
 	elif [[ -n $SCRIPT ]]; then
 		local target="$MOD_DATA_DIR/script.bash"

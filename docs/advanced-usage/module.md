@@ -124,6 +124,10 @@ GIT_REPO=https://gitlab.com/repo/user
 SCRIPT=path/to/file
 ```
 
+Optional Properties:
+
+- `GIT_BRANCH`: checkout to branch or tag
+
 ### Download GITHUB release files
 
 ```sh
