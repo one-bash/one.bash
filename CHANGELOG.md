@@ -8,7 +8,30 @@ The versions follow the rules of [Semantic Versioning 2.0.0](https://semver.org/
 
 ## [Unreleased]
 
-[Full Changes](https://github.com/one-bash/one.bash/compare/v0.3.0...HEAD)
+[Full Changes](https://github.com/one-bash/one.bash/compare/v0.4.0...HEAD)
+
+
+<a name="v0.4.0"></a>
+## v0.4.0 (2024-09-21 05:07:15 +08:00)
+
+[Full Changes](https://github.com/one-bash/one.bash/compare/v0.3.0...v0.4.0)
+
+### New Features
+
+- mod.opt.bash support GIT_BRANCH ([f9519bc](https://github.com/one-bash/one.bash/commit/f9519bcc91396e4205f60c4d4a9c7d8a57661924))
+- mod.opt.bash support property "BIN" ([20b4a12](https://github.com/one-bash/one.bash/commit/20b4a128aabd9bf0ea74c08044a764eb4aee48a9))
+
+### Bug Fixes
+
+- one backup should print repo_name for each mod ([2545573](https://github.com/one-bash/one.bash/commit/25455736bfeff33e71b30d8c77b4754ab2746c0b))
+- create meta.bash for bin/sub.opt.bash when "one bin/sub enable" ([3f73c2d](https://github.com/one-bash/one.bash/commit/3f73c2d70b18def665321e1d5149b471921a520f))
+- GITHUB_RELEASE_FILES not work ([bb8be7c](https://github.com/one-bash/one.bash/commit/bb8be7cd3dc92706a7bb82ec47cf34cea3849634))
+- GIT_REPO instead of GITHUB_REPO ([912b660](https://github.com/one-bash/one.bash/commit/912b6604696f52f9e3ab5c8c9010a84a7e855032))
+  > GITHUB_REPO is deprecated and will be removed in v1
+
+### Document Changes
+
+- better docs ([c2d3bb6](https://github.com/one-bash/one.bash/commit/c2d3bb62ce68ca8702e1050d8ebe958b885ba94d))
 
 
 <a name="v0.3.0"></a>
