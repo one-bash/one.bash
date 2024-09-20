@@ -184,7 +184,7 @@ download_mod_data() {
 					local -a clone_opts=(
 						--depth 1 --single-branch --recurse-submodules --shallow-submodules
 					)
-					if [[ -n $GIT_BRANCH ]]; then clone_opts+=(--branch "$GIT_BRANCH"); fi
+					if [[ -n ${GIT_BRANCH:-} ]]; then clone_opts+=(--branch "$GIT_BRANCH"); fi
 
 					git clone "${clone_opts[@]}" "$GIT_REPO" "$target"
 				fi
