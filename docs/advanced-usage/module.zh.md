@@ -111,17 +111,22 @@ SCRIPT=https://raw.githubusercontent.com/cheat/cheat/master/scripts/cheat.bash
 
 SCRIPT 指向的文件会被下载到 `$ONE_DIR/data/type/name/script.bash`.
 
-### 下载 GITHUB 项目代码
+### 下载 GIT 项目代码
 
 ```sh
-GITHUB_REPO=https://github.com/lincheney/fzf-tab-completion
+GIT_REPO=https://github.com/lincheney/fzf-tab-completion
 SCRIPT=bash/fzf-bash-completion.sh
+```
+
+```sh
+GIT_REPO=https://gitlab.com/repo/user
+SCRIPT=path/to/file
 ```
 
 ### 下载 GITHUB release 文件
 
 ```sh
-GITHUB_REPO=https://github.com/so-fancy/diff-so-fancy
+GIT_REPO=https://github.com/so-fancy/diff-so-fancy
 GITHUB_RELEASE_VERSION=latest
 GITHUB_RELEASE_FILES=(diff-so-fancy)
 ```

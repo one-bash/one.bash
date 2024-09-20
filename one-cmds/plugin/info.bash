@@ -47,7 +47,7 @@ info_mod() {
 					print_info_item About "${ABOUT//$'\n'/ }"
 					print_info_item Priority "${PRIORITY:-}"
 					print_info_item DEPS "${DEPS:-}"
-					print_info_item GITHUB_REPO "${GITHUB_REPO:-}"
+					print_info_item GIT_REPO "${GIT_REPO:-${GITHUB_REPO:-}}"
 					print_info_item GITHUB_RELEASE_VERSION "${GITHUB_RELEASE_VERSION:-}"
 					print_info_item GITHUB_RELEASE_FILES "${GITHUB_RELEASE_FILES:-}"
 					print_info_item Script "${SCRIPT:-}"

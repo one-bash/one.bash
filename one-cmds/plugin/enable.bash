@@ -79,7 +79,7 @@ create_mod() {
 			} >>"$MOD_FILE"
 		fi
 
-		if [[ -n ${GITHUB_REPO:-} ]]; then
+		if [[ -n ${GIT_REPO:-${GITHUB_REPO:-}} ]]; then
 			if [[ -n ${SCRIPT:-} ]]; then
 				echo "source \"\$ONE_DIR/data/$t/$name/git/${SCRIPT}\"" >>"$MOD_FILE"
 			fi

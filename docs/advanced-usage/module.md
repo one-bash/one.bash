@@ -112,17 +112,22 @@ SCRIPT=https://raw.githubusercontent.com/cheat/cheat/master/scripts/cheat.bash
 
 The script will be downloaded to `$ONE_DIR/data/type/name/script.bash`.
 
-### Download GITHUB repo codes
+### Download GIT repo codes
 
 ```sh
-GITHUB_REPO=https://github.com/lincheney/fzf-tab-completion
+GIT_REPO=https://github.com/lincheney/fzf-tab-completion
 SCRIPT=bash/fzf-bash-completion.sh
+```
+
+```sh
+GIT_REPO=https://gitlab.com/repo/user
+SCRIPT=path/to/file
 ```
 
 ### Download GITHUB release files
 
 ```sh
-GITHUB_REPO=https://github.com/so-fancy/diff-so-fancy
+GIT_REPO=https://github.com/so-fancy/diff-so-fancy
 GITHUB_RELEASE_VERSION=latest
 GITHUB_RELEASE_FILES=(diff-so-fancy)
 ```

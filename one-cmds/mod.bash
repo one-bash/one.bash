@@ -105,7 +105,7 @@ _ask_update_mod_data() {
 }
 
 download_github_release_files() {
-	if [[ -z ${GITHUB_REPO:-} ]] || [[ ! -v GITHUB_RELEASE_FILES ]]; then
+	if [[ -z ${GIT_REPO:-${GITHUB_REPO:-}} ]] || [[ ! -v GITHUB_RELEASE_FILES ]]; then
 		return 0
 	fi
 
@@ -114,9 +114,9 @@ download_github_release_files() {
 	local file
 	for file in "${GITHUB_RELEASE_FILES[@]}"; do
 		if [[ $version == latest ]]; then
-			url="$GITHUB_REPO/releases/latest/download/$file"
+			url="${GIT_REPO:-${GITHUB_REPO:-}}/releases/latest/download/$file"
 		else
-			url="$GITHUB_REPO/releases/download/$version/$file"
+			url="${GIT_REPO:-${GITHUB_REPO:-}}/releases/download/$version/$file"
 		fi
 
 		print_verb 'To download file "%s" from %s\n' "$file" "$url"
@@ -126,20 +126,23 @@ download_github_release_files() {
 
 download_mod_data() {
 	local name=$1 opt_path=$2
-	local SCRIPT answer GITHUB_REPO
+	local SCRIPT answer GIT_REPO
 
 	local MOD_DATA_ROOT="$ONE_DIR/data/$t"
 	local MOD_DATA_DIR="$MOD_DATA_ROOT/${name}"
 	mkdir -p "$MOD_DATA_DIR"
 
 	SCRIPT=$(get_opt "$opt_path" SCRIPT)
-	GITHUB_REPO=$(get_opt "$opt_path" GITHUB_REPO)
+	GIT_REPO=$(get_opt "$opt_path" GIT_REPO)
+	if [[ -z $GIT_REPO ]]; then
+		GIT_REPO=$(get_opt "$opt_path" GITHUB_REPO)
+	fi
 
-	if [[ -n $GITHUB_REPO ]]; then
+	if [[ -n $GIT_REPO ]]; then
 		local target="$MOD_DATA_DIR/git"
 		if _ask_update_mod_data "$target"; then
-			print_verb 'To git clone "%s" "%s"\n' "$GITHUB_REPO" "$target"
-			git clone --depth 1 --single-branch --recurse-submodules --shallow-submodules "$GITHUB_REPO" "$target"
+			print_verb 'To git clone "%s" "%s"\n' "$GIT_REPO" "$target"
+			git clone --depth 1 --single-branch --recurse-submodules --shallow-submodules "$GIT_REPO" "$target"
 		fi
 	elif [[ -n $SCRIPT ]]; then
 		local target="$MOD_DATA_DIR/script.bash"
