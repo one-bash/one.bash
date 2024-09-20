@@ -50,14 +50,44 @@ fi
 # shellcheck source=../one-cmds/mod.bash
 . "$ONE_DIR/one-cmds/mod.bash"
 
-list_enabled_for_backup() {
-	list_enabled "$1" | sort | tr '\n' ' '
+list_enabled_mod_for_backup() {
+	local path filename
+	for path in "$ONE_DIR"/enabled/*---*"@$1.bash"; do
+		filename=${path##*---}
+
+		if [[ $filename =~ ^([^@]+)@([^@]+)@([^@]+).bash$ ]]; then
+			mod_name=${BASH_REMATCH[1]}
+			repo_name=${BASH_REMATCH[2]}
+			mod_type=${BASH_REMATCH[3]}
+			echo "one $mod_type enable -r $repo_name $mod_name"
+		fi
+	done
 	printf '\n'
 }
 
-list_enabled_bins() {
-	find "$ONE_DIR/enabled/bin" -maxdepth 1 -type l -exec basename {} \; |
-		sort | tr '\n' ' '
+list_enabled_bin_for_backup() {
+	local mod_type=$1
+	local target repo_name mod_name
+
+	for path in "$ONE_DIR/enabled/$mod_type"/*; do
+		if [[ ! -L $path ]]; then continue; fi
+		target=$(readlink "$path")
+		mod_name=${path##*/}
+
+		if [[ $target =~ ^"$ONE_DIR"/enabled/repo/([^/]+)/$mod_type/ ]]; then
+			repo_name=${BASH_REMATCH[1]}
+			echo "one $mod_type enable -r $repo_name $mod_name"
+		elif [[ $target =~ ^"$ONE_DIR"/data/$mod_type/$mod_name/ ]]; then
+			if [[ -f "$ONE_DIR"/data/$mod_type/$mod_name/meta.bash ]]; then
+				(
+					# shellcheck disable=SC1090
+					. "$ONE_DIR/data/$mod_type/$mod_name/meta.bash"
+					echo "one $mod_type enable -r $repo_name $mod_name"
+				)
+			fi
+		fi
+	done
+
 	printf '\n'
 }
 
@@ -70,6 +100,7 @@ list_enabled_subs() {
 backup_content() {
 	cat <<EOF
 #!/usr/bin/env bash
+# Description: invoke this scripts to restore your backups of one.bash.
 
 set -o errexit -o nounset -o pipefail -o errtrace
 (shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
@@ -83,6 +114,8 @@ one p disable --all
 EOF
 
 	local path url
+	shopt -s nullglob
+
 	for path in "$ONE_DIR"/enabled/repo/*; do
 		if [[ -d $path/.git ]]; then
 			url=$(git -C "$path" config --get remote.origin.url)
@@ -93,12 +126,12 @@ EOF
 	done
 
 	printf '\n'
-	printf "%s %s\n\n" "one alias enable" "$(list_enabled_for_backup alias)"
-	printf "%s %s\n\n" "one completion enable" "$(list_enabled_for_backup completion)"
-	printf "%s %s\n\n" "one bin enable" "$(list_enabled_bins)"
-	printf "%s %s\n\n" "one sub enable" "$(list_enabled_subs)"
-	printf "%s %s\n\n" "one plugin enable" "$(list_enabled_for_backup plugin)"
-	printf '\necho "[All Done]"\n'
+	list_enabled_mod_for_backup alias
+	list_enabled_mod_for_backup completion
+	list_enabled_mod_for_backup plugin
+	list_enabled_bin_for_backup bin
+	list_enabled_bin_for_backup sub
+	printf 'echo "[All Done]"\n'
 }
 
 declare -A opts=()
