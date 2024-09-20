@@ -15,20 +15,6 @@ EOF
 # TODO FIX the bin file should be executable. [[ -x $path ]]
 . "$ONE_DIR/one-cmds/plugin/action-completion.bash"
 
-create_symlink() {
-	local name=$1 target=$2 answer
-
-	if [[ -L "$ONE_DIR/enabled/$t/$name" ]]; then
-		local answer
-		printf 'Found existed enabled file: %s -> %s\n' "$name" "$(readlink "$ONE_DIR/enabled/$t/$name")" >&2
-		answer=$(l.ask "Do you want to override it?")
-		if [[ $answer != YES ]]; then return 0; fi
-	fi
-
-	ln -fs "$target" "$ONE_DIR/enabled/$t/$name"
-	printf "Enabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$target"
-}
-
 set_exports() {
 	if [[ ! -v EXPORTS ]]; then
 		return
@@ -52,7 +38,7 @@ enable() {
 
 	if [[ -x $path ]]; then
 		mod_check_dep_cmds "$path"
-		create_symlink "$name" "$path"
+		create_bin_symlink "$name" "$t" "$path"
 	elif [[ $path == *.opt.bash ]]; then
 		mod_check_dep_cmds "$path"
 		# Disable first, prevent duplicated module enabled with different priority
@@ -75,7 +61,7 @@ enable() {
 			# shellcheck disable=1090
 			read -ra exports < <(. "$path" && echo "${EXPORTS[@]}")
 			for bin_name in "${exports[@]}"; do
-				create_symlink "$bin_name" "$script_file"
+				create_bin_symlink "$bin_name" "$t" "$script_file"
 			done
 		else
 			(
@@ -86,7 +72,7 @@ enable() {
 				# shellcheck disable=1090
 				read -ra exports < <(. "$path" && echo "${EXPORTS[@]}")
 				for bin_name in "${exports[@]}"; do
-					create_symlink "$bin_name" "$ONE_DIR/data/$t/$name/$bin_name"
+					create_bin_symlink "$bin_name" "$t" "$ONE_DIR/data/$t/$name/$bin_name"
 				done
 			)
 		fi

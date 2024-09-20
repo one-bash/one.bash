@@ -64,7 +64,7 @@ create_mod() {
 		fi
 
 		if declare -F INSERT &>/dev/null; then
-			log_verb "$log_tag" "To execute INSERT fucntion"
+			log_verb "$log_tag" "To copy INSERT fucntion"
 			{
 				printf -- '\n'
 				declare -f INSERT | sed -e '1,2d;$d' -e 's/^    //'
@@ -88,7 +88,7 @@ create_mod() {
 		fi
 
 		if declare -F APPEND &>/dev/null; then
-			log_verb "$log_tag" "To execute APPEND fucntion"
+			log_verb "$log_tag" "To copy APPEND fucntion"
 			{
 				printf -- '\n'
 				declare -f APPEND | sed -e '1,2d;$d' -e 's/^    //'
@@ -108,15 +108,20 @@ create_mod() {
 	output=$MOD_FILE
 }
 
-enable_file() {
-	local name=$1 repo=$2 filepath=$3 priority
-	priority=$(get_priority "$filepath" "$t")
+_enable_mod() {
+	local name=$1 opt_path=$2
 
-	ln -sf "$filepath" "$ONE_DIR/enabled/$priority---$name@$repo@$t.bash"
+	(
+		# shellcheck disable=1090
+		source "$opt_path"
 
-	printf 'Enabled %b%s%b with priority=%b%s%b. Please restart shell to take effect.\n' \
-		"$BLUE" "$repo/$t/$name" "$RESET_ALL" \
-		"$YELLOW" "$priority" "$RESET_ALL"
+		local path
+		if l.is_array BIN; then
+			for path in "${BIN[@]}"; do
+				create_bin_symlink "${path##*/}" bin "$ONE_DIR/data/$t/$name/git/$path"
+			done
+		fi
+	)
 }
 
 enable_mod() {
@@ -132,26 +137,36 @@ enable_mod() {
 			repo_name=${repo_name%%/*}
 
 			if [[ $filepath == *.opt.bash ]]; then
-				mod_check_dep_cmds "$filepath"
+				local opt_path=$filepath
+				mod_check_dep_cmds "$opt_path"
 				# Disable first, prevent duplicated module enabled with different priority
 				disable_mod "$name"
-				download_mod_data "$name" "$filepath"
+				download_mod_data "$name" "$opt_path"
 
 				local mod_path
-				create_mod "$name" "$filepath" mod_path
+				create_mod "$name" "$opt_path" mod_path
 				if [[ -n ${mod_path:-} ]]; then
 					filepath=$mod_path
 				else
 					echo "No mod file created" >&2
 					return 0
 				fi
+
+				_enable_mod "$name" "$opt_path"
 			else
 				mod_check_dep_cmds "$filepath"
 				# Disable first, prevent duplicated module enabled with different priority
 				disable_mod "$name"
 			fi
 
-			enable_file "$name" "$repo_name" "$filepath"
+			local priority
+			priority=$(get_priority "$filepath" "$t")
+			ln -fs "$filepath" "$ONE_DIR/enabled/$priority---$name@$repo_name@$t.bash"
+
+			printf 'Enabled: %b%s%b with priority=%b%s%b. Please restart shell to take effect.\n' \
+				"$BLUE" "$repo_name/$t/$name" "$RESET_ALL" \
+				"$YELLOW" "$priority" "$RESET_ALL"
+
 			;;
 
 		0)

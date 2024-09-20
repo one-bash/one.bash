@@ -38,22 +38,40 @@ disable_mod() {
 
 	_found_=false
 
-	local filepath target
+	local filepath filename target
 	shopt -s nullglob
 	# shellcheck disable=2154
 	for filepath in "$ONE_DIR/enabled/"*---"$name@"*"@$t.bash"; do
-		if [[ -L $filepath ]]; then
-			# TODO: below commented codes may be useless
-			# target=$(readlink "$filepath")
-			# if [[ -e $target ]] && grep "^$mod_annotation" "$filepath" &>/dev/null; then
-			# 	unlink "$target"
-			# fi
 
-			unlink "$filepath"
+		local filename="${filepath##*/}"
 
-			echo "Disabled ${filepath##*/}. Please restart shell to take effect."
-			_found_=true
+		if [[ $filename =~ ^[[:digit:]]{3}---([^@]+)@([^@]+)@([^@]+).bash$ ]]; then
+			mod_name=${BASH_REMATCH[1]}
+			repo_name=${BASH_REMATCH[2]}
+			mod_type=${BASH_REMATCH[3]}
+			if [[ -f ${ONE_DIR}/enabled/repo/$repo_name/$mod_type/${mod_name}.opt.bash ]]; then
+				(
+					. "${ONE_DIR}/enabled/repo/$repo_name/$mod_type/${mod_name}.opt.bash"
+
+					local path target name
+					if l.is_array BIN; then
+						for path in "${BIN[@]}"; do
+							if [[ -L $path ]]; then
+								name=${path##*/}
+								unlink "$ONE_DIR/enabled/bin/$name"
+								target="$(readlink "$path")"
+								printf "Disabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$target"
+							fi
+						done
+					fi
+				)
+			fi
 		fi
+
+		unlink "$filepath"
+
+		echo "Disabled ${filename}. Please restart shell to take effect."
+		_found_=true
 	done
 }
 
@@ -93,10 +111,10 @@ _ask_update_mod_data() {
 
 	if [[ -e $target ]]; then
 		local prompt
-		prompt=$(printf '%b[Mod=%s] %s%b' "$YELLOW" "$name" "Found existed data which may be outdated. Update it to latest? (y/[n])" "$RESET_ALL")
-		read -r -p "$prompt" answer
+		prompt=$(printf '%b[Mod=%s] %s%b' "$YELLOW" "$name" "Found existed data which may be outdated. Update it to latest?" "$RESET_ALL")
+		answer=$(l.ask "$prompt" N)
 
-		if [[ ${answer:-n} == y ]]; then
+		if [[ ${answer} == YES ]]; then
 			rm -rf "$target"
 		else
 			return 1
@@ -378,4 +396,11 @@ print_enabled_mod_props() {
 
 	# shellcheck disable=2059
 	printf "$format\n" "${prints[@]}"
+}
+
+create_bin_symlink() {
+	local name=$1 type=$2 target=$3
+
+	ln -fs "$target" "$ONE_DIR/enabled/$type/$name"
+	printf "Enabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$target"
 }

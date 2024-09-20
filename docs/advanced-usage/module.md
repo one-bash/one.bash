@@ -134,6 +134,16 @@ GITHUB_RELEASE_FILES=(diff-so-fancy)
 
 - `GITHUB_RELEASE_VERSION`: It's optional. Defaults to `latest`.
 
+### Export bin file
+
+```sh
+GIT_REPO=https://github.com/wfxr/forgit
+BIN=(bin/git-forgit)
+```
+
+Enable this moudule, will create symbol-link at $ONE_DIR/enabled/bin/
+
+
 <!-- links -->
 
 [one.share]: https://github.com/one-bash/one.share
