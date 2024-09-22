@@ -8,7 +8,23 @@ The versions follow the rules of [Semantic Versioning 2.0.0](https://semver.org/
 
 ## [Unreleased]
 
-[Full Changes](https://github.com/one-bash/one.bash/compare/v0.4.0...HEAD)
+[Full Changes](https://github.com/one-bash/one.bash/compare/v0.5.0...HEAD)
+
+
+<a name="v0.5.0"></a>
+## v0.5.0 (2024-09-22 18:04:11 +08:00)
+
+[Full Changes](https://github.com/one-bash/one.bash/compare/v0.4.0...v0.5.0)
+
+### New Features
+
+- add "shopt -s extdebug" while ONE_DEBUG=true ([d4bf4c8](https://github.com/one-bash/one.bash/commit/d4bf4c874e318f7f949cd9bf4fa15f955ed29110))
+
+### Bug Fixes
+
+- SCRIPT: unbound variable ([6206088](https://github.com/one-bash/one.bash/commit/6206088cce8f918d6e7b6af4527a0da62c4b0179))
+- change CWD to MOD_DATA_DIR for AFTER_DOWNLOAD/RUN_AND_INSERT/RUN_AND_APPEND ([dcceecd](https://github.com/one-bash/one.bash/commit/dcceecd996dd68fcff9d807d9b9fa17a286342b5))
+- GIT_BRANCH could be undefined ([750b3c5](https://github.com/one-bash/one.bash/commit/750b3c54bf1a3b7b55c17b442a57ddda3123dca6))
 
 
 <a name="v0.4.0"></a>
