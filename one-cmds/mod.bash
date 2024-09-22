@@ -189,7 +189,7 @@ download_mod_data() {
 					git clone "${clone_opts[@]}" "$GIT_REPO" "$target"
 				fi
 			fi
-		elif [[ -n $SCRIPT ]]; then
+		elif [[ -n ${SCRIPT:-} ]]; then
 			local target="$MOD_DATA_DIR/script.bash"
 			if _ask_update_mod_data "$target"; then
 				if [[ $SCRIPT =~ ^https?:// ]] || [[ $SCRIPT =~ ^ftp:// ]]; then
