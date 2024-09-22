@@ -1,5 +1,7 @@
 # You can invoke "a debug true" to set ONE_DEBUG=true. And "a debug false" to unset.
 if [[ $ONE_DEBUG == true ]]; then
+	shopt -s extdebug
+
 	one_debug() {
 		local time fmt tag
 
