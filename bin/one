@@ -33,6 +33,7 @@ Usage:
 
     $name backup                  Output backup scripts for current enabled modules
     $name config                  Manage user's ONE_CONF
+    $name doc                     Display manual documentations
     $name debug                   Toggle debug mode on one.bash
     $name link                    Create symlink files based on LINKS_CONF file
     $name log                     Print the logs of one.bash

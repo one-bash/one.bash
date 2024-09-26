@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+
+set -o errexit -o nounset -o pipefail -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+# one.bash:completion
+if [[ ${1:-} == --complete ]]; then
+	if ((COMP_CWORD < 3)); then
+		shopt -s nullglob
+		for p in "$ONE_DIR"/docs/advanced-usage/*.md; do
+			p="${p##*/}"
+			p="${p%.md}"
+			p="${p%.zh}"
+			echo "$p"
+		done
+
+		for p in "$ONE_DIR"/docs/develop/*.md; do
+			p="${p##*/}"
+			p="${p%.md}"
+			p="${p%.zh}"
+			echo "$p"
+		done
+	fi
+
+	exit 0
+fi
+
+# one.bash:usage
+if (($# == 0)) || [[ $1 == -h ]] || [[ $1 == --help ]]; then
+	# editorconfig-checker-disable
+	cat <<EOF
+Usage: one doc <KEYWORD>
+Desc: Display manual documentations
+EOF
+	# editorconfig-checker-enable
+	exit 0
+fi
+
+main() {
+	local path d lang
+	local -a dirs
+	local keyword=$1
+
+	case $LANG in
+		zh*)
+			lang=.zh
+			;;
+		*)
+			lang=''
+			;;
+	esac
+
+	shopt -s nullglob
+
+	dirs=(
+		"$ONE_DIR"/docs/advanced-usage
+		"$ONE_DIR"/docs/develop
+	)
+
+	for d in "${dirs[@]}"; do
+		if [[ -f "$d/$keyword$lang.md" ]]; then
+			path="$d/$keyword$lang.md"
+		fi
+	done
+
+	if [[ -n $lang ]] && [[ -z ${path:-} ]]; then
+		# If no documentation for specific language. Search the English documentation.
+		for d in "${dirs[@]}"; do
+			if [[ -f "$d/$keyword.md" ]]; then
+				path="$d/$keyword.md"
+			fi
+		done
+	fi
+
+	# shellcheck source=./base-scripts.bash
+	. "$ONE_DIR/one-cmds/base-scripts.bash"
+
+	if [[ -z ${path:-} ]]; then
+		print_err "Not found manual documentations for '$keyword'"
+		return "$ONE_EX_DATAERR"
+	fi
+
+	if l.has command bat; then
+		bat "$path"
+	elif l.has command less; then
+		less <"$path"
+	else
+		cat "$path"
+	fi
+}
+
+main "$@"
