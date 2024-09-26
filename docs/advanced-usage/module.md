@@ -33,6 +33,20 @@ The value of priority range of each module type:
 - `completion`: 500~699, defaults to `600`.
 - `alias`: 700~799, defaults to `750`.
 
+## Enable module with variables
+
+Some module may use environment variables as options. Such as [one.share - zoxide](https://github.com/one-bash/one.share/blob/master/plugin/zoxide.opt.bash):
+
+```sh
+ABOUT='https://github.com/ajeetdsouza/zoxide'
+DEPS=zoxide
+RUN_AND_APPEND() {
+	zoxide init bash --cmd "${ZOXIDE_CMD:-z}" --hook pwd
+}
+```
+
+User can change the default value by passing `ZOXIDE_CMD=j`. Like `ZOXIDE_CMD=j one plugin enable zoxide`
+
 ## Write a module
 
 All modules must be put in one of alias/completion/plugin/bin/sub folders.

@@ -33,6 +33,20 @@ one.bash 会按顺序加载模块（根据优先级从低到高）。
 - `completion`: 500~699, 默认 `600`.
 - `alias`: 700~799, 默认 `750`.
 
+## 启用模块时传递变量
+
+某些模块可能使用环境变量作为选项。例如 [one.share - zoxide](https://github.com/one-bash/one.share/blob/master/plugin/zoxide.opt.bash)：
+
+```sh
+ABOUT='https://github.com/ajeetdsouza/zoxide'
+DEPS=zoxide
+run_and_append() {
+	zoxide init bash --cmd “${ZOXIDE_CMD:-z}” --hook pwd
+}
+```
+
+用户可以传递 `ZOXIDE_CMD=j` 改变默认值，比如 `ZOXIDE_CMD=j one plugin enable zoxide`
+
 ## Write a module
 
 所有模块必须放在 alias/completion/plugin/bin/sub 文件夹中。
