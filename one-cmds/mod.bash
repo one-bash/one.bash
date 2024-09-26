@@ -265,7 +265,16 @@ mod_check_dep_cmds() {
 
 	if [[ $path == *.opt.bash ]]; then
 		# shellcheck disable=2207
-		IFS=' ' DEPS=($(get_opt "$path" DEPS))
+		IFS=' ' DEPS=(
+			$(
+				source "$1"
+				if [[ -v DEPS ]]; then
+					eval "echo \"\${DEPS}\""
+				elif l.is_array DEPS; then
+					eval "echo \"\${DEPS[@]}\""
+				fi
+			)
+		)
 	else
 		# shellcheck disable=2207
 		IFS=' ' DEPS=($(metafor one-bash:mod:deps <"$path"))

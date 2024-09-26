@@ -64,7 +64,7 @@ about-plugin 'Module Description'
 
 - `about-plugin 'Description'`: Description of module. It is optional
 - `one-bash:mod:deps DEPS`: To check commands in system when `one <mod> enable` and loading one.bash.
-  - The `DEPS` is a string which includes one or more command names separated with spaces.
+  - The `DEPS` is a string or an array which includes more command names. Such as `DEPS=(awk sed)`
 - `# ONE_LOAD_PRIORITY: <PRIORITY>`: Setting the loading priority. Put this line at the head of script.
 
 See the examples in https://github.com/one-bash/one.share
@@ -82,7 +82,7 @@ The final module will be: `$ONE_DIR/enabled/priority---name@repo@type.bash` -> `
 - `PRIORITY=400`: Priority of module. It is optional
 - `GIT_REPO='https://github.com/user/repo.git'`: Git clone this repo. It is optional
 - `SCRIPT='https://raw.githubusercontent.com/...'`: curl this file. It is optional
-- `DEPS='awk sed'`: To check commands in system when `one <mod> enable`. The DEPS is a string which includes one or more command names separated with spaces.
+- `DEPS=(awk sed)`: To check commands in system when `one <mod> enable`. The DEPS is a string which includes one or more command names separated with spaces.
 
 - hooks used in `one <mod> enable`. They are all optional.
   - `AFTER_DOWNLOAD() {}`: This function will be executed after files downloaded. User may use it to download the other requirements, compile and other things.

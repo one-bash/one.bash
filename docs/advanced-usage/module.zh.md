@@ -64,7 +64,7 @@ about-plugin 'Module Description'
 
 - `about-plugin 'Description'`: 模块的描述。这个字段是可选的。
 - `one-bash:mod:deps DEPS`: 当 `one <mod> enable` 以及加载 one.bash 时检查系统中是否存在该命令。
-  - `DEPS` 是一个字符串，其中包含一个或多个以空格分隔的命令名称。
+  - `DEPS` 是字符串或者数组，如果包含多个命令，必须用数组的形式。比如 `DEPS=(awk sed)`
 - `# ONE_LOAD_PRIORITY: <PRIORITY>`: 设置加载优先级。将此行放在脚本的头部。
 
 参考示例：https://github.com/one-bash/one.share
@@ -81,7 +81,7 @@ about-plugin 'Module Description'
 - `PRIORITY=400`: 模块的优先级。这个字段是可选的
 - `GIT_REPO='https://github.com/user/repo.git'`: Git 克隆此仓库。这个字段是可选的
 - `SCRIPT='https://raw.githubusercontent.com/...'`: 使用 curl 下载此文件。这个字段是可选的
-- `DEPS='awk sed'`: 当 `one <mod> enable` 时检查系统中的命令。`DEPS` 是一个字符串，其中包含一个或多个以空格分隔的命令名称。
+- `DEPS=(awk sed)`: 当 `one <mod> enable` 时检查系统中的命令。`DEPS` 是一个字符串，其中包含一个或多个以空格分隔的命令名称。
 
 - 在 `one <mod> enable` 中使用的钩子，所有钩子都是可选的。
   - `AFTER_DOWNLOAD() {}`: 这个函数将在文件下载后执行。用户可以用它来下载其他依赖项、编译等操作。
