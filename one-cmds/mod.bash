@@ -53,6 +53,17 @@ disable_mod() {
 				(
 					. "${ONE_DIR}/enabled/repo/$repo_name/$mod_type/${mod_name}.opt.bash"
 
+					if declare -F BEFORE_DISABLE &>/dev/null; then
+						local log_tag="disable:$t:$name"
+						log_verb "$log_tag" "To execute BEFORE_DISABLE fucntion"
+						(
+							BEFORE_DISABLE 2>&1 | tee -a "$ONE_LOG_FILE" >&2
+						) || {
+							log_err "$log_tag" "Failed to execute BEFORE_DISABLE function"
+							return 7
+						}
+					fi
+
 					local path target name
 					if l.is_array BIN; then
 						for path in "${BIN[@]}"; do

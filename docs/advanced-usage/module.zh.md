@@ -84,11 +84,15 @@ about-plugin 'Module Description'
 - `DEPS=(awk sed)`: 当 `one <mod> enable` 时检查系统中的命令。`DEPS` 是一个字符串，其中包含一个或多个以空格分隔的命令名称。
 
 - 在 `one <mod> enable` 中使用的钩子，所有钩子都是可选的。
+  - `BEFORE_ENABLE() {}` 这个函数在 `AFTER_DOWNLOAD` 之前执行。用户可以在这实现自定义操作。
   - `AFTER_DOWNLOAD() {}`: 这个函数将在文件下载后执行。用户可以用它来下载其他依赖项、编译等操作。
   - `INSERT() {}`: 函数内容将被插入到模块脚本 (`source $SCRIPT`) 之前。
   - `RUN_AND_INSERT() {}`: 这个函数将被执行，其标准输出将被插入到模块脚本 (`source $SCRIPT`) 之前。
   - `APPEND() {}`: 函数内容将被插入到模块脚本 (`source $SCRIPT`) 之后。
   - `RUN_AND_APPEND() {}`: 这个函数将被执行，其标准输出将被插入到模块脚本 (`source $SCRIPT`) 之后。
+
+- 在 `one <mod> disable` 中使用的钩子，所有钩子都是可选的。
+  - `BEFORE_DISABLE() {}` 用户可以在这实现自定义操作。
 
 参考示例：https://github.com/one-bash/one.share
 

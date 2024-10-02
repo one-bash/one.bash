@@ -146,6 +146,22 @@ enable_mod() {
 				mod_check_dep_cmds "$opt_path"
 				# Disable first, prevent duplicated module enabled with different priority
 				disable_mod "$name"
+
+				(
+					# shellcheck disable=1090
+					. "$opt_path"
+					if declare -F BEFORE_ENABLE &>/dev/null; then
+						local log_tag="enable:$t:$name"
+						log_verb "$log_tag" "To execute BEFORE_ENABLE fucntion"
+						(
+							BEFORE_ENABLE 2>&1 | tee -a "$ONE_LOG_FILE" >&2
+						) || {
+							log_err "$log_tag" "Failed to execute BEFORE_ENABLE function"
+							return 7
+						}
+					fi
+				)
+
 				download_mod_data "$name" "$opt_path"
 
 				local mod_path
@@ -203,11 +219,7 @@ main() {
 	fi
 
 	. "$ONE_DIR/one-cmds/mod.bash"
-
-	# shellcheck source=../../bash/load-config.bash
 	. "$ONE_DIR/bash/load-config.bash"
-
-	# shellcheck source=../../bash/log.bash
 	. "$ONE_DIR/bash/log.bash"
 
 	local name

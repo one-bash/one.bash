@@ -115,8 +115,9 @@ main() {
 	shopt -s nullglob
 	local name path filepaths
 
-	# shellcheck source=../../one-cmds/mod.bash
 	. "$ONE_DIR/one-cmds/mod.bash"
+	. "$ONE_DIR/bash/load-config.bash"
+	. "$ONE_DIR/bash/log.bash"
 
 	local repo=${opts[r]:-}
 

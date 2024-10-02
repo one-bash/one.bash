@@ -36,7 +36,10 @@ main() {
 		usage
 		return "$ONE_EX_OK"
 	fi
+
 	. "$ONE_DIR/one-cmds/mod.bash"
+	. "$ONE_DIR/bash/load-config.bash"
+	. "$ONE_DIR/bash/log.bash"
 
 	local name
 	local found

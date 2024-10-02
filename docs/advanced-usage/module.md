@@ -84,12 +84,16 @@ The final module will be: `$ONE_DIR/enabled/priority---name@repo@type.bash` -> `
 - `SCRIPT='https://raw.githubusercontent.com/...'`: curl this file. It is optional
 - `DEPS=(awk sed)`: To check commands in system when `one <mod> enable`. The DEPS is a string which includes one or more command names separated with spaces.
 
-- hooks used in `one <mod> enable`. They are all optional.
+- Hooks used in `one <mod> enable` are all optional.
+  - `BEFORE_ENABLE() {}` This function is executed before `AFTER_DOWNLOAD`. Users can implement custom operations here.
   - `AFTER_DOWNLOAD() {}`: This function will be executed after files downloaded. User may use it to download the other requirements, compile and other things.
   - `INSERT() {}`: The function content will be inserted before module sciprt (`source $SCRIPT`).
   - `RUN_AND_INSERT() {}`: The function will be executed. And its stdout will be inserted before module sciprt (`source $SCRIPT`).
   - `APPEND() {}`: The function content will be inserted after module sciprt (`source $SCRIPT`).
   - `RUN_AND_APPEND() {}`: The function will be executed. And its stdout will be inserted after module sciprt (`source $SCRIPT`).
+
+- Hooks used in `one <mod> disable` are all optional.
+  - `BEFORE_DISABLE() {}` User can implement custom actions here.
 
 See the examples in https://github.com/one-bash/one.share
 
