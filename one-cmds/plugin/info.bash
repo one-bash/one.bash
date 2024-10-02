@@ -45,7 +45,12 @@ info_mod() {
 					source "$filepath"
 					ABOUT=${ABOUT:-}
 					print_info_item About "${ABOUT//$'\n'/ }"
-					print_info_item Priority "${PRIORITY:-}"
+					if [[ -z ${PRIORITY:-} ]]; then
+						print_info_item Priority "${default_priority_map[$t]}"
+					else
+						print_info_item Priority "${PRIORITY}"
+					fi
+
 					print_info_item DEPS "${DEPS:-}"
 					print_info_item GIT_REPO "${GIT_REPO:-${GITHUB_REPO:-}}"
 					print_info_item GITHUB_RELEASE_VERSION "${GITHUB_RELEASE_VERSION:-}"

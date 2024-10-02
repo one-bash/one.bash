@@ -6,23 +6,27 @@ print_info_item() {
 
 	printf "%b%-${PRINT_INFO_KEY_WIDTH:-10}s%b= " "$BLUE" "${key^}" "$RESET_ALL"
 
-	case ${val,,} in
-		true | enabled)
-			printf '%b%s' "$GREEN" "$val"
-			;;
-		false)
-			printf '%b%s' "$RED" "$val"
-			;;
-		disabled)
-			printf '%b%s' "$GREY" "$val"
-			;;
-		invalid)
-			printf '%b%s' "$YELLOW" "$val"
-			;;
-		*)
-			printf '%s' "$val"
-			;;
-	esac
+	if [[ $val =~ ^[0-9]+$ ]]; then
+		printf '%b%s' "$YELLOW" "$val"
+	else
+		case ${val,,} in
+			true | enabled)
+				printf '%b%s' "$GREEN" "$val"
+				;;
+			false)
+				printf '%b%s' "$RED" "$val"
+				;;
+			disabled)
+				printf '%b%s' "$GREY" "$val"
+				;;
+			invalid)
+				printf '%b%s' "$YELLOW" "$val"
+				;;
+			*)
+				printf '%s' "$val"
+				;;
+		esac
+	fi
 
 	printf '%b\n' "$RESET_ALL"
 }
