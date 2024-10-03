@@ -8,7 +8,28 @@ The versions follow the rules of [Semantic Versioning 2.0.0](https://semver.org/
 
 ## [Unreleased]
 
-[Full Changes](https://github.com/one-bash/one.bash/compare/v0.5.0...HEAD)
+[Full Changes](https://github.com/one-bash/one.bash/compare/v0.6.0...HEAD)
+
+
+<a name="v0.6.0"></a>
+## v0.6.0 (2024-10-03 04:01:58 +08:00)
+
+[Full Changes](https://github.com/one-bash/one.bash/compare/v0.5.0...v0.6.0)
+
+### New Features
+
+- add hooks: BEFORE_ENABLE and BEFORE_DISABLE ([0687c74](https://github.com/one-bash/one.bash/commit/0687c749cc5688e7a146b2e47040ce30075ec95d))
+- add command "one doc" to query documentations ([00e770d](https://github.com/one-bash/one.bash/commit/00e770d579881beac82fd7d3064ca235526949c1))
+
+### Bug Fixes
+
+- "one plugin info" not print PRIORITY for plugin.opt.bash ([fdcbae7](https://github.com/one-bash/one.bash/commit/fdcbae735a85c7bf10a31edb4becd7ba27b9c6e1))
+  > And add color for PRIORITY printed
+- DEPS must be string (one command), or an array (multi commands) ([32c4366](https://github.com/one-bash/one.bash/commit/32c43667b100de8bbbedb1fff2925a5cbf13a73d))
+
+### Document Changes
+
+- Enable module with variables ([7bfd50a](https://github.com/one-bash/one.bash/commit/7bfd50a2c3d7002dc33f000fcf69beb3019b3e36))
 
 
 <a name="v0.5.0"></a>
