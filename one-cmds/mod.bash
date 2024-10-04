@@ -419,7 +419,7 @@ print_enabled_mod_props() {
 }
 
 create_bin_symlink() {
-	local name=$1 type=$2 target=$3
+	local name=$1 type=$2 target=${3/$ONE_DIR/../..}
 
 	ln -fs "$target" "$ONE_DIR/enabled/$type/$name"
 	printf "Enabled: %b%s%b -> %s\n" "$GREEN" "$name" "$RESET_ALL" "$target"

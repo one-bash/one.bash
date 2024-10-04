@@ -74,10 +74,10 @@ list_enabled_bin_for_backup() {
 		target=$(readlink "$path")
 		mod_name=${path##*/}
 
-		if [[ $target =~ ^"$ONE_DIR"/enabled/repo/([^/]+)/$mod_type/ ]]; then
+		if [[ $target =~ ^../../enabled/repo/([^/]+)/$mod_type/ ]]; then
 			repo_name=${BASH_REMATCH[1]}
 			echo "one $mod_type enable -r $repo_name $mod_name"
-		elif [[ $target =~ ^"$ONE_DIR"/data/$mod_type/$mod_name/ ]]; then
+		elif [[ $target =~ ^../../data/$mod_type/$mod_name/ ]]; then
 			if [[ -f "$ONE_DIR"/data/$mod_type/$mod_name/meta.bash ]]; then
 				(
 					# shellcheck disable=SC1090

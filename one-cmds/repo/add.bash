@@ -13,6 +13,7 @@ Examples:
   one repo add one-bash/one.share
   one repo add https://github.com/one-bash/one.share
   one repo add https://github.com/one-bash/one.share.git
+  one repo add git@github.com:one-bash/one.share.git
   one repo add /home/adoyle/any/folder
 EOF
 	# editorconfig-checker-enable

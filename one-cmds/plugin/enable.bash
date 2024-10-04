@@ -182,7 +182,8 @@ enable_mod() {
 
 			local priority
 			priority=$(get_priority "$filepath" "$t")
-			ln -fs "$filepath" "$ONE_DIR/enabled/$priority---$name@$repo_name@$t.bash"
+			local relativePath=${filepath/"$ONE_DIR"/..}
+			ln -fs "$relativePath" "$ONE_DIR/enabled/$priority---$name@$repo_name@$t.bash"
 
 			printf 'Enabled: %b%s%b with priority=%b%s%b. Please restart shell to take effect.\n' \
 				"$BLUE" "$repo_name/$t/$name" "$RESET_ALL" \

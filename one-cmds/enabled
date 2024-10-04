@@ -78,16 +78,23 @@ list() {
 
 	shopt -s nullglob
 	for path in "$ONE_DIR/enabled/$type"/*; do
-		link=$(readlink "$path")
-		repo=${link%/*}
-		repo=${repo%/*}
-		repo_name="${repo##*/}"
+		name="${path##*/}"
+
+		if [[ -f $ONE_DIR/data/$type/$name/meta.bash ]]; then
+			repo_name=$(grep 'repo_name=' "$ONE_DIR/data/$type/$name/meta.bash" | sed -E 's/repo_name=(.*)/\1/')
+		else
+			link=$(readlink "$path")
+			repo=${link%/*}
+			repo=${repo%/*}
+			repo_name="${repo##*/}"
+		fi
+
+		repo="$ONE_DIR/enabled/repo/$repo_name"
 
 		if [[ -n $repo_filter ]] && [[ $repo_filter != "$repo_name" ]]; then
 			continue
 		fi
 
-		name="${path##*/}"
 		printf '%b%-4s %b%-4s %b%-18s %b%-18s' \
 			"$YELLOW" "$priority" \
 			"$type_color" "${type^}" \

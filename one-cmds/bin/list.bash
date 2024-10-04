@@ -38,7 +38,7 @@ main() {
 			name=${name%.sh}
 			link=${ONE_DIR}/enabled/$t/$name
 
-			if [[ -L $link ]] && [[ $(readlink "$link") == "$path" ]]; then
+			if [[ -L $link ]] && [[ $(realpath "$link") == $(realpath "$path") ]]; then
 				printf '%b%s%b ' "$BOLD_GREEN" "$name" "$RESET_ALL"
 			else
 				printf '%s ' "$name"
