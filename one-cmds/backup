@@ -126,9 +126,9 @@ EOF
 	done
 
 	printf '\n'
+	list_enabled_mod_for_backup plugin # Must enable plugin first
 	list_enabled_mod_for_backup alias
 	list_enabled_mod_for_backup completion
-	list_enabled_mod_for_backup plugin
 	list_enabled_bin_for_backup bin
 	list_enabled_bin_for_backup sub
 	printf 'echo "[All Done]"\n'
