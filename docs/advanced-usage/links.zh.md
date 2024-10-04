@@ -57,6 +57,32 @@ ONE_LINKS_CONF() {
 }
 ```
 
+## Dotbot 插件
+
+用户可以通过 `one dotbot-plugin add` 添加 [dotbot 插件](https://github.com/anishathalye/dotbot/wiki/Plugins)。
+
+举个例子，使用 https://github.com/DrDynamic/dotbot-git
+
+执行 `one dotbot-plugin add DrDynamic/dotbot-git`
+
+编辑 `ONE_LINKS_CONF` 文件：
+
+```yaml
+- git:
+    '~/.oh-my-zsh/custom/plugins/zsh-autosuggestions':
+        url: 'https://github.com/zsh-users/zsh-autosuggestions'
+        description: 'oh my zsh - autosuggestions'
+    '~/.oh-my-zsh/custom/themes/powerlevel10k':
+        url: 'https://github.com/romkatv/powerlevel10k.git'
+        description: 'oh my zsh - powerlevel10k'
+    '~/.zprezto':
+        url: 'https://github.com/sorin-ionescu/prezto.git'
+        description: "Install zprezto"
+        recursive: true
+```
+
+执行 `one link`。
+
 
 [one.links.example.yaml]: https://github.com/one-bash/one.share/blob/master/one.links.example.yaml
 [dotbot]: https://github.com/anishathalye/dotbot/

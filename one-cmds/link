@@ -48,7 +48,7 @@ run() {
 	fi
 
 	print_verb "Create symbol links based on ONE_LINKS_CONF: ${DOTBOT_CONF}"
-	"$ONE_DIR/deps/dotbot/bin/dotbot" -d "$(dirname "$DOTBOT_CONF")" -c "$DOTBOT_CONF"
+	"$ONE_DIR/deps/dotbot/bin/dotbot" -d "$(dirname "$DOTBOT_CONF")" -c "$DOTBOT_CONF" --plugin-dir "$ONE_DIR/data/dotbot-plugin/*"
 }
 
 if (($# > 0)); then

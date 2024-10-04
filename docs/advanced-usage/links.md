@@ -57,6 +57,32 @@ ONE_LINKS_CONF() {
 }
 ```
 
+## Dotbot Plugins
+
+User can use `one dotbot-plugin add` to add [dotbot plugin](https://github.com/anishathalye/dotbot/wiki/Plugins).
+
+For example, using the https://github.com/DrDynamic/dotbot-git
+
+Run `one dotbot-plugin add DrDynamic/dotbot-git`
+
+Edit the `ONE_LINKS_CONF` file:
+
+```yaml
+- git:
+    '~/.oh-my-zsh/custom/plugins/zsh-autosuggestions':
+        url: 'https://github.com/zsh-users/zsh-autosuggestions'
+        description: 'oh my zsh - autosuggestions'
+    '~/.oh-my-zsh/custom/themes/powerlevel10k':
+        url: 'https://github.com/romkatv/powerlevel10k.git'
+        description: 'oh my zsh - powerlevel10k'
+    '~/.zprezto':
+        url: 'https://github.com/sorin-ionescu/prezto.git'
+        description: "Install zprezto"
+        recursive: true
+```
+
+Run `one link`
+
 
 [one.links.example.yaml]: https://github.com/one-bash/one.share/blob/master/one.links.example.yaml
 [dotbot]: https://github.com/anishathalye/dotbot/

@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -o errexit -o nounset -o pipefail -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+if [[ -z ${ONE_DIR:-} ]]; then
+	ONE_DIR=$(realpath "$0")
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	ONE_DIR=${ONE_DIR%/*}
+	declare -rx ONE_DIR
+fi
+
+# shellcheck source=../base-scripts.bash
+. "$ONE_DIR/one-cmds/base-scripts.bash"
+
+# shellcheck source=../mod-base.bash
+. "$ONE_DIR/one-cmds/mod-base.bash"
+
+# shellcheck source=../../bash/load-config.bash
+. "$ONE_DIR/bash/load-config.bash"
+
+# shellcheck disable=2034
+actions=(list add remove update)
+
+# shellcheck disable=2034
+declare -A action_aliases=(
+	['l']=list
+	['a']=add
+	['r']=remove
+	['u']=update
+)
+
+# one.bash:completion
+# one.bash:usage
+usage() {
+	# editorconfig-checker-disable
+	cat <<EOF
+Usage:  one dotbot-plugin [-h|--help] <ACTION>
+        one dotbot-plugin [-h|--help]
+
+Desc:   Manage dotbot plugins
+
+Action:
+  l, list              List downloaded dotbot plugins
+  a, add               Download a dotbot plugin
+  r, remove            Remove a dotbot plugin
+  u, update            Update a dotbot plugin
+EOF
+	# editorconfig-checker-enable
+}
+
+parse_cmd dotbot-plugin "$@"
