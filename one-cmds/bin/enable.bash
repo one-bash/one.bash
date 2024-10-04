@@ -15,19 +15,25 @@ EOF
 # TODO FIX the bin file should be executable. [[ -x $path ]]
 . "$ONE_DIR/one-cmds/plugin/action-completion.bash"
 
-set_exports() {
+create_exports() {
 	if [[ ! -v EXPORTS ]]; then
 		return
 	fi
 
 	local name=$1
 
-	local file
-	for file in "${EXPORTS[@]}"; do
-		if [[ -f "$ONE_DIR/data/$t/${name}/$file" ]]; then
-			chmod +x "$ONE_DIR/data/$t/${name}/$file"
+	local bin_name
+	for bin_name in "${EXPORTS[@]}"; do
+		if [[ -f "$ONE_DIR/data/$t/$name/$bin_name" ]]; then
+			# for GITHUB_RELEASE_FILES
+			chmod +x "$ONE_DIR/data/$t/$name/$bin_name"
+			create_bin_symlink "$bin_name" "$t" "$ONE_DIR/data/$t/$name/$bin_name"
+		elif [[ -f "$ONE_DIR/data/$t/$name/git/$bin_name" ]]; then
+			# for GIT_REPO
+			chmod +x "$ONE_DIR/data/$t/$name/git/$bin_name"
+			create_bin_symlink "$bin_name" "$t" "$ONE_DIR/data/$t/$name/git/$bin_name"
 		else
-			print_err "Not found file \"$file\" to export"
+			print_err "Not found file \"$bin_name\" to export. Please report bug to module maintainer."
 		fi
 	done
 }
@@ -84,13 +90,7 @@ enable() {
 			(
 				# shellcheck disable=1090
 				. "$path"
-				set_exports "$name"
-
-				# shellcheck disable=1090
-				read -ra exports < <(. "$path" && echo "${EXPORTS[@]}")
-				for bin_name in "${exports[@]}"; do
-					create_bin_symlink "$bin_name" "$t" "$ONE_DIR/data/$t/$name/$bin_name"
-				done
+				create_exports "$name"
 			)
 		fi
 	else
