@@ -120,7 +120,7 @@ EOF
 		if [[ -d $path/.git ]]; then
 			url=$(git -C "$path" config --get remote.origin.url)
 		else
-			url=$(readlink "$path")
+			url=$(realpath "$path")
 		fi
 		echo "one repo add $url"
 	done
