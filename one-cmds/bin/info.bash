@@ -66,7 +66,9 @@ main() {
 			done
 		else
 			for path in "${ONE_DIR}/enabled/repo/$repo/$t/$name"{,.bash,.sh,.opt.bash}; do
-				filepaths+=("$path")
+				if [[ -f "$path" ]]; then
+					filepaths+=("$path")
+				fi
 			done
 		fi
 
