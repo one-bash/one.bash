@@ -8,7 +8,26 @@ The versions follow the rules of [Semantic Versioning 2.0.0](https://semver.org/
 
 ## [Unreleased]
 
-[Full Changes](https://github.com/one-bash/one.bash/compare/v0.6.0...HEAD)
+[Full Changes](https://github.com/one-bash/one.bash/compare/v0.7.0...HEAD)
+
+
+<a name="v0.7.0"></a>
+## v0.7.0 (2024-10-05 00:58:25 +08:00)
+
+[Full Changes](https://github.com/one-bash/one.bash/compare/v0.6.0...v0.7.0)
+
+### New Features
+
+- new commands "one dotbot-plugin" ([5503a3d](https://github.com/one-bash/one.bash/commit/5503a3d25d29020b7b59feb0a70eb8bd113c2fdb))
+
+### Bug Fixes
+
+- use relative path instead of absolute path for enabled file ([3218a99](https://github.com/one-bash/one.bash/commit/3218a99f754bf4bd0c6becaabeca0f125a21dcf4))
+  > User can move one.bash folder without problem
+- matched multi bin/sub files ([eea751a](https://github.com/one-bash/one.bash/commit/eea751a46831e6ac9c0bad9ada88f6546152bc32))
+- **backup**: one repo add should use absolute filepath ([0fc7ba2](https://github.com/one-bash/one.bash/commit/0fc7ba20e76d9086c5f6f743d498b0777cfb39c3))
+- **backup**: must enable plugins first ([5e8feff](https://github.com/one-bash/one.bash/commit/5e8feffc88375fece8251d533c04bc73df50242a))
+- **bin**: not found file when EXPORTS with GIT_REPO ([60827bd](https://github.com/one-bash/one.bash/commit/60827bd5e71312bfb137e9c0386b900819fe199e))
 
 
 <a name="v0.6.0"></a>
