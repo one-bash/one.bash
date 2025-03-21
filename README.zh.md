@@ -9,7 +9,7 @@
 
 ## 功能
 
-- 链接：集中管理一系列配置文件。基于 YAML 文件，使用 `one link` 和 `one unlink` 命令来管理软链接。
+- 链接：集中管理一系列配置文件。基于 YAML 文件，使用 `one link` 和 `one unlink` 命令来管理软链接。详见 [ONE Links](./docs/advanced-usage/links.zh.md)。
 - 模块：通过[模块][one-module]管理 shell 脚本、补语、别名、命令、子命令。支持自定义模块。
 - 仓库：通过 [repo][one-repo] 轻松分享和重用可执行文件、子命令、配置和模块。支持自定义 repo 和多个 repo。
 - 子命令：可以在一个作用域下管理自己的命令。如 `a <cmd>` 来调用命令，避免在 `PATH` 中重复命令。请阅读 [ONE_SUB Commands][one-sub]。

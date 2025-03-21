@@ -9,7 +9,7 @@ A modular framework that manages commands, completions, dotfiles for bash users.
 
 ## Features
 
-- Links: Manage collections of dotfiles in one place. Using `one link` and `one unlink` based on YAML files to manage soft-links.
+- Links: Manage collections of dotfiles in one place. Using `one link` and `one unlink` based on YAML files to manage soft-links. See [ONE Links](./docs/advanced-usage/links.md) for details.
 - Modules: Manage shell scripts, completions, aliases, commands (bins), sub-commands (subs) by [modules][one-module]. Support custom modules.
 - Repo: Package shell scripts, completions, aliases, commands by [repo][one-repo] for sharing and reusing. Support custom repo and multiple repos.
 - Sub-commands: Manage commands under your own scope. Like `a <cmd>` to invoke command that no worry about duplicated in `PATH`. Read the [ONE_SUB Commands][one-sub].
